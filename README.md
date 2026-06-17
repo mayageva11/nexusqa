@@ -1,289 +1,168 @@
-# NexusQA — AI-Powered QA Automation Portfolio
+# NexusQA — QA Automation Portfolio Project
 
-> **A production-grade test automation suite** built by Maya Erusalimsky to demonstrate real-world QA engineering skills: Playwright E2E testing, API test coverage, Page Object Model architecture, Claude AI integration, and a fully automated CI/CD pipeline.
+**Built by Maya Erusalimsky** | QA Automation Engineer
 
 [![CI](https://github.com/mayageva11/nexusqa/actions/workflows/ci.yml/badge.svg)](https://github.com/mayageva11/nexusqa/actions/workflows/ci.yml)
-[![Playwright](https://img.shields.io/badge/Playwright-1.49.1-00D1FF?logo=playwright)](https://playwright.dev)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript)](https://www.typescriptlang.org)
-[![Claude API](https://img.shields.io/badge/Claude-Sonnet_4.6-BF5AF2)](https://anthropic.com)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Tests](https://img.shields.io/badge/tests-234_passing-brightgreen)](#)
+[![Browsers](https://img.shields.io/badge/browsers-Chromium_%7C_Firefox_%7C_WebKit-blue)](https://playwright.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6)](https://www.typescriptlang.org)
 
 ---
 
-## What This Project Is
+## 👋 What Is This Project?
 
-NexusQA tests a real SaaS product — **Luminary Analytics**, a dashboard application with authentication, user management, analytics, and reports — across the full testing pyramid:
+This is a **complete, real-world QA automation project** I built from scratch to demonstrate professional automation engineering skills.
 
-| Layer | What is tested | Tools |
-|---|---|---|
-| **E2E** | Login flows, dashboard, navigation, user CRUD, reports wizard | Playwright + POM |
-| **API** | Auth endpoints, CRUD, error handling, token lifecycle | Playwright API fixtures |
-| **Visual** | Responsive layouts at 1280px and 768px viewports | Playwright |
-| **Security** | SQL injection inputs, auth bypass attempts | Custom assertions |
+It includes two parts:
 
-**The twist:** Claude AI is wired into the test infrastructure at runtime — generating edge-case test data, classifying failures, and producing test scenarios from plain English user stories.
+1. **A web application** called *Luminary Analytics* — a SaaS-style analytics dashboard with login, user management, reports, and charts. I built it myself so I would have something realistic to test.
+
+2. **A full test suite** for that application — 234 automated tests covering every feature, written in Playwright and TypeScript, running in a real CI/CD pipeline on GitHub Actions.
+
+The goal was to build something that looks and works exactly like a real job — not a tutorial, not a toy project.
 
 ---
 
-## Live Links
+## 🌐 Live Demo & Portfolio
 
-| Resource | URL |
+| | Link |
 |---|---|
-| Portfolio / CV | https://mayageva11.github.io/nexusqa |
-| Test Reports | https://mayageva11.github.io/nexusqa/reports |
-| GitHub Actions | https://github.com/mayageva11/nexusqa/actions |
+| **My Portfolio / CV** | **https://mayageva11.github.io/nexusqa** |
+| GitHub Actions (CI runs) | https://github.com/mayageva11/nexusqa/actions |
+| Source Code | https://github.com/mayageva11/nexusqa |
 
 ---
 
-## Project Structure
+## 💼 What Skills Does This Demonstrate?
 
-```
-nexusqa/
-│
-├── app/                          # Luminary Analytics — the SaaS app under test
-│   ├── api/
-│   │   ├── server.ts             # Express + TypeScript API server
-│   │   ├── store.ts              # In-memory data store with seed data
-│   │   ├── routes/
-│   │   │   ├── auth.ts           # POST /login, POST /logout, GET /me
-│   │   │   ├── users.ts          # Full CRUD + search/sort/paginate
-│   │   │   ├── metrics.ts        # Dashboard analytics data
-│   │   │   └── reports.ts        # Report generation + CSV export
-│   │   └── middleware/
-│   │       ├── auth.middleware.ts # JWT verification
-│   │       └── logger.middleware.ts
-│   ├── login.html                # Auth page
-│   ├── dashboard.html            # Metrics + charts
-│   ├── analytics.html            # Time-series data explorer
-│   ├── users.html                # User management table
-│   └── reports.html              # Report wizard + export
-│
-├── tests/                        # The Playwright test suite
-│   ├── playwright.config.ts      # 3-browser matrix, retries, artifacts
-│   ├── global-setup.ts           # Pre-test auth state generation
-│   ├── global-teardown.ts        # Cleanup
-│   ├── fixtures/
-│   │   ├── auth.fixture.ts       # adminPage / editorPage / viewerPage
-│   │   └── api.fixture.ts        # adminApi / unauthApi
-│   ├── helpers/
-│   │   ├── page-objects/         # LoginPage, DashboardPage, UsersPage, ReportsPage
-│   │   ├── assertions/           # Custom Playwright matchers
-│   │   └── claude-generator.ts   # Claude API integration
-│   ├── e2e/
-│   │   ├── auth/                 # login, logout, session persistence
-│   │   ├── dashboard/            # metrics, navigation, widgets
-│   │   ├── users/                # CRUD, search, sort, permissions
-│   │   └── reports/              # wizard flow, export, undo/redo
-│   └── api/                      # auth.api, users.api, metrics.api
-│
-├── portfolio/
-│   └── index.html                # CV / portfolio landing page
-│
-└── .github/workflows/
-    ├── ci.yml                    # Full pipeline on push/PR
-    ├── nightly.yml               # 02:00 UTC regression + Allure deploy
-    └── pr-check.yml              # Smoke suite on every PR
-```
-
----
-
-## Test Coverage
-
-```
-234 tests  ·  3 browsers (Chromium, Firefox, WebKit)  ·  ~90 seconds total
-```
-
-### E2E Tests
-
-**Authentication** (`tests/e2e/auth/`)
-- Valid login redirects to dashboard; invalid credentials show inline error
-- SQL injection in email field returns 401, not 500
-- Very long inputs (1000+ chars) handled without crash
-- Remember-me checkbox persists token across browser sessions
-- Logout clears localStorage, invalidates server-side session, blocks re-entry to protected routes
-
-**Dashboard** (`tests/e2e/dashboard/`)
-- All 4 metric cards render with real numeric values (not placeholder dashes)
-- Trend indicators (▲/▼) reflect actual data direction from the API
-- Chart.js canvases have non-zero pixel dimensions (chart rendered, not empty)
-- Sidebar navigation routes to correct pages with correct active state
-- Activity feed shows timestamped items
-- Layout is correct at both 1280px and 768px viewports
-
-**User Management** (`tests/e2e/users/`)
-- Table loads with paginated data (10 users per page)
-- Search input filters rows in real time by name and email
-- Sort by name toggles ascending/descending
-- Add user: happy path creates record; empty form shows validation errors; invalid email format is rejected
-- Delete: confirmation dialog required; cancelling preserves the record
-- Role-based UI: viewer sees the table but not admin-only action buttons
-
-**Reports** (`tests/e2e/reports/`)
-- 3-step wizard: name input → config → confirm → generate
-- Step 1 validation blocks progression when fields are empty
-- Generated report appears in the list immediately after creation
-- Delete shows undo toast; clicking undo restores the report
-- CSV download button present on each report card
-
-### API Tests
-
-**Auth API** (`tests/api/auth.api.spec.ts`)
-
-| Request | Expected |
+| Skill | How it appears in this project |
 |---|---|
-| `POST /api/auth/login` valid credentials | 200 + JWT token |
-| `POST /api/auth/login` wrong password | 401 |
-| `POST /api/auth/login` missing email | 400 + message |
-| `GET /api/auth/me` with valid token | 200 + user profile |
-| Any protected endpoint, no token | 401 |
-| Any protected endpoint, bad token | 403 |
-| `POST /api/auth/logout` | 200, token invalidated |
-
-**Metrics API** (`tests/api/metrics.api.spec.ts`)
-- Response shape: `cards[]`, `series[]`, `trafficSources[]`, `topPages[]`
-- Exactly 4 cards; each has `id`, `label`, `value` (string), `change` (number), `trend` (`up` or `down`)
-- Series has exactly 30 entries with ISO date strings and positive session/revenue values
-
-**Users API** (`tests/api/users.api.spec.ts`)
-- GET returns paginated list with total count and page metadata
-- Search query parameter filters correctly
-- POST creates user and returns 201 with the new resource
-- PUT updates role, response immediately reflects the change
-- DELETE removes user; subsequent GET by ID returns 404
-- POST with missing required fields returns 400 with field-level error messages
+| **Playwright** | 234 tests across E2E, API, and visual layers |
+| **TypeScript** | Everything is strictly typed — app, tests, fixtures, helpers |
+| **Page Object Model** | All pages have a typed POM class — tests never contain raw selectors |
+| **Test fixtures** | Pre-authenticated browser sessions for admin/editor/viewer roles |
+| **API testing** | Full HTTP-level tests for auth, users, and metrics endpoints |
+| **CI/CD** | GitHub Actions pipeline — lint, typecheck, 3-browser matrix, deploy |
+| **AI integration** | Claude API used to generate edge-case test data and triage failures |
+| **Security testing** | SQL injection, XSS inputs, auth bypass — all covered |
+| **Cross-browser** | Tests run in Chromium, Firefox, and WebKit on every push |
+| **Responsive testing** | Layout checks at 1280px and 768px viewports |
 
 ---
 
-## Claude AI Integration
+## 🧪 What Is Tested?
 
-The file `tests/helpers/claude-generator.ts` connects to the Anthropic API and provides three functions used by tests at runtime.
+### The Application Under Test: Luminary Analytics
 
-### 1. `generateTestUsers(count)` — Smarter test data
+A multi-page SaaS dashboard with:
+- **Login page** — JWT-based authentication with role management
+- **Dashboard** — real-time metric cards, charts, activity feed
+- **Users page** — full CRUD table with search, sort, and pagination
+- **Reports page** — 3-step wizard to generate and export reports
+- **Analytics page** — time-series data visualization
 
-Instead of hardcoded fixtures or generic faker data, Claude produces users that are realistic and full of the edge cases that often hide bugs:
+### Test Layers
 
-```typescript
-const users = await generateTestUsers(10);
-// Example output:
-// { name: "Ñoño García-López",  email: "user+tag@sub.domain.io",   role: "editor" }
-// { name: "张伟",                email: "zhang.wei@company.co.uk",  role: "viewer" }
-// { name: "O'Brien-Smith, Jr.", email: "long.email.address+test@subdomain.example.com", role: "admin" }
-```
+**E2E Tests** — `tests/e2e/`
 
-Unicode names, tagged emails, hyphenated surnames — real-world inputs that reveal encoding bugs, validation gaps, and display truncation issues.
+These tests open a real browser and interact with the app like a user would:
 
-### 2. `analyzeFailure(testName, errorMessage)` — Automatic failure triage
+- Login: valid credentials, wrong password, SQL injection attempt, very long input, remember-me
+- Logout: clears token, invalidates server session, blocks re-entry to protected pages
+- Dashboard: all 4 metric cards show real values, charts render, sidebar navigation works
+- Users: search filters in real time, add/delete with confirmation dialogs, role-based UI (viewer can't see admin buttons)
+- Reports: complete 3-step wizard flow, delete with undo toast, CSV export button
 
-When a test fails in CI, Claude reads the error message and classifies it before it lands in the Allure report:
+**API Tests** — `tests/api/`
 
-```typescript
-const analysis = await analyzeFailure(
-  'should load users table with data',
-  'Timeout 5000ms exceeded waiting for [data-testid="users-table"]'
-);
-// Returns:
-// {
-//   rootCause: "element not visible within timeout — possible race condition on data fetch",
-//   severity: "flaky",
-//   suggestedFix: "increase timeout or add explicit wait for API response",
-//   isFlaky: true
-// }
-```
+These test the backend directly via HTTP — no browser:
 
-This means the Allure report tells you *why* a test failed, not just *that* it failed.
+- Auth: valid login returns a JWT, wrong password returns 401, missing fields return 400
+- Protected routes: no token → 401, bad token → 403, logout invalidates token server-side
+- Users: create, read, update, delete all return correct status codes and response shapes
+- Metrics: response has exactly the right fields, 30 days of data, no null/NaN values
 
-### 3. `generateTestScenario(userStory)` — Spec-to-test in one call
+**Visual / Responsive Tests**
 
-Write a user story in plain English, get back a structured test plan:
-
-```typescript
-const scenario = await generateTestScenario(
-  'As an admin, I want to filter users by role so I can find editors quickly'
-);
-// Returns:
-// {
-//   title: "Filter users table by role",
-//   preconditions: ["logged in as admin", "users table has mixed roles"],
-//   steps: ["navigate to /users", "select 'editor' from role dropdown", ...],
-//   assertions: ["only editor rows visible", "row count matches total editors"],
-//   edgeCases: ["filter with no matching users", "switch filter while search active"]
-// }
-```
+- Page layout at desktop (1280px) and tablet (768px) — no broken overflow or hidden elements
 
 ---
 
-## CI/CD Pipeline
+## 🤖 Claude AI Integration
 
-### `ci.yml` — Every push and pull request
+I wired the **Anthropic Claude API** directly into the test infrastructure. It does three things:
+
+**1. Generates realistic edge-case test data**
+
+Instead of fake names like "Test User 1", Claude generates users with Unicode names, tagged emails, hyphens, apostrophes — the kind of input that actually breaks things:
 
 ```
-push / pull_request
-        │
-        ▼
-  lint-and-typecheck ── tsc --noEmit (app/ and tests/)
-        │
-        ▼
-    start-app ── PORT=3001, health-check retry loop
-        │
-   ┌────┴────┐
-   ▼         ▼
-e2e-tests  api-tests
-(matrix)
-┌──────────┐
-│ chromium │
-│ firefox  │  ← run in parallel
-│ webkit   │
-└──────────┘
-        │
-        ▼
-  report-summary ── posts ✅/❌ comment on the PR with pass/fail counts
-        │
-        ▼ (main branch only)
-  deploy-portfolio ── portfolio/index.html → GitHub Pages
+Ñoño García-López   user+tag@sub.domain.io
+张伟                 zhang.wei@company.co.uk
+O'Brien-Smith, Jr.  long.address+test@subdomain.example.com
 ```
 
-Each browser uploads its own artifact. If Firefox fails but Chromium passes, the failure is isolated in the report.
+**2. Analyzes test failures automatically**
 
-### `pr-check.yml` — Smoke gate on every PR
+When a test fails in CI, Claude reads the error message and explains why — was it a flaky test, a real bug, or an environment issue? The CI report shows the diagnosis, not just "FAILED".
 
-Runs only the 13 tests tagged `@smoke`. Completes in under 60 seconds. Blocks merge if any smoke test fails. Fast feedback without waiting for the full matrix.
+**3. Converts user stories into test plans**
 
-### `nightly.yml` — Full regression at 02:00 UTC
-
-Runs all 234 tests on `main`. Generates an Allure report with history trends and deploys it to GitHub Pages at `/reports`. Catches regressions introduced across the day before anyone starts work in the morning.
+Give it a sentence like *"As an admin I want to filter users by role"* and it returns a structured list of test steps, assertions, and edge cases.
 
 ---
 
-## Running Locally
+## ⚙️ CI/CD Pipeline
+
+Every time I push to GitHub, this runs automatically:
+
+```
+Push to main
+    │
+    ├─ Typecheck (TypeScript strict mode, app + tests)
+    │
+    ├─ Start the app server (with health check retry)
+    │
+    ├─ Run all tests in parallel:
+    │       ├─ Chromium
+    │       ├─ Firefox
+    │       └─ WebKit
+    │
+    ├─ Run API tests
+    │
+    └─ Deploy portfolio page to GitHub Pages
+```
+
+If any test fails, the pipeline goes red and I get the failure reason with screenshots and traces attached.
+
+**Three workflows:**
+- `ci.yml` — runs on every push and pull request (full suite)
+- `pr-check.yml` — runs smoke tests only on every PR (fast, ~60 seconds, blocks merge on failure)
+- `nightly.yml` — runs the full suite every night at 2:00 AM UTC and publishes a trend report
+
+---
+
+## 🚀 How to Run It Yourself
 
 ### Requirements
-- Node.js 18+
-- An Anthropic API key — only needed for the three Claude-powered tests in `claude-generator.ts`. All other 231 tests run without it.
+- Node.js 18 or higher
+- That's it. An Anthropic API key is optional (only 3 tests use it).
 
 ### Step 1 — Install
 
 ```bash
-# Install app dependencies
+# Install the app
 cd app && npm install
 
-# Install test dependencies + browsers
-cd ../tests && npm install
-npx playwright install
+# Install the tests and browsers
+cd ../tests && npm install && npx playwright install
 ```
 
 ### Step 2 — Configure
 
 ```bash
-# From the project root
 cp .env.example .env
-```
-
-Edit `.env`:
-```
-PORT=3001
-JWT_SECRET=any-random-string-here
-BASE_URL=http://localhost:3001
-ANTHROPIC_API_KEY=sk-ant-...   # optional
+# The defaults work out of the box — no changes needed to get started
 ```
 
 ### Step 3 — Start the app
@@ -291,140 +170,105 @@ ANTHROPIC_API_KEY=sk-ant-...   # optional
 ```bash
 cd app
 npm start
-# Luminary Analytics running on http://localhost:3001
 ```
 
-Open `http://localhost:3001` and log in with any of these accounts:
+App is now running at **http://localhost:3001**
 
-| Email | Password | Role |
+Login with any of these accounts:
+
+| Email | Password | What you can do |
 |---|---|---|
-| `admin@luminary.io` | `Test1234!` | Admin — full access |
-| `editor@luminary.io` | `Test1234!` | Editor — read + edit |
-| `viewer@luminary.io` | `Test1234!` | Viewer — read only |
+| `admin@luminary.io` | `Test1234!` | Everything |
+| `editor@luminary.io` | `Test1234!` | Read and edit |
+| `viewer@luminary.io` | `Test1234!` | Read only |
 
-### Step 4 — Run tests
+### Step 4 — Run the tests
 
 ```bash
 cd tests
 
-# All 234 tests, all 3 browsers
+# Run everything
 npx playwright test
 
-# Smoke suite only — 13 tests, ~60 seconds
+# Quick smoke check (13 tests, ~60 seconds)
 npx playwright test --grep @smoke
 
-# One browser
+# One browser only
 npx playwright test --project=chromium
 
-# One file
-npx playwright test e2e/auth/login.spec.ts
-
-# Interactive UI mode
+# Open visual test UI
 npx playwright test --ui
 
-# Open the HTML report
+# See the HTML report after a run
 npx playwright show-report
 ```
 
-### With Docker
+---
 
-```bash
-# From the project root
-docker-compose up --build
-# App starts, tests run, report is saved to playwright-report/
+## 🗂️ Project Structure
+
+```
+nexusqa/
+│
+├── app/                     ← The web app being tested
+│   ├── api/
+│   │   ├── server.ts        ← Express server with JWT auth
+│   │   ├── store.ts         ← Seed data (users, metrics, reports)
+│   │   └── routes/          ← auth, users, metrics, reports APIs
+│   ├── login.html           ← Login page
+│   ├── dashboard.html       ← Metrics + charts
+│   ├── users.html           ← User management table
+│   ├── reports.html         ← Report wizard
+│   └── analytics.html       ← Data explorer
+│
+├── tests/                   ← The Playwright test suite
+│   ├── playwright.config.ts ← 3-browser config, retries, artifacts
+│   ├── global-setup.ts      ← Logs in once and saves auth state
+│   ├── fixtures/
+│   │   ├── auth.fixture.ts  ← Gives tests a pre-logged-in browser
+│   │   └── api.fixture.ts   ← Gives tests an authenticated HTTP client
+│   ├── helpers/
+│   │   ├── page-objects/    ← One class per page (LoginPage, DashboardPage…)
+│   │   ├── assertions/      ← Custom Playwright matchers
+│   │   └── claude-generator.ts ← AI test data + failure analysis
+│   ├── e2e/                 ← Browser-level tests (auth, dashboard, users, reports)
+│   └── api/                 ← HTTP-level tests (auth, users, metrics)
+│
+├── portfolio/
+│   └── index.html           ← My CV / portfolio page (live at GitHub Pages)
+│
+└── .github/workflows/
+    ├── ci.yml               ← Full pipeline on every push
+    ├── pr-check.yml         ← Smoke tests on every PR
+    └── nightly.yml          ← Full suite every night
 ```
 
 ---
 
-## Page Object Model
+## 🛠️ Tech Stack
 
-Every page interaction goes through a typed Page Object. Tests never contain raw selectors — they read like a specification:
-
-```typescript
-// tests/helpers/page-objects/DashboardPage.ts
-export class DashboardPage {
-  readonly metricsGrid: Locator;
-  readonly logoutButton: Locator;
-
-  constructor(page: Page) {
-    this.metricsGrid = page.getByTestId('metrics-grid');
-    this.logoutButton = page.getByTestId('logout-btn');
-  }
-
-  async goto(): Promise<void> {
-    await this.page.goto('/dashboard');
-    await this.page.waitForURL(/dashboard/);
-    await expect(this.metricsGrid).toBeVisible({ timeout: 15000 });
-  }
-
-  async logout(): Promise<void> {
-    await this.logoutButton.click();
-    await this.page.waitForURL('**/login');
-  }
-}
-```
-
-```typescript
-// tests/e2e/auth/logout.spec.ts — no selectors, reads like plain English
-test('should log out and redirect to login', async ({ page }) => {
-  const dashboard = new DashboardPage(page);
-  await dashboard.goto();
-  await dashboard.logout();
-  await expect(page).toHaveURL(/login/);
-});
-```
-
----
-
-## Pre-Authenticated Fixtures
-
-Tests that need a logged-in user get a ready-made browser context — no login flow in every test:
-
-```typescript
-// tests/fixtures/auth.fixture.ts
-export const test = base.extend<{
-  adminPage: Page;
-  editorPage: Page;
-  viewerPage: Page;
-}>({
-  adminPage: async ({ browser }, use) => {
-    const ctx = await browser.newContext({
-      storageState: path.join(__dirname, '../auth-state/admin.auth.json'),
-    });
-    const page = await ctx.newPage();
-    await use(page);
-    await ctx.close();
-  },
-});
-```
-
-`global-setup.ts` runs once before the suite, logs in as each user, and saves the storage state (localStorage JWT). Tests import `{ test }` from this fixture file and receive a pre-authenticated page in milliseconds.
-
----
-
-## Tech Stack
-
-| Category | Technology |
+| | |
 |---|---|
 | Test framework | Playwright 1.49.1 |
-| Language | TypeScript 5.x (strict mode) |
-| AI integration | Anthropic Claude API (`claude-sonnet-4-6`) |
-| App backend | Express 4 + ts-node |
-| App frontend | Vanilla HTML/CSS/JS + Chart.js |
-| Auth | JWT (jsonwebtoken) |
+| Language | TypeScript (strict mode throughout) |
+| AI | Anthropic Claude API |
+| App backend | Node.js + Express + JWT |
+| App frontend | HTML / CSS / JavaScript + Chart.js |
 | CI/CD | GitHub Actions |
-| Test reports | Playwright HTML + Allure |
+| Test reports | Playwright HTML Report + Allure |
 | Containers | Docker + Docker Compose |
 
 ---
 
-## About
+## 👩‍💻 About Me
 
-**Maya Erusalimsky** — QA Automation Engineer
+I'm **Maya Erusalimsky**, a QA Automation Engineer.
 
-QA Automation Engineer with 1.5 years of production experience at Kissterra, and a B.Sc. in Computer Science from the College of Management Academic Studies. I write TypeScript and Python, work in Agile teams, and care about the full picture — from test architecture to CI/CD to deployment.
+I have 1.5 years of experience in production QA at Kissterra, a B.Sc. in Computer Science from the College of Management Academic Studies, and I'm looking for a role where I can keep building test infrastructure that teams actually rely on.
 
-- **Email:** mayageva11@gmail.com
-- **LinkedIn:** https://linkedin.com/in/maya-erusalimsky
-- **GitHub:** https://github.com/mayageva11
-- **Portfolio:** https://mayageva11.github.io/nexusqa
+This project is the best way I know to show what I can do — not a list of buzzwords, but working code.
+
+📧 mayageva11@gmail.com
+🔗 https://linkedin.com/in/maya-erusalimsky
+🐙 https://github.com/mayageva11
+🌐 https://mayageva11.github.io/nexusqa

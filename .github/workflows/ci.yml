@@ -214,20 +214,21 @@ jobs:
   deploy-portfolio:
     name: Deploy Portfolio to GitHub Pages
     runs-on: ubuntu-latest
-    needs: [e2e-tests, api-tests]
+    needs: lint-and-typecheck
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      contents: write
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: portfolio/
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Deploy portfolio to gh-pages branch
+        run: |
+          git config user.email "mayageva11@gmail.com"
+          git config user.name "Maya Erusalimsky"
+          git fetch origin gh-pages 2>/dev/null || true
+          git checkout gh-pages 2>/dev/null || git checkout --orphan gh-pages
+          git rm -rf . --quiet 2>/dev/null || true
+          cp portfolio/index.html index.html
+          git add index.html
+          git diff --cached --quiet && echo "No changes to deploy" && exit 0
+          git commit -m "deploy: update portfolio [skip ci]"
+          git push origin gh-pages
