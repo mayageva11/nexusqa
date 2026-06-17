@@ -3,7 +3,8 @@
 **Built by Maya Erusalimsky** | QA Automation Engineer
 
 [![CI](https://github.com/mayageva11/nexusqa/actions/workflows/ci.yml/badge.svg)](https://github.com/mayageva11/nexusqa/actions/workflows/ci.yml)
-[![Tests](https://img.shields.io/badge/tests-234_passing-brightgreen)](#)
+[![Nightly](https://github.com/mayageva11/nexusqa/actions/workflows/nightly.yml/badge.svg)](https://github.com/mayageva11/nexusqa/actions/workflows/nightly.yml)
+[![Allure Report](https://img.shields.io/badge/Allure_Report-live-cyan)](https://mayageva11.github.io/nexusqa/reports)
 [![Browsers](https://img.shields.io/badge/browsers-Chromium_%7C_Firefox_%7C_WebKit-blue)](https://playwright.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6)](https://www.typescriptlang.org)
 
@@ -28,6 +29,7 @@ The goal was to build something that looks and works exactly like a real job —
 | | Link |
 |---|---|
 | **My Portfolio / CV** | **https://mayageva11.github.io/nexusqa** |
+| **Test Report (Allure)** | **https://mayageva11.github.io/nexusqa/reports** |
 | GitHub Actions (CI runs) | https://github.com/mayageva11/nexusqa/actions |
 | Source Code | https://github.com/mayageva11/nexusqa |
 
@@ -120,17 +122,20 @@ Every time I push to GitHub, this runs automatically:
 Push to main
     │
     ├─ Typecheck (TypeScript strict mode, app + tests)
+    │       │
+    │       └─ Deploy portfolio → GitHub Pages (mayageva11.github.io/nexusqa)
     │
     ├─ Start the app server (with health check retry)
     │
     ├─ Run all tests in parallel:
-    │       ├─ Chromium
-    │       ├─ Firefox
-    │       └─ WebKit
+    │       ├─ Chromium  ──┐
+    │       ├─ Firefox   ──┼─ each uploads allure-results/
+    │       └─ WebKit    ──┘
     │
-    ├─ Run API tests
+    ├─ Run API tests ──────── uploads allure-results/
     │
-    └─ Deploy portfolio page to GitHub Pages
+    └─ Merge all allure-results → generate Allure HTML report
+            └─ Deploy report → GitHub Pages (/reports)
 ```
 
 If any test fails, the pipeline goes red and I get the failure reason with screenshots and traces attached.

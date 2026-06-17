@@ -122,12 +122,19 @@ jobs:
         working-directory: tests
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-      - name: Upload Playwright report
+      - name: Upload Playwright HTML report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report-${{ matrix.browser }}
           path: tests/playwright-report/
+          retention-days: 7
+      - name: Upload Allure results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-${{ matrix.browser }}
+          path: tests/allure-results/
           retention-days: 7
       - name: Upload screenshots and videos on failure
         if: failure()
@@ -173,23 +180,81 @@ jobs:
       - name: Run API tests
         run: npx playwright test tests/api/ --project=chromium
         working-directory: tests
-      - name: Upload API test report
+      - name: Upload Playwright HTML report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: api-test-report
           path: tests/playwright-report/
           retention-days: 7
+      - name: Upload Allure results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-api
+          path: tests/allure-results/
+          retention-days: 7
+
+  deploy-report:
+    name: Deploy Allure Report
+    runs-on: ubuntu-latest
+    needs: [e2e-tests, api-tests]
+    if: always() && github.ref == 'refs/heads/main' && github.event_name == 'push'
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download all Allure results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: allure-results-*
+          path: allure-results-all/
+          merge-multiple: false
+      - name: Merge Allure results into one folder
+        run: |
+          mkdir -p allure-results
+          find allure-results-all -type f | xargs -I{} cp {} allure-results/ 2>/dev/null || true
+          echo "Merged $(ls allure-results | wc -l) result files"
+      - name: Fetch previous Allure history from gh-pages
+        run: |
+          git fetch origin gh-pages 2>/dev/null || true
+          git checkout origin/gh-pages -- reports/history 2>/dev/null || true
+          if [ -d "reports/history" ]; then
+            mkdir -p allure-results/history
+            cp -r reports/history/. allure-results/history/
+            echo "History restored: $(ls allure-results/history | wc -l) files"
+          else
+            echo "No previous history found — first run"
+          fi
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Install Allure CLI
+        run: npm install -g allure-commandline
+      - name: Generate Allure HTML report
+        run: allure generate allure-results --clean -o allure-report
+      - name: Deploy Allure report to GitHub Pages at /reports
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./allure-report
+          publish_branch: gh-pages
+          destination_dir: reports
+          keep_files: true
+          user_name: 'Maya Erusalimsky'
+          user_email: 'mayageva11@gmail.com'
+          commit_message: 'deploy: update Allure report [skip ci]'
 
   report-summary:
-    name: Report Summary
+    name: PR Comment — Test Results
     runs-on: ubuntu-latest
     needs: [e2e-tests, api-tests]
     if: always() && github.event_name == 'pull_request'
     permissions:
       pull-requests: write
     steps:
-      - name: Post test results to PR
+      - name: Post test results comment on PR
         uses: actions/github-script@v7
         with:
           script: |
@@ -198,12 +263,36 @@ jobs:
               repo: context.repo.repo,
               run_id: context.runId,
             });
-            const testJobs = jobs.jobs.filter(j => j.name.includes('Tests'));
-            const passed = testJobs.filter(j => j.conclusion === 'success').length;
-            const failed = testJobs.filter(j => j.conclusion === 'failure').length;
-            const skipped = testJobs.filter(j => j.conclusion === 'skipped').length;
-            const emoji = failed > 0 ? '❌' : '✅';
-            const body = `## ${emoji} NexusQA Test Results\n\n✅ **${passed} passed** | ❌ **${failed} failed** | ⏭️ **${skipped} skipped**\n\n[View full report in Actions](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})`;
+
+            const browserJobs = ['chromium', 'firefox', 'webkit'].map(browser => {
+              const job = jobs.jobs.find(j => j.name.includes(`E2E Tests`) && j.name.toLowerCase().includes(browser));
+              const icon = !job ? '⏭' : job.conclusion === 'success' ? '✅' : '❌';
+              const label = { chromium: '🌐 Chromium', firefox: '🦊 Firefox', webkit: '🧭 WebKit' }[browser];
+              return `| ${label} | ${icon} ${job?.conclusion ?? 'skipped'} |`;
+            });
+
+            const apiJob = jobs.jobs.find(j => j.name === 'API Tests');
+            const apiIcon = !apiJob ? '⏭' : apiJob.conclusion === 'success' ? '✅' : '❌';
+
+            const allPassed = jobs.jobs
+              .filter(j => j.name.includes('Tests'))
+              .every(j => j.conclusion === 'success');
+
+            const headline = allPassed ? '## ✅ All tests passed' : '## ❌ Some tests failed';
+            const reportUrl = 'https://mayageva11.github.io/nexusqa/reports';
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+
+            const body = [
+              headline,
+              '',
+              '| Browser / Suite | Result |',
+              '|---|---|',
+              ...browserJobs,
+              `| 🔌 API Tests | ${apiIcon} ${apiJob?.conclusion ?? 'skipped'} |`,
+              '',
+              `📊 [View Allure Report](${reportUrl}) · 🔍 [View CI Run](${runUrl})`,
+            ].join('\n');
+
             await github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
@@ -226,7 +315,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./portfolio
           publish_branch: gh-pages
-          force_orphan: true
+          keep_files: true
           user_name: 'Maya Erusalimsky'
           user_email: 'mayageva11@gmail.com'
           commit_message: 'deploy: update portfolio [skip ci]'

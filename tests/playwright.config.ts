@@ -9,6 +9,7 @@ export default defineConfig({
   workers: process.env.CI ? 2 : undefined,
   reporter: [
     ['html', { outputFolder: 'playwright-report' }],
+    ['allure-playwright', { outputFolder: 'allure-results', detail: true, suiteTitle: false }],
     ['list'],
   ],
   use: {

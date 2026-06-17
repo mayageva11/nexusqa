@@ -63,10 +63,68 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           PLAYWRIGHT_VIEWPORT_WIDTH: ${{ matrix.width }}
           PLAYWRIGHT_VIEWPORT_HEIGHT: ${{ matrix.height }}
-      - name: Upload results
+      - name: Upload Playwright report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: nightly-${{ matrix.browser }}-${{ matrix.viewport }}
           path: tests/playwright-report/
           retention-days: 14
+      - name: Upload Allure results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nightly-allure-${{ matrix.browser }}-${{ matrix.viewport }}
+          path: tests/allure-results/
+          retention-days: 14
+
+  deploy-allure-report:
+    name: Deploy Nightly Allure Report with History
+    runs-on: ubuntu-latest
+    needs: full-regression
+    if: always()
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download all Allure results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: nightly-allure-*
+          path: allure-results-all/
+          merge-multiple: false
+      - name: Merge Allure results into one folder
+        run: |
+          mkdir -p allure-results
+          find allure-results-all -type f | xargs -I{} cp {} allure-results/ 2>/dev/null || true
+          echo "Merged $(ls allure-results | wc -l) result files"
+      - name: Restore previous Allure history for trend graphs
+        run: |
+          git fetch origin gh-pages 2>/dev/null || true
+          git checkout origin/gh-pages -- reports/history 2>/dev/null || true
+          if [ -d "reports/history" ]; then
+            mkdir -p allure-results/history
+            cp -r reports/history/. allure-results/history/
+            echo "History restored: $(ls allure-results/history | wc -l) files"
+          else
+            echo "No previous history — this will be the first data point on trend graphs"
+          fi
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Install Allure CLI
+        run: npm install -g allure-commandline
+      - name: Generate Allure HTML report
+        run: allure generate allure-results --clean -o allure-report
+      - name: Deploy Allure report to GitHub Pages at /reports
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./allure-report
+          publish_branch: gh-pages
+          destination_dir: reports
+          keep_files: true
+          user_name: 'Maya Erusalimsky'
+          user_email: 'mayageva11@gmail.com'
+          commit_message: 'deploy: nightly Allure report with history [skip ci]'
