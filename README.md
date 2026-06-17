@@ -1,6 +1,6 @@
 # NexusQA — QA Automation Portfolio Project
 
-**Built by Maya Erusalimsky** | QA Automation Engineer
+**Built by Maya Erusalimsky** · QA Automation Engineer
 
 [![CI](https://github.com/mayageva11/nexusqa/actions/workflows/ci.yml/badge.svg)](https://github.com/mayageva11/nexusqa/actions/workflows/ci.yml)
 [![Nightly](https://github.com/mayageva11/nexusqa/actions/workflows/nightly.yml/badge.svg)](https://github.com/mayageva11/nexusqa/actions/workflows/nightly.yml)
@@ -10,283 +10,251 @@
 
 ---
 
-## 🔑 Try the Live App
+## What Is This?
+
+This repository contains **two things** that belong together:
+
+**1. A SaaS web application I built called Luminary Analytics**
+A realistic analytics dashboard — login system, user management, charts, and reports. I built it from scratch specifically to have a production-like product to test. You can use it live right now.
+
+**2. A complete automated test suite for that application**
+234 tests written in Playwright and TypeScript. They run automatically on GitHub Actions across three browsers (Chromium, Firefox, WebKit) every time I push code. The results are published as a live Allure report.
+
+The point of the project is to show what a professional QA automation setup looks like in practice — not a tutorial exercise, but a real test suite for a real running application.
+
+---
+
+## The Three Things to Look At
+
+| | What it is | Link |
+|---|---|---|
+| 🖥️ **Live App** | Luminary Analytics — the SaaS app being tested | **https://luminary-analytics.onrender.com** |
+| 📊 **Test Report** | Allure report — every test, pass/fail, with traces | **https://mayageva11.github.io/nexusqa/reports** |
+| 👩‍💻 **Portfolio / CV** | My background and how this project was built | **https://mayageva11.github.io/nexusqa** |
+
+---
+
+## The Live App — Luminary Analytics
 
 **https://luminary-analytics.onrender.com**
 
-| Email | Password | Role |
+This is the application the tests run against. It is a multi-page SaaS analytics dashboard with:
+
+- **Login page** — JWT authentication, three user roles (admin / editor / viewer)
+- **Dashboard** — live metric cards (sessions, revenue, users, conversion rate), charts, activity feed
+- **Users page** — full user management table with search, sorting, pagination, add/edit/delete
+- **Reports page** — 3-step wizard to generate reports, CSV export, delete with undo
+- **Analytics page** — time-series data explorer
+
+**Log in and try it yourself:**
+
+| Email | Password | What this role can do |
 |---|---|---|
-| `admin@luminary.io` | `Test1234!` | Full access — sees everything |
-| `editor@luminary.io` | `Test1234!` | Can edit but not manage users |
-| `viewer@luminary.io` | `Test1234!` | Read-only access |
+| `admin@luminary.io` | `Test1234!` | Everything — full admin access |
+| `editor@luminary.io` | `Test1234!` | View and edit data, cannot manage users |
+| `viewer@luminary.io` | `Test1234!` | Read-only, no edit or admin controls |
 
-> First load may take ~30 seconds — Render free tier spins down after inactivity.
-
----
-
-## 👋 What Is This Project?
-
-This is a **complete, real-world QA automation project** I built from scratch to demonstrate professional automation engineering skills.
-
-It includes two parts:
-
-1. **A web application** called *Luminary Analytics* — a SaaS-style analytics dashboard with login, user management, reports, and charts. I built it myself so I would have something realistic to test.
-
-2. **A full test suite** for that application — 234 automated tests covering every feature, written in Playwright and TypeScript, running in a real CI/CD pipeline on GitHub Actions.
-
-The goal was to build something that looks and works exactly like a real job — not a tutorial, not a toy project.
+> The app runs on Render's free tier — the first load may take up to 30 seconds if it has been idle.
 
 ---
 
-## 🌐 Live Demo & Portfolio
+## The Test Report — Allure
 
-| | Link |
-|---|---|
-| **Live App (Luminary Analytics)** | **https://luminary-analytics.onrender.com** |
-| **My Portfolio / CV** | **https://mayageva11.github.io/nexusqa** |
-| **Test Report (Allure)** | **https://mayageva11.github.io/nexusqa/reports** |
-| GitHub Actions (CI runs) | https://github.com/mayageva11/nexusqa/actions |
-| Source Code | https://github.com/mayageva11/nexusqa |
+**https://mayageva11.github.io/nexusqa/reports**
+
+Every test run produces an Allure HTML report that is published automatically to GitHub Pages. It shows:
+
+- Pass / fail status for all 234 tests
+- Which browser each test ran on
+- Screenshots and traces attached to any failure
+- Trend graphs that accumulate across nightly runs
+
+The report is regenerated on every push to `main` and every night at 2:00 AM UTC.
 
 ---
 
-## 💼 What Skills Does This Demonstrate?
+## Skills Demonstrated
 
 | Skill | How it appears in this project |
 |---|---|
 | **Playwright** | 234 tests across E2E, API, and visual layers |
-| **TypeScript** | Everything is strictly typed — app, tests, fixtures, helpers |
-| **Page Object Model** | All pages have a typed POM class — tests never contain raw selectors |
-| **Test fixtures** | Pre-authenticated browser sessions for admin/editor/viewer roles |
+| **TypeScript** | Strict mode throughout — app, tests, fixtures, helpers |
+| **Page Object Model** | Every page has a typed POM class — no raw selectors in tests |
+| **Test fixtures** | Pre-authenticated browser sessions per role (admin/editor/viewer) |
 | **API testing** | Full HTTP-level tests for auth, users, and metrics endpoints |
-| **CI/CD** | GitHub Actions pipeline — lint, typecheck, 3-browser matrix, deploy |
-| **AI integration** | Claude API used to generate edge-case test data and triage failures |
-| **Security testing** | SQL injection, XSS inputs, auth bypass — all covered |
-| **Cross-browser** | Tests run in Chromium, Firefox, and WebKit on every push |
-| **Responsive testing** | Layout checks at 1280px and 768px viewports |
+| **CI/CD** | GitHub Actions — lint, typecheck, 3-browser matrix, auto-deploy |
+| **AI integration** | Claude API for edge-case test data generation and failure triage |
+| **Security testing** | SQL injection, XSS inputs, auth bypass attempts |
+| **Cross-browser** | Every test runs in Chromium, Firefox, and WebKit |
+| **Responsive testing** | Layout verified at 1280px, 768px, and 390px viewports |
 
 ---
 
-## 🧪 What Is Tested?
+## What the Tests Cover
 
-### The Application Under Test: Luminary Analytics
+**E2E Tests** (`tests/e2e/`) — real browser, real interactions
 
-A multi-page SaaS dashboard with:
-- **Login page** — JWT-based authentication with role management
-- **Dashboard** — real-time metric cards, charts, activity feed
-- **Users page** — full CRUD table with search, sort, and pagination
-- **Reports page** — 3-step wizard to generate and export reports
-- **Analytics page** — time-series data visualization
+- **Auth:** valid login, wrong password, SQL injection in email field, very long inputs, remember-me, logout clears session and blocks re-entry
+- **Dashboard:** all 4 metric cards show real values (not dashes), charts render, navigation works, layout holds at mobile/tablet sizes
+- **Users:** search filters live, add user with validation, delete with confirmation dialog, role-based UI differences between admin and viewer
+- **Reports:** 3-step wizard completes end-to-end, delete triggers undo toast, CSV button present
 
-### Test Layers
+**API Tests** (`tests/api/`) — HTTP requests directly, no browser
 
-**E2E Tests** — `tests/e2e/`
-
-These tests open a real browser and interact with the app like a user would:
-
-- Login: valid credentials, wrong password, SQL injection attempt, very long input, remember-me
-- Logout: clears token, invalidates server session, blocks re-entry to protected pages
-- Dashboard: all 4 metric cards show real values, charts render, sidebar navigation works
-- Users: search filters in real time, add/delete with confirmation dialogs, role-based UI (viewer can't see admin buttons)
-- Reports: complete 3-step wizard flow, delete with undo toast, CSV export button
-
-**API Tests** — `tests/api/`
-
-These test the backend directly via HTTP — no browser:
-
-- Auth: valid login returns a JWT, wrong password returns 401, missing fields return 400
-- Protected routes: no token → 401, bad token → 403, logout invalidates token server-side
-- Users: create, read, update, delete all return correct status codes and response shapes
-- Metrics: response has exactly the right fields, 30 days of data, no null/NaN values
-
-**Visual / Responsive Tests**
-
-- Page layout at desktop (1280px) and tablet (768px) — no broken overflow or hidden elements
+| Endpoint | What is verified |
+|---|---|
+| `POST /api/auth/login` | 200 + JWT for valid credentials, 401 for wrong password, 400 for missing fields |
+| `GET /api/auth/me` | Returns user profile when token is valid, 401 when it is not |
+| `POST /api/auth/logout` | Token is invalidated server-side — same token returns 403 afterward |
+| `GET /api/users` | Paginated list with correct metadata |
+| `POST /api/users` | Creates user, returns 201, validation errors return 400 |
+| `DELETE /api/users/:id` | Removes user, subsequent GET returns 404 |
+| `GET /api/metrics` | Correct shape — 4 cards, 30-day series, no null or NaN values |
 
 ---
 
-## 🤖 Claude AI Integration
+## CI/CD Pipeline
 
-I wired the **Anthropic Claude API** directly into the test infrastructure. It does three things:
-
-**1. Generates realistic edge-case test data**
-
-Instead of fake names like "Test User 1", Claude generates users with Unicode names, tagged emails, hyphens, apostrophes — the kind of input that actually breaks things:
-
-```
-Ñoño García-López   user+tag@sub.domain.io
-张伟                 zhang.wei@company.co.uk
-O'Brien-Smith, Jr.  long.address+test@subdomain.example.com
-```
-
-**2. Analyzes test failures automatically**
-
-When a test fails in CI, Claude reads the error message and explains why — was it a flaky test, a real bug, or an environment issue? The CI report shows the diagnosis, not just "FAILED".
-
-**3. Converts user stories into test plans**
-
-Give it a sentence like *"As an admin I want to filter users by role"* and it returns a structured list of test steps, assertions, and edge cases.
-
----
-
-## ⚙️ CI/CD Pipeline
-
-Every time I push to GitHub, this runs automatically:
+Every push to `main` triggers this pipeline automatically:
 
 ```
 Push to main
     │
-    ├─ Typecheck (TypeScript strict mode, app + tests)
+    ├─ TypeScript typecheck (app + tests, strict mode)
     │       │
-    │       └─ Deploy portfolio → GitHub Pages (mayageva11.github.io/nexusqa)
+    │       └─ Deploy portfolio page → GitHub Pages
     │
-    ├─ Start the app server (with health check retry)
+    ├─ Start the Express app server
     │
-    ├─ Run all tests in parallel:
-    │       ├─ Chromium  ──┐
-    │       ├─ Firefox   ──┼─ each uploads allure-results/
-    │       └─ WebKit    ──┘
+    ├─ Run all tests in parallel across 3 browsers:
+    │       ├─ Chromium ──┐
+    │       ├─ Firefox  ──┼─ each uploads allure-results/
+    │       └─ WebKit   ──┘
     │
-    ├─ Run API tests ──────── uploads allure-results/
+    ├─ Run API tests → uploads allure-results/
     │
-    └─ Merge all allure-results → generate Allure HTML report
-            └─ Deploy report → GitHub Pages (/reports)
+    └─ Merge results → generate Allure HTML report
+            └─ Deploy to GitHub Pages at /reports
 ```
 
-If any test fails, the pipeline goes red and I get the failure reason with screenshots and traces attached.
-
-**Three workflows:**
-- `ci.yml` — runs on every push and pull request (full suite)
-- `pr-check.yml` — runs smoke tests only on every PR (fast, ~60 seconds, blocks merge on failure)
-- `nightly.yml` — runs the full suite every night at 2:00 AM UTC and publishes a trend report
+Three workflows run in total:
+- **`ci.yml`** — full suite on every push and pull request
+- **`pr-check.yml`** — smoke tests only on every PR (~60 seconds, blocks merge on failure)
+- **`nightly.yml`** — full suite at 2:00 AM UTC, publishes report with accumulated history
 
 ---
 
-## 🚀 How to Run It Yourself
+## AI Integration — Claude API
+
+Three functions in `tests/helpers/claude-generator.ts` connect to the Anthropic Claude API at test runtime:
+
+**`generateTestUsers(count)`** — produces realistic edge-case users instead of "Test User 1":
+```
+Ñoño García-López    user+tag@sub.domain.io
+张伟                  zhang.wei@company.co.uk
+O'Brien-Smith, Jr.   long.address+test@subdomain.example.com
+```
+
+**`analyzeFailure(testName, errorMessage)`** — when a test fails in CI, Claude classifies it: is it a real bug, a flaky timeout, or an environment issue? The Allure report shows the diagnosis alongside the failure.
+
+**`generateTestScenario(userStory)`** — converts a plain-English user story into structured test steps, assertions, and edge cases.
+
+---
+
+## Running It Locally
 
 ### Requirements
 - Node.js 18 or higher
-- That's it. An Anthropic API key is optional (only 3 tests use it).
+- Anthropic API key is optional (only 3 tests use it — all others run without it)
 
-### Step 1 — Install
-
-```bash
-# Install the app
-cd app && npm install
-
-# Install the tests and browsers
-cd ../tests && npm install && npx playwright install
-```
-
-### Step 2 — Configure
-
-```bash
-cp .env.example .env
-# The defaults work out of the box — no changes needed to get started
-```
-
-### Step 3 — Start the app
+### Start the app
 
 ```bash
 cd app
-npm start
+npm install
+npm run dev
 ```
 
-App is now running at **http://localhost:3001**
+App runs at **http://localhost:3001** — use the same login credentials as above.
 
-Login with any of these accounts:
-
-| Email | Password | What you can do |
-|---|---|---|
-| `admin@luminary.io` | `Test1234!` | Everything |
-| `editor@luminary.io` | `Test1234!` | Read and edit |
-| `viewer@luminary.io` | `Test1234!` | Read only |
-
-### Step 4 — Run the tests
+### Run the tests
 
 ```bash
 cd tests
+npm install
+npx playwright install   # downloads browser binaries
 
-# Run everything
-npx playwright test
-
-# Quick smoke check (13 tests, ~60 seconds)
-npx playwright test --grep @smoke
-
-# One browser only
-npx playwright test --project=chromium
-
-# Open visual test UI
-npx playwright test --ui
-
-# See the HTML report after a run
-npx playwright show-report
+npx playwright test                      # all 234 tests, all 3 browsers
+npx playwright test --grep @smoke        # 13 smoke tests, ~60 seconds
+npx playwright test --project=chromium   # one browser only
+npx playwright test --ui                 # interactive visual mode
+npx playwright show-report               # open HTML report after a run
 ```
 
 ---
 
-## 🗂️ Project Structure
+## Project Structure
 
 ```
 nexusqa/
 │
-├── app/                     ← The web app being tested
+├── app/                        ← Luminary Analytics — the SaaS app under test
 │   ├── api/
-│   │   ├── server.ts        ← Express server with JWT auth
-│   │   ├── store.ts         ← Seed data (users, metrics, reports)
-│   │   └── routes/          ← auth, users, metrics, reports APIs
-│   ├── login.html           ← Login page
-│   ├── dashboard.html       ← Metrics + charts
-│   ├── users.html           ← User management table
-│   ├── reports.html         ← Report wizard
-│   └── analytics.html       ← Data explorer
+│   │   ├── server.ts           ← Express server, JWT auth, routes
+│   │   ├── store.ts            ← In-memory data store with seed data
+│   │   └── routes/             ← auth · users · metrics · reports
+│   ├── login.html              ← Login page
+│   ├── dashboard.html          ← Metrics dashboard
+│   ├── users.html              ← User management
+│   ├── reports.html            ← Report wizard
+│   └── analytics.html          ← Data explorer
 │
-├── tests/                   ← The Playwright test suite
-│   ├── playwright.config.ts ← 3-browser config, retries, artifacts
-│   ├── global-setup.ts      ← Logs in once and saves auth state
+├── tests/                      ← The Playwright test suite
+│   ├── playwright.config.ts    ← 3-browser config, retries, Allure reporter
+│   ├── global-setup.ts         ← Logs in as each role, saves auth state once
 │   ├── fixtures/
-│   │   ├── auth.fixture.ts  ← Gives tests a pre-logged-in browser
-│   │   └── api.fixture.ts   ← Gives tests an authenticated HTTP client
+│   │   ├── auth.fixture.ts     ← adminPage / editorPage / viewerPage
+│   │   └── api.fixture.ts      ← Authenticated HTTP client for API tests
 │   ├── helpers/
-│   │   ├── page-objects/    ← One class per page (LoginPage, DashboardPage…)
-│   │   ├── assertions/      ← Custom Playwright matchers
-│   │   └── claude-generator.ts ← AI test data + failure analysis
-│   ├── e2e/                 ← Browser-level tests (auth, dashboard, users, reports)
-│   └── api/                 ← HTTP-level tests (auth, users, metrics)
+│   │   ├── page-objects/       ← LoginPage · DashboardPage · UsersPage · ReportsPage
+│   │   ├── assertions/         ← Custom Playwright matchers
+│   │   └── claude-generator.ts ← AI test data and failure analysis
+│   ├── e2e/                    ← Browser tests: auth · dashboard · users · reports
+│   └── api/                    ← HTTP tests: auth · users · metrics
 │
 ├── portfolio/
-│   └── index.html           ← My CV / portfolio page (live at GitHub Pages)
+│   └── index.html              ← CV / portfolio page (live at GitHub Pages)
+│
+├── render.yaml                 ← One-click deploy config for Render.com
 │
 └── .github/workflows/
-    ├── ci.yml               ← Full pipeline on every push
-    ├── pr-check.yml         ← Smoke tests on every PR
-    └── nightly.yml          ← Full suite every night
+    ├── ci.yml                  ← Full pipeline on every push
+    ├── pr-check.yml            ← Smoke gate on every pull request
+    └── nightly.yml             ← Full suite + trend report every night
 ```
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
-| | |
+| Category | Technology |
 |---|---|
 | Test framework | Playwright 1.49.1 |
-| Language | TypeScript (strict mode throughout) |
-| AI | Anthropic Claude API |
-| App backend | Node.js + Express + JWT |
-| App frontend | HTML / CSS / JavaScript + Chart.js |
+| Language | TypeScript 5 (strict mode) |
+| AI | Anthropic Claude API (`claude-sonnet-4-6`) |
+| App backend | Node.js · Express · JWT |
+| App frontend | HTML · CSS · JavaScript · Chart.js |
 | CI/CD | GitHub Actions |
-| Test reports | Playwright HTML Report + Allure |
-| Containers | Docker + Docker Compose |
+| Test reports | Allure · Playwright HTML |
+| Hosting | Render (app) · GitHub Pages (report + portfolio) |
 
 ---
 
-## 👩‍💻 About Me
+## About Me
 
-I'm **Maya Erusalimsky**, a QA Automation Engineer.
+I'm **Maya Erusalimsky**, a QA Automation Engineer with 1.5 years of production experience at Kissterra and a B.Sc. in Computer Science from the College of Management Academic Studies.
 
-I have 1.5 years of experience in production QA at Kissterra, a B.Sc. in Computer Science from the College of Management Academic Studies, and I'm looking for a role where I can keep building test infrastructure that teams actually rely on.
-
-This project is the best way I know to show what I can do — not a list of buzzwords, but working code.
+I built this project to give a concrete answer to the question every hiring team asks: *"What have you actually built?"*
 
 📧 mayageva11@gmail.com
 🔗 https://linkedin.com/in/maya-erusalimsky
