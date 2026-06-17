@@ -10,6 +10,20 @@
 
 ---
 
+## 🔑 Try the Live App
+
+**https://luminary-analytics.onrender.com**
+
+| Email | Password | Role |
+|---|---|---|
+| `admin@luminary.io` | `Test1234!` | Full access — sees everything |
+| `editor@luminary.io` | `Test1234!` | Can edit but not manage users |
+| `viewer@luminary.io` | `Test1234!` | Read-only access |
+
+> First load may take ~30 seconds — Render free tier spins down after inactivity.
+
+---
+
 ## 👋 What Is This Project?
 
 This is a **complete, real-world QA automation project** I built from scratch to demonstrate professional automation engineering skills.
@@ -28,6 +42,7 @@ The goal was to build something that looks and works exactly like a real job —
 
 | | Link |
 |---|---|
+| **Live App (Luminary Analytics)** | **https://luminary-analytics.onrender.com** |
 | **My Portfolio / CV** | **https://mayageva11.github.io/nexusqa** |
 | **Test Report (Allure)** | **https://mayageva11.github.io/nexusqa/reports** |
 | GitHub Actions (CI runs) | https://github.com/mayageva11/nexusqa/actions |
