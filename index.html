@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Maya Erusalimsky — QA Automation Engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#050810;
+  --surface:#0D1220;
+  --border:#1A2540;
+  --cyan:#00FFD1;
+  --purple:#BF5AF2;
+  --pink:#FF2D55;
+  --text:#E8EAF0;
+  --muted:#5A6480;
+  --font-display:'Orbitron',monospace;
+  --font-body:'Inter',sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--font-body);
+  font-size:16px;
+  line-height:1.6;
+  overflow-x:hidden;
+  cursor:crosshair;
+}
+/* Scanline overlay */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,255,209,0.015) 2px,rgba(0,255,209,0.015) 4px);
+  pointer-events:none;z-index:9999;
+}
+/* Grid background */
+.grid-bg{
+  position:fixed;inset:0;
+  background-image:
+    linear-gradient(rgba(0,255,209,0.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,255,209,0.04) 1px,transparent 1px);
+  background-size:60px 60px;
+  transform:perspective(800px) rotateX(10deg) scale(1.1);
+  transform-origin:50% 0;
+  pointer-events:none;z-index:0;
+  animation:gridDrift 20s linear infinite;
+}
+@keyframes gridDrift{to{background-position:0 60px}}
+section,nav,footer{position:relative;z-index:1}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;
+  padding:1rem 2rem;
+  display:flex;justify-content:space-between;align-items:center;
+  background:rgba(5,8,16,0.85);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  z-index:100;
+}
+.nav-logo{
+  font-family:var(--font-display);
+  font-size:0.85rem;
+  color:var(--cyan);
+  letter-spacing:0.15em;
+  text-shadow:0 0 20px rgba(0,255,209,0.5);
+}
+.nav-links{display:flex;gap:2rem}
+.nav-links a{
+  color:var(--muted);
+  text-decoration:none;
+  font-size:0.8rem;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  transition:color 0.2s;
+}
+.nav-links a:hover{color:var(--cyan)}
+
+/* HERO */
+.hero{
+  min-height:100vh;
+  display:flex;flex-direction:column;
+  justify-content:center;align-items:center;
+  text-align:center;
+  padding:6rem 2rem 4rem;
+}
+.hero-eyebrow{
+  font-family:var(--font-mono);
+  font-size:0.75rem;
+  color:var(--cyan);
+  letter-spacing:0.3em;
+  text-transform:uppercase;
+  margin-bottom:1.5rem;
+  opacity:0;animation:fadeUp 0.6s 0.2s ease forwards;
+}
+.hero-name{
+  font-family:var(--font-display);
+  font-size:clamp(2.5rem,8vw,6rem);
+  font-weight:900;
+  letter-spacing:0.05em;
+  line-height:1;
+  background:linear-gradient(135deg,var(--cyan) 0%,#00c8ff 50%,var(--purple) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 0 40px rgba(0,255,209,0.3));
+  margin-bottom:1rem;
+  opacity:0;animation:fadeUp 0.6s 0.4s ease forwards;
+}
+.hero-title{
+  font-size:1.1rem;
+  color:var(--muted);
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+  margin-bottom:3rem;
+  opacity:0;animation:fadeUp 0.6s 0.6s ease forwards;
+}
+.cursor{
+  display:inline-block;
+  width:2px;height:1.1em;
+  background:var(--cyan);
+  margin-left:3px;
+  vertical-align:text-bottom;
+  animation:blink 1s step-end infinite;
+}
+@keyframes blink{50%{opacity:0}}
+
+/* Terminal */
+.terminal{
+  background:rgba(13,18,32,0.9);
+  border:1px solid var(--border);
+  border-radius:8px;
+  width:min(560px,90vw);
+  overflow:hidden;
+  margin-bottom:2.5rem;
+  opacity:0;animation:fadeUp 0.6s 0.8s ease forwards;
+  box-shadow:0 0 40px rgba(0,255,209,0.08),0 0 80px rgba(191,90,242,0.05);
+}
+.terminal-bar{
+  background:#0a1020;
+  padding:0.6rem 1rem;
+  display:flex;align-items:center;gap:8px;
+  border-bottom:1px solid var(--border);
+}
+.dot{width:10px;height:10px;border-radius:50%}
+.dot.r{background:#ff5f56}.dot.y{background:#ffbd2e}.dot.g{background:#27c93f}
+.terminal-title{
+  font-family:var(--font-mono);
+  font-size:0.7rem;
+  color:var(--muted);
+  margin-left:auto;margin-right:auto;
+}
+.terminal-body{
+  padding:1.2rem 1.5rem;
+  font-family:var(--font-mono);
+  font-size:0.78rem;
+  line-height:1.9;
+  min-height:140px;
+  position:relative;
+}
+.terminal-body::before{
+  content:'';
+  position:absolute;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,255,209,0.012) 3px,rgba(0,255,209,0.012) 6px);
+  pointer-events:none;
+  animation:flicker 8s step-end infinite;
+}
+@keyframes flicker{0%,95%,100%{opacity:1}96%{opacity:0.96}97%{opacity:1}98%{opacity:0.98}}
+.t-pass{color:#27c93f}
+.t-fail{color:var(--pink)}
+.t-info{color:var(--cyan)}
+.t-dim{color:var(--muted)}
+.t-line{display:block;white-space:pre}
+
+/* CTAs */
+.hero-ctas{
+  display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;
+  opacity:0;animation:fadeUp 0.6s 1s ease forwards;
+}
+.btn{
+  font-family:var(--font-mono);
+  font-size:0.8rem;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  padding:0.8rem 2rem;
+  border-radius:4px;
+  text-decoration:none;
+  border:1px solid;
+  transition:all 0.2s;
+  cursor:crosshair;
+}
+.btn-primary{
+  background:transparent;
+  border-color:var(--cyan);
+  color:var(--cyan);
+  box-shadow:0 0 20px rgba(0,255,209,0.15),inset 0 0 20px rgba(0,255,209,0.05);
+}
+.btn-primary:hover{
+  background:rgba(0,255,209,0.1);
+  box-shadow:0 0 30px rgba(0,255,209,0.3),inset 0 0 20px rgba(0,255,209,0.1);
+}
+.btn-secondary{
+  background:transparent;
+  border-color:var(--purple);
+  color:var(--purple);
+  box-shadow:0 0 20px rgba(191,90,242,0.15);
+}
+.btn-secondary:hover{
+  background:rgba(191,90,242,0.1);
+  box-shadow:0 0 30px rgba(191,90,242,0.3);
+}
+
+/* STATS BAR */
+.stats-bar{
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  background:rgba(13,18,32,0.6);
+  padding:2rem;
+  display:flex;justify-content:center;
+  gap:clamp(2rem,6vw,6rem);
+  flex-wrap:wrap;
+}
+.stat{text-align:center}
+.stat-num{
+  font-family:var(--font-display);
+  font-size:clamp(2rem,5vw,3rem);
+  font-weight:700;
+  color:var(--cyan);
+  display:block;
+  text-shadow:0 0 30px rgba(0,255,209,0.4);
+}
+.stat-label{
+  font-size:0.7rem;
+  color:var(--muted);
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+}
+
+/* SECTIONS */
+.section{padding:5rem 2rem}
+.section-inner{max-width:1000px;margin:0 auto}
+.section-eyebrow{
+  font-family:var(--font-mono);
+  font-size:0.7rem;
+  color:var(--cyan);
+  letter-spacing:0.3em;
+  text-transform:uppercase;
+  margin-bottom:0.75rem;
+}
+.section-title{
+  font-family:var(--font-display);
+  font-size:clamp(1.5rem,4vw,2.2rem);
+  font-weight:700;
+  margin-bottom:1rem;
+  letter-spacing:0.05em;
+}
+.section-desc{color:var(--muted);max-width:600px;line-height:1.7;margin-bottom:3rem}
+
+/* PROJECT CARD */
+.project-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:2.5rem;
+  transition:border-color 0.3s,box-shadow 0.3s;
+}
+.project-card:hover{
+  border-color:var(--purple);
+  box-shadow:0 0 40px rgba(191,90,242,0.1);
+}
+.project-header{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  flex-wrap:wrap;gap:1rem;
+  margin-bottom:2rem;
+}
+.project-name{
+  font-family:var(--font-display);
+  font-size:1.4rem;
+  color:var(--cyan);
+  letter-spacing:0.08em;
+  text-shadow:0 0 20px rgba(0,255,209,0.3);
+}
+.project-sub{color:var(--muted);font-size:0.85rem;margin-top:0.3rem}
+.project-links{display:flex;gap:0.75rem;flex-wrap:wrap}
+.link-pill{
+  font-family:var(--font-mono);
+  font-size:0.72rem;
+  padding:0.4rem 1rem;
+  border-radius:2px;
+  border:1px solid var(--border);
+  color:var(--muted);
+  text-decoration:none;
+  letter-spacing:0.08em;
+  transition:all 0.2s;
+}
+.link-pill:hover{border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 15px rgba(0,255,209,0.2)}
+
+/* Architecture diagram */
+.arch{
+  display:flex;align-items:center;justify-content:center;
+  flex-wrap:wrap;gap:0;
+  margin:2rem 0;
+  font-family:var(--font-mono);
+  font-size:0.75rem;
+}
+.arch-node{
+  background:rgba(0,255,209,0.05);
+  border:1px solid var(--cyan);
+  border-radius:4px;
+  padding:0.5rem 1rem;
+  color:var(--cyan);
+  text-align:center;
+  white-space:nowrap;
+}
+.arch-node.purple{
+  border-color:var(--purple);
+  color:var(--purple);
+  background:rgba(191,90,242,0.05);
+}
+.arch-node.pink{
+  border-color:var(--pink);
+  color:var(--pink);
+  background:rgba(255,45,85,0.05);
+}
+.arch-arrow{
+  color:var(--muted);
+  padding:0 0.5rem;
+  font-size:1rem;
+}
+
+/* Tech badges */
+.badges{display:flex;flex-wrap:wrap;gap:0.5rem;margin:1.5rem 0}
+.badge{
+  font-family:var(--font-mono);
+  font-size:0.7rem;
+  padding:0.3rem 0.75rem;
+  border-radius:2px;
+  border:1px solid var(--border);
+  color:var(--muted);
+  letter-spacing:0.05em;
+}
+.badge.cyan{border-color:rgba(0,255,209,0.4);color:var(--cyan)}
+.badge.purple{border-color:rgba(191,90,242,0.4);color:var(--purple)}
+
+/* Features grid */
+.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem;margin-top:2rem}
+.feature{
+  background:rgba(0,255,209,0.03);
+  border:1px solid var(--border);
+  border-radius:6px;
+  padding:1.5rem;
+  transition:border-color 0.2s;
+}
+.feature:hover{border-color:rgba(0,255,209,0.3)}
+.feature-icon{font-size:1.3rem;margin-bottom:0.75rem}
+.feature-title{font-weight:500;margin-bottom:0.5rem;font-size:0.9rem}
+.feature-text{color:var(--muted);font-size:0.82rem;line-height:1.6}
+
+/* Claude section */
+.claude-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem}
+.claude-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:1.75rem;
+  transition:border-color 0.3s,box-shadow 0.3s;
+}
+.claude-card:hover{
+  border-color:var(--purple);
+  box-shadow:0 0 30px rgba(191,90,242,0.08);
+}
+.claude-card-title{
+  font-family:var(--font-display);
+  font-size:0.85rem;
+  color:var(--purple);
+  letter-spacing:0.08em;
+  margin-bottom:0.75rem;
+}
+.claude-card-desc{color:var(--muted);font-size:0.82rem;line-height:1.6;margin-bottom:1rem}
+.code-snippet{
+  background:#070b14;
+  border:1px solid var(--border);
+  border-radius:4px;
+  padding:0.75rem 1rem;
+  font-family:var(--font-mono);
+  font-size:0.7rem;
+  line-height:1.6;
+  overflow-x:auto;
+}
+.code-snippet .kw{color:var(--purple)}
+.code-snippet .fn{color:#61afef}
+.code-snippet .str{color:#98c379}
+.code-snippet .cm{color:var(--muted)}
+
+/* Pipeline */
+.pipeline{
+  display:flex;align-items:center;
+  flex-wrap:wrap;gap:0;
+  margin:2rem 0;
+  font-family:var(--font-mono);
+}
+.pipe-node{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:4px;
+  padding:0.6rem 1.2rem;
+  font-size:0.75rem;
+  text-align:center;
+  position:relative;
+  animation:pipePulse 3s ease-in-out infinite;
+}
+.pipe-node:nth-child(1){animation-delay:0s;border-color:rgba(0,255,209,0.4);color:var(--cyan)}
+.pipe-node:nth-child(3){animation-delay:0.4s;border-color:rgba(0,255,209,0.3);color:var(--cyan)}
+.pipe-node:nth-child(5){animation-delay:0.8s;border-color:rgba(191,90,242,0.4);color:var(--purple)}
+.pipe-node:nth-child(7){animation-delay:1.2s;border-color:rgba(191,90,242,0.3);color:var(--purple)}
+.pipe-node:nth-child(9){animation-delay:1.6s;border-color:rgba(0,255,209,0.4);color:var(--cyan)}
+.pipe-label{font-size:0.6rem;color:var(--muted);display:block;margin-top:2px}
+.pipe-arrow{color:var(--muted);padding:0 0.4rem;font-size:0.9rem}
+@keyframes pipePulse{0%,100%{box-shadow:none}50%{box-shadow:0 0 15px currentColor}}
+
+/* Skills */
+.skills-cloud{display:flex;flex-wrap:wrap;gap:0.6rem;margin-top:1.5rem}
+.skill-tag{
+  font-family:var(--font-mono);
+  font-size:0.72rem;
+  padding:0.4rem 0.9rem;
+  border-radius:2px;
+  border:1px solid var(--border);
+  color:var(--muted);
+  letter-spacing:0.05em;
+  transition:all 0.2s;
+}
+.skill-tag:hover{border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 10px rgba(0,255,209,0.2)}
+.skill-tag.primary{
+  font-size:0.85rem;
+  border-color:rgba(0,255,209,0.5);
+  color:var(--cyan);
+  box-shadow:0 0 15px rgba(0,255,209,0.1);
+}
+
+/* About */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start}
+@media(max-width:640px){.about-grid{grid-template-columns:1fr}}
+.about-bio{color:var(--muted);line-height:1.8;font-size:0.9rem}
+.contact-links{display:flex;flex-direction:column;gap:1rem}
+.contact-link{
+  display:flex;align-items:center;gap:1rem;
+  text-decoration:none;
+  color:var(--muted);
+  font-family:var(--font-mono);
+  font-size:0.8rem;
+  padding:0.75rem 1rem;
+  border:1px solid var(--border);
+  border-radius:4px;
+  transition:all 0.2s;
+}
+.contact-link:hover{border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 20px rgba(0,255,209,0.1)}
+.contact-link-icon{font-size:1rem;width:1.5rem;text-align:center}
+
+/* Divider */
+.divider{
+  border:none;
+  border-top:1px solid var(--border);
+  margin:0;
+}
+
+/* Footer */
+footer{
+  padding:2rem;
+  text-align:center;
+  border-top:1px solid var(--border);
+  font-family:var(--font-mono);
+  font-size:0.7rem;
+  color:var(--muted);
+  letter-spacing:0.1em;
+}
+footer span{color:var(--cyan)}
+
+/* Animations */
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.reveal{
+  opacity:0;transform:translateY(24px);
+  transition:opacity 0.6s ease,transform 0.6s ease;
+}
+.reveal.visible{opacity:1;transform:none}
+
+@media(max-width:600px){
+  .nav-links{display:none}
+  .arch{flex-direction:column}
+  .arch-arrow{transform:rotate(90deg)}
+  .pipeline{flex-direction:column;align-items:flex-start}
+  .pipe-arrow{transform:rotate(90deg)}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation-duration:0.01ms !important;transition-duration:0.01ms !important}
+}
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+
+<nav>
+  <div class="nav-logo">MAYA.ERU</div>
+  <div class="nav-links">
+    <a href="#project">Project</a>
+    <a href="#claude">Claude Integration</a>
+    <a href="#cicd">CI/CD</a>
+    <a href="#about">About</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <p class="hero-eyebrow">// QA Automation Engineer · Portfolio 2026</p>
+  <h1 class="hero-name">MAYA ERUSALIMSKY</h1>
+  <p class="hero-title">Playwright · TypeScript · Claude API · CI/CD<span class="cursor"></span></p>
+
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+      <span class="terminal-title">playwright test — nexusqa</span>
+    </div>
+    <div class="terminal-body" id="terminal-output"></div>
+  </div>
+
+  <div class="hero-ctas">
+    <a href="https://github.com/mayageva11/nexusqa" class="btn btn-primary" target="_blank">View on GitHub ↗</a>
+    <a href="#project" class="btn btn-secondary">Explore Project ↓</a>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat"><span class="stat-num" data-target="87">0</span><span class="stat-label">Tests Written</span></div>
+  <div class="stat"><span class="stat-num" data-target="3">0</span><span class="stat-label">Browsers</span></div>
+  <div class="stat"><span class="stat-num" data-target="100" data-suffix="%">0</span><span class="stat-label">Pass Rate</span></div>
+  <div class="stat"><span class="stat-num" data-target="2" data-prefix="<" data-suffix="min">0</span><span class="stat-label">CI Runtime</span></div>
+</div>
+
+<hr class="divider"/>
+
+<!-- PROJECT -->
+<section class="section" id="project">
+  <div class="section-inner">
+    <p class="section-eyebrow reveal">// portfolio.main_project</p>
+    <h2 class="section-title reveal">NexusQA</h2>
+    <p class="section-desc reveal">A full-stack QA automation suite that uses Claude to build the SaaS app, generate test data, and analyze failures — all wired into a live CI/CD pipeline.</p>
+
+    <div class="project-card reveal">
+      <div class="project-header">
+        <div>
+          <div class="project-name">NEXUSQA</div>
+          <div class="project-sub">AI-Powered Test Automation Suite for Luminary Analytics SaaS</div>
+        </div>
+        <div class="project-links">
+          <a href="https://github.com/mayageva11/nexusqa" class="link-pill" target="_blank">GitHub ↗</a>
+          <a href="https://mayageva11.github.io/nexusqa/reports" class="link-pill" target="_blank">Test Reports ↗</a>
+          <a href="https://mayageva11.github.io/nexusqa" class="link-pill" target="_blank">Live App ↗</a>
+        </div>
+      </div>
+
+      <div class="arch">
+        <div class="arch-node purple">Claude API</div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node">Test Data &amp; Scenarios</div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node">Playwright Suite</div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node pink">Luminary SaaS App</div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node">Allure Reports</div>
+      </div>
+
+      <div class="badges">
+        <span class="badge cyan">Playwright</span>
+        <span class="badge cyan">TypeScript</span>
+        <span class="badge purple">Claude API</span>
+        <span class="badge">GitHub Actions</span>
+        <span class="badge">Node.js</span>
+        <span class="badge">Docker</span>
+        <span class="badge">Allure</span>
+        <span class="badge">Page Object Model</span>
+      </div>
+
+      <div class="features">
+        <div class="feature">
+          <div class="feature-icon">🧪</div>
+          <div class="feature-title">E2E + API Coverage</div>
+          <div class="feature-text">87 tests across auth, dashboard, user management, and reports. Full API layer coverage with request fixtures.</div>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">🤖</div>
+          <div class="feature-title">AI-Generated Test Data</div>
+          <div class="feature-text">Claude generates realistic, edge-case-rich users, scenarios, and payloads — not just Lorem Ipsum.</div>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">⚡</div>
+          <div class="feature-title">Parallel Execution</div>
+          <div class="feature-text">Matrix CI strategy runs Chromium, Firefox, and WebKit in parallel. Full suite in under 2 minutes.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- CLAUDE INTEGRATION -->
+<section class="section" id="claude">
+  <div class="section-inner">
+    <p class="section-eyebrow reveal">// claude_api.integration</p>
+    <h2 class="section-title reveal">How Claude Powers the Tests</h2>
+    <p class="section-desc reveal">The twist that makes this portfolio unique. Claude isn't just a tool I used to write the code — it's an active part of the test infrastructure at runtime.</p>
+
+    <div class="claude-cards">
+      <div class="claude-card reveal">
+        <div class="claude-card-title">INTELLIGENT TEST DATA</div>
+        <div class="claude-card-desc">Claude generates users with real edge cases: unicode names, long emails, special characters, multi-locale inputs. Better than any faker library.</div>
+        <div class="code-snippet">
+<span class="kw">const</span> users = <span class="kw">await</span> <span class="fn">generateTestUsers</span>(<span class="str">15</span>);
+<span class="cm">// returns users with edge cases:</span>
+<span class="cm">// { name: "Ñoño García-López", </span>
+<span class="cm">//   email: "user+tag@sub.domain.io" }</span>
+        </div>
+      </div>
+      <div class="claude-card reveal">
+        <div class="claude-card-title">FAILURE ANALYSIS</div>
+        <div class="claude-card-desc">When a test fails in CI, Claude reads the error and screenshot to classify it: real bug, flaky test, or environment issue. Saved in the Allure report.</div>
+        <div class="code-snippet">
+<span class="kw">const</span> analysis = <span class="kw">await</span> <span class="fn">analyzeFailure</span>(
+  testName, errorMsg
+);
+<span class="cm">// { rootCause: "race condition",</span>
+<span class="cm">//   severity: "flaky",</span>
+<span class="cm">//   isFlaky: true }</span>
+        </div>
+      </div>
+      <div class="claude-card reveal">
+        <div class="claude-card-title">SCENARIO GENERATION</div>
+        <div class="claude-card-desc">Feed Claude a user story in plain English. It returns a structured test scenario with steps, assertions, and edge cases ready to implement.</div>
+        <div class="code-snippet">
+<span class="kw">const</span> scenario = <span class="kw">await</span> <span class="fn">generateTestScenario</span>(
+  <span class="str">"user can filter by role"</span>
+);
+<span class="cm">// { steps: [...], assertions: [...],</span>
+<span class="cm">//   edgeCases: ["empty role", ...] }</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- CI/CD -->
+<section class="section" id="cicd">
+  <div class="section-inner">
+    <p class="section-eyebrow reveal">// github_actions.pipeline</p>
+    <h2 class="section-title reveal">CI/CD Pipeline</h2>
+    <p class="section-desc reveal">Three GitHub Actions workflows. Every push triggers the full matrix. PRs get a smoke suite. Nightly runs deploy a fresh Allure report to GitHub Pages.</p>
+
+    <div class="pipeline reveal">
+      <div class="pipe-node">Push<span class="pipe-label">git push</span></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-node">Lint + TS<span class="pipe-label">typecheck</span></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-node">Start App<span class="pipe-label">health check</span></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-node">E2E Matrix<span class="pipe-label">3 browsers</span></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-node">Report ↗<span class="pipe-label">GitHub Pages</span></div>
+    </div>
+
+    <div class="features">
+      <div class="feature reveal">
+        <div class="feature-icon">🔀</div>
+        <div class="feature-title">Matrix Strategy</div>
+        <div class="feature-text">Chromium, Firefox, and WebKit run in parallel. Each uploads its own artifact. Failures are isolated per browser.</div>
+      </div>
+      <div class="feature reveal">
+        <div class="feature-icon">💬</div>
+        <div class="feature-title">PR Comments</div>
+        <div class="feature-text">Every PR gets an automated comment: ✅ passed | ❌ failed | ⏭️ skipped — with a direct link to the full report.</div>
+      </div>
+      <div class="feature reveal">
+        <div class="feature-icon">🌙</div>
+        <div class="feature-title">Nightly Regression</div>
+        <div class="feature-text">02:00 UTC, full suite on main. Deploys a fresh Allure report with trend graphs and history tracking.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- SKILLS -->
+<section class="section" id="skills">
+  <div class="section-inner">
+    <p class="section-eyebrow reveal">// engineer.skills</p>
+    <h2 class="section-title reveal">Technical Skills</h2>
+    <div class="skills-cloud reveal">
+      <span class="skill-tag primary">Playwright</span>
+      <span class="skill-tag primary">TypeScript</span>
+      <span class="skill-tag">API Testing</span>
+      <span class="skill-tag">E2E Testing</span>
+      <span class="skill-tag">Page Object Model</span>
+      <span class="skill-tag">GitHub Actions</span>
+      <span class="skill-tag">CI/CD</span>
+      <span class="skill-tag">Claude API</span>
+      <span class="skill-tag">Regression Testing</span>
+      <span class="skill-tag">Python</span>
+      <span class="skill-tag">JavaScript</span>
+      <span class="skill-tag">Git / GitHub</span>
+      <span class="skill-tag">Jira</span>
+      <span class="skill-tag">Agile / Scrum</span>
+      <span class="skill-tag">Postman</span>
+      <span class="skill-tag">Docker</span>
+      <span class="skill-tag">Allure Reports</span>
+      <span class="skill-tag">AWS</span>
+      <span class="skill-tag">SDLC</span>
+      <span class="skill-tag">Bug Lifecycle</span>
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- ABOUT -->
+<section class="section" id="about">
+  <div class="section-inner">
+    <p class="section-eyebrow reveal">// engineer.profile</p>
+    <h2 class="section-title reveal">About Maya</h2>
+    <div class="about-grid">
+      <div class="about-bio reveal">
+        <p style="margin-bottom:1rem">QA Automation Engineer with 1.5 years of production experience at Kissterra, and a B.Sc. in Computer Science from the College of Management Academic Studies.</p>
+        <p style="margin-bottom:1rem">I write production-quality TypeScript and Python, work closely with developers in Agile teams, and think critically about correctness and edge cases — because good QA is just good engineering.</p>
+        <p>Experienced with the full development cycle: from sprint planning to release gating, from PR reviews to CI pipeline ownership. I don't just find bugs — I prevent them.</p>
+      </div>
+      <div class="contact-links reveal">
+        <a href="mailto:mayageva11@gmail.com" class="contact-link">
+          <span class="contact-link-icon">✉</span>
+          mayageva11@gmail.com
+        </a>
+        <a href="https://linkedin.com/in/maya-erusalimsky" class="contact-link" target="_blank">
+          <span class="contact-link-icon">in</span>
+          linkedin.com/in/maya-erusalimsky
+        </a>
+        <a href="https://github.com/mayageva11" class="contact-link" target="_blank">
+          <span class="contact-link-icon">⌥</span>
+          github.com/mayageva11
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>MAYA ERUSALIMSKY</span> · QA Automation Engineer · Israel · 2026
+  <br/>Built with Playwright + TypeScript + <span>Claude API</span>
+</footer>
+
+<script>
+// Terminal animation
+const lines = [
+  {text: '  Running 3 test suites...', cls: 't-dim', delay: 0},
+  {text: '', cls: '', delay: 300},
+  {text: '  ✓  login with valid credentials', cls: 't-pass', timing: '(342ms)', delay: 500},
+  {text: '  ✓  redirect to dashboard after login', cls: 't-pass', timing: '(218ms)', delay: 900},
+  {text: '  ✓  session persists on refresh', cls: 't-pass', timing: '(405ms)', delay: 1300},
+  {text: '', cls: '', delay: 1600},
+  {text: '  ✓  all 4 metric cards visible', cls: 't-pass', timing: '(891ms)', delay: 1800},
+  {text: '  ✓  revenue card shows positive trend', cls: 't-pass', timing: '(234ms)', delay: 2200},
+  {text: '  ✓  line chart has 30 data points', cls: 't-pass', timing: '(156ms)', delay: 2600},
+  {text: '', cls: '', delay: 2900},
+  {text: '  ✓  user table loads with pagination', cls: 't-pass', timing: '(678ms)', delay: 3100},
+  {text: '  ✓  search filters rows in real time', cls: 't-pass', timing: '(445ms)', delay: 3500},
+  {text: '  ✓  add user validates required fields', cls: 't-pass', timing: '(312ms)', delay: 3900},
+  {text: '', cls: '', delay: 4200},
+  {text: '  ─────────────────────────────────────', cls: 't-dim', delay: 4400},
+  {text: '  12 passed  (4.5s)', cls: 't-info', delay: 4600},
+];
+
+const output = document.getElementById('terminal-output');
+let loopTimeout;
+
+function runTerminal() {
+  output.innerHTML = '';
+  lines.forEach(({text, cls, timing, delay}) => {
+    setTimeout(() => {
+      const span = document.createElement('span');
+      span.className = 't-line ' + (cls || '');
+      if (timing) {
+        span.innerHTML = text + ' <span class="t-dim">' + timing + '</span>';
+      } else {
+        span.textContent = text;
+      }
+      output.appendChild(span);
+      output.scrollTop = output.scrollHeight;
+    }, delay);
+  });
+  loopTimeout = setTimeout(runTerminal, lines[lines.length-1].delay + 2500);
+}
+runTerminal();
+
+// Counter animation
+function animateCounter(el) {
+  const target = parseInt(el.dataset.target);
+  const prefix = el.dataset.prefix || '';
+  const suffix = el.dataset.suffix || '';
+  const duration = 1200;
+  const start = performance.now();
+  function update(now) {
+    const progress = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    el.textContent = prefix + Math.round(eased * target) + suffix;
+    if (progress < 1) requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+}
+
+// Scroll reveal
+const revealEls = document.querySelectorAll('.reveal');
+const statNums = document.querySelectorAll('.stat-num');
+let statsAnimated = false;
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, {threshold: 0.12});
+
+revealEls.forEach(el => observer.observe(el));
+
+const statsObserver = new IntersectionObserver((entries) => {
+  if (entries[0].isIntersecting && !statsAnimated) {
+    statsAnimated = true;
+    statNums.forEach(el => animateCounter(el));
+  }
+}, {threshold: 0.5});
+
+statsObserver.observe(document.querySelector('.stats-bar'));
+</script>
+</body>
+</html>
