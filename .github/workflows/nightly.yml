@@ -1,0 +1,72 @@
+name: Nightly Full Regression
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+env:
+  BASE_URL: http://localhost:3001
+  CI: true
+
+jobs:
+  full-regression:
+    name: Full Suite — ${{ matrix.browser }} — ${{ matrix.viewport }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+        viewport: [desktop, tablet, mobile]
+        include:
+          - viewport: desktop
+            width: 1440
+            height: 900
+          - viewport: tablet
+            width: 768
+            height: 1024
+          - viewport: mobile
+            width: 390
+            height: 844
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: |
+            app/package-lock.json
+            tests/package-lock.json
+      - run: npm ci
+        working-directory: app
+      - run: npm ci
+        working-directory: tests
+      - name: Install browser
+        run: npx playwright install ${{ matrix.browser }} --with-deps
+        working-directory: tests
+      - name: Start app
+        run: node -r ts-node/register api/server.ts &
+        working-directory: app
+        env:
+          JWT_SECRET: nightly-secret-${{ github.run_id }}
+      - name: Wait for app
+        run: |
+          for i in $(seq 1 20); do
+            curl -sf http://localhost:3001/health && exit 0
+            sleep 3
+          done
+          exit 1
+      - name: Run full test suite
+        run: npx playwright test --project=${{ matrix.browser }}
+        working-directory: tests
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          PLAYWRIGHT_VIEWPORT_WIDTH: ${{ matrix.width }}
+          PLAYWRIGHT_VIEWPORT_HEIGHT: ${{ matrix.height }}
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nightly-${{ matrix.browser }}-${{ matrix.viewport }}
+          path: tests/playwright-report/
+          retention-days: 14

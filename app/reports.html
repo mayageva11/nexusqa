@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reports — Luminary Analytics</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg: #050810; --surface: #0d1220; --border: #1a2540; --cyan: #00ffd1; --purple: #bf5af2; --pink: #ff2d55; --text: #e8eaf0; --muted: #5a6480; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; display: flex; min-height: 100vh; }
+    .sidebar { width: 240px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 1.5rem 0; flex-shrink: 0; position: fixed; top: 0; left: 0; height: 100vh; }
+    .sidebar-logo { font-family: 'Orbitron', sans-serif; font-size: 0.9rem; color: var(--cyan); padding: 0 1.5rem 1.5rem; text-transform: uppercase; letter-spacing: 0.1em; border-bottom: 1px solid var(--border); }
+    .sidebar-nav { padding: 1rem 0; }
+    .nav-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1.5rem; color: var(--muted); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s, background 0.2s; }
+    .nav-item:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+    .nav-item.active { color: var(--cyan); background: rgba(0,255,209,0.08); border-left: 2px solid var(--cyan); }
+    .main { margin-left: 240px; flex: 1; display: flex; flex-direction: column; }
+    .header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 2rem; background: var(--surface); border-bottom: 1px solid var(--border); }
+    .header-title { font-size: 1.125rem; font-weight: 600; }
+    .content { padding: 2rem; flex: 1; }
+    .page-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+    .page-heading { font-size: 1.5rem; font-weight: 600; }
+    .btn-primary { padding: 0.625rem 1.25rem; background: var(--cyan); color: var(--bg); border: none; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; font-family: inherit; transition: box-shadow 0.2s; }
+    .btn-primary:hover { box-shadow: 0 0 20px rgba(0,255,209,0.4); }
+    .reports-list { display: flex; flex-direction: column; gap: 0.75rem; }
+    .report-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem 1.5rem; display: flex; align-items: center; gap: 1.5rem; transition: border-color 0.2s; }
+    .report-card:hover { border-color: var(--border); }
+    .report-icon { width: 40px; height: 40px; border-radius: 10px; background: rgba(191,90,242,0.15); display: flex; align-items: center; justify-content: center; font-size: 1.125rem; flex-shrink: 0; }
+    .report-info { flex: 1; }
+    .report-name { font-weight: 600; margin-bottom: 0.25rem; }
+    .report-meta { font-size: 0.8125rem; color: var(--muted); }
+    .badge-ready { display: inline-flex; align-items: center; padding: 0.2em 0.6em; border-radius: 4px; font-size: 0.75rem; font-weight: 600; background: rgba(0,255,209,0.12); color: var(--cyan); }
+    .report-actions { display: flex; gap: 0.5rem; }
+    .btn-icon { background: none; border: 1px solid var(--border); color: var(--muted); padding: 0.375rem 0.75rem; border-radius: 8px; cursor: pointer; font-size: 0.8125rem; font-family: inherit; transition: all 0.2s; text-decoration: none; display: inline-flex; align-items: center; gap: 0.25rem; }
+    .btn-icon:hover { border-color: var(--cyan); color: var(--cyan); }
+    .btn-icon.danger:hover { border-color: var(--pink); color: var(--pink); }
+    .toast { position: fixed; bottom: 2rem; right: 2rem; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.5rem; display: flex; align-items: center; gap: 1rem; box-shadow: 0 4px 24px rgba(0,0,0,0.4); transform: translateY(100px); opacity: 0; transition: transform 0.3s, opacity 0.3s; z-index: 100; }
+    .toast.visible { transform: translateY(0); opacity: 1; }
+    .toast-text { font-size: 0.9rem; }
+    .toast-undo { background: none; border: 1px solid var(--cyan); color: var(--cyan); padding: 0.25rem 0.625rem; border-radius: 6px; cursor: pointer; font-size: 0.8125rem; font-family: inherit; }
+    .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(5,8,16,0.8); z-index: 50; align-items: center; justify-content: center; }
+    .modal-backdrop.open { display: flex; }
+    .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; width: 100%; max-width: 520px; }
+    .step-indicator { display: flex; gap: 0.5rem; margin-bottom: 2rem; }
+    .step { display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; color: var(--muted); }
+    .step.active { color: var(--cyan); }
+    .step-num { width: 24px; height: 24px; border-radius: 50%; border: 1px solid currentColor; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; }
+    .step.active .step-num { background: var(--cyan); color: var(--bg); border-color: var(--cyan); }
+    .step-sep { color: var(--border); margin: 0 0.25rem; }
+    .form-group { margin-bottom: 1.25rem; }
+    label { display: block; font-size: 0.8125rem; font-weight: 500; color: var(--muted); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .form-input { width: 100%; padding: 0.625rem 1rem; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 0.9rem; font-family: inherit; transition: border-color 0.2s; }
+    .form-input:focus { outline: none; border-color: var(--cyan); }
+    .modal-actions { display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.5rem; }
+    .btn-cancel { padding: 0.625rem 1.25rem; background: none; border: 1px solid var(--border); color: var(--muted); border-radius: 8px; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+    .btn-cancel:hover { border-color: var(--text); color: var(--text); }
+    .logout-btn { background: none; border: 1px solid var(--border); color: var(--muted); padding: 0.375rem 0.875rem; border-radius: 8px; cursor: pointer; font-size: 0.8125rem; font-family: inherit; transition: all 0.2s; }
+    .logout-btn:hover { border-color: var(--pink); color: var(--pink); }
+  </style>
+</head>
+<body>
+  <nav class="sidebar" data-testid="sidebar">
+    <div class="sidebar-logo">Luminary</div>
+    <div class="sidebar-nav">
+      <a href="/dashboard" class="nav-item" data-testid="nav-dashboard"><span>⬡</span> Dashboard</a>
+      <a href="/analytics" class="nav-item" data-testid="nav-analytics"><span>◈</span> Analytics</a>
+      <a href="/users" class="nav-item" data-testid="nav-users"><span>◉</span> Users</a>
+      <a href="/reports" class="nav-item active" data-testid="nav-reports"><span>◫</span> Reports</a>
+      <a href="#" class="nav-item" data-testid="nav-settings"><span>◎</span> Settings</a>
+    </div>
+    <a href="/cv" class="nav-item" data-testid="nav-cv" style="margin:0;border-top:1px solid var(--border);border-radius:0;color:var(--cyan);font-size:0.75rem;letter-spacing:0.05em;" target="_blank"><span>◈</span> My Portfolio ↗</a>
+  </nav>
+
+  <div class="main">
+    <header class="header">
+      <div class="header-title" data-testid="page-title">Reports</div>
+      <button class="logout-btn" data-testid="logout-btn" id="logoutBtn">Sign out</button>
+    </header>
+    <div class="content">
+      <div class="page-toolbar">
+        <h1 class="page-heading">Reports</h1>
+        <button class="btn-primary" data-testid="generate-report-btn" id="generateReportBtn">+ Generate New Report</button>
+      </div>
+      <div class="reports-list" data-testid="reports-list" id="reportsList"></div>
+    </div>
+  </div>
+
+  <div class="toast" data-testid="undo-toast" id="undoToast">
+    <span class="toast-text" data-testid="toast-message">Report deleted</span>
+    <button class="toast-undo" data-testid="undo-btn" id="undoBtn">Undo</button>
+  </div>
+
+  <!-- Generate Report Wizard -->
+  <div class="modal-backdrop" data-testid="report-wizard" id="reportWizard">
+    <div class="modal">
+      <div class="step-indicator" data-testid="wizard-steps">
+        <div class="step active" data-testid="step-1"><div class="step-num">1</div> <span>Details</span></div>
+        <span class="step-sep">›</span>
+        <div class="step" data-testid="step-2"><div class="step-num">2</div> <span>Metrics</span></div>
+        <span class="step-sep">›</span>
+        <div class="step" data-testid="step-3"><div class="step-num">3</div> <span>Confirm</span></div>
+      </div>
+
+      <div id="wizardStep1" data-testid="wizard-step-1">
+        <div class="form-group">
+          <label>Report Name</label>
+          <input type="text" class="form-input" data-testid="report-name-input" id="reportNameInput" placeholder="Q3 Traffic Analysis">
+        </div>
+        <div class="form-group">
+          <label>Report Type</label>
+          <select class="form-input" data-testid="report-type-select" id="reportTypeSelect">
+            <option value="">Select type</option>
+            <option value="traffic">Traffic</option>
+            <option value="revenue">Revenue</option>
+            <option value="acquisition">Acquisition</option>
+            <option value="conversion">Conversion</option>
+            <option value="retention">Retention</option>
+          </select>
+        </div>
+        <div class="modal-actions">
+          <button class="btn-cancel" data-testid="wizard-cancel" id="wizardCancel">Cancel</button>
+          <button class="btn-primary" data-testid="wizard-next-1" id="wizardNext1">Next →</button>
+        </div>
+      </div>
+
+      <div id="wizardStep2" style="display:none" data-testid="wizard-step-2">
+        <div class="form-group">
+          <label>Date Range</label>
+          <select class="form-input" data-testid="date-range-select">
+            <option value="7">Last 7 days</option>
+            <option value="30" selected>Last 30 days</option>
+            <option value="90">Last 90 days</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Include Metrics</label>
+          <div style="display:flex;flex-direction:column;gap:0.5rem;margin-top:0.5rem">
+            <label style="text-transform:none;letter-spacing:0;display:flex;align-items:center;gap:0.5rem;color:var(--text)">
+              <input type="checkbox" data-testid="metric-sessions" checked style="accent-color:var(--cyan)"> Sessions
+            </label>
+            <label style="text-transform:none;letter-spacing:0;display:flex;align-items:center;gap:0.5rem;color:var(--text)">
+              <input type="checkbox" data-testid="metric-revenue" checked style="accent-color:var(--cyan)"> Revenue
+            </label>
+            <label style="text-transform:none;letter-spacing:0;display:flex;align-items:center;gap:0.5rem;color:var(--text)">
+              <input type="checkbox" data-testid="metric-users" style="accent-color:var(--cyan)"> Users
+            </label>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn-cancel" data-testid="wizard-back-2" id="wizardBack2">← Back</button>
+          <button class="btn-primary" data-testid="wizard-next-2" id="wizardNext2">Next →</button>
+        </div>
+      </div>
+
+      <div id="wizardStep3" style="display:none" data-testid="wizard-step-3">
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:1.25rem;margin-bottom:1.25rem">
+          <div style="font-size:0.875rem;color:var(--muted);margin-bottom:0.5rem">Report Summary</div>
+          <div id="summaryName" style="font-weight:600;margin-bottom:0.25rem"></div>
+          <div id="summaryType" style="font-size:0.875rem;color:var(--muted)"></div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn-cancel" data-testid="wizard-back-3" id="wizardBack3">← Back</button>
+          <button class="btn-primary" data-testid="wizard-generate" id="wizardGenerate">Generate Report</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const token = localStorage.getItem('luminary_token');
+    if (!token) { window.location.replace('/login'); }
+
+    let wizardStep = 1;
+    let deletedReport = null;
+    let toastTimer = null;
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await fetch('/api/auth/logout', { method: 'POST', headers: { Authorization: `Bearer ${token}` } });
+      localStorage.clear();
+      window.location.replace('/login');
+    });
+
+    async function loadReports() {
+      const res = await fetch('/api/reports', { headers: { Authorization: `Bearer ${token}` } });
+      if (!res.ok) { localStorage.removeItem('luminary_token'); localStorage.removeItem('luminary_user'); window.location.replace('/login'); return; }
+      const data = await res.json();
+      renderReports(data.reports);
+    }
+
+    const icons = { traffic: '📊', revenue: '💰', acquisition: '🎯', conversion: '🔄', retention: '🔒' };
+
+    function renderReports(reports) {
+      const list = document.getElementById('reportsList');
+      if (!reports.length) {
+        list.innerHTML = `<div style="text-align:center;color:var(--muted);padding:3rem">No reports yet. Generate your first report.</div>`;
+        return;
+      }
+      list.innerHTML = reports.map(r => `
+        <div class="report-card" data-testid="report-card" data-report-id="${r.id}">
+          <div class="report-icon">${icons[r.type] ?? '📋'}</div>
+          <div class="report-info">
+            <div class="report-name" data-testid="report-name">${escHtml(r.name)}</div>
+            <div class="report-meta">
+              <span class="badge-ready" data-testid="report-status">${r.status}</span>
+              &nbsp;·&nbsp; ${r.rows.toLocaleString()} rows
+              &nbsp;·&nbsp; Created ${new Date(r.createdAt).toLocaleDateString()}
+            </div>
+          </div>
+          <div class="report-actions">
+            <a href="/api/reports/${r.id}/download" class="btn-icon" data-testid="download-report-btn" download>⬇ Download CSV</a>
+            <button class="btn-icon danger" data-testid="delete-report-btn" onclick="deleteReport('${r.id}', '${escHtml(r.name)}')">Delete</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function deleteReport(id, name) {
+      const res = await fetch(`/api/reports/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
+      const data = await res.json();
+      deletedReport = data.report;
+      showToast(`"${name}" deleted`);
+      loadReports();
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('undoToast');
+      document.querySelector('[data-testid="toast-message"]').textContent = msg;
+      toast.classList.add('visible');
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('visible'), 5000);
+    }
+
+    document.getElementById('undoBtn').addEventListener('click', async () => {
+      if (!deletedReport) return;
+      await fetch('/api/reports/generate', { method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ name: deletedReport.name, type: deletedReport.type }) });
+      deletedReport = null;
+      document.getElementById('undoToast').classList.remove('visible');
+      loadReports();
+    });
+
+    // Wizard
+    document.getElementById('generateReportBtn').addEventListener('click', () => {
+      wizardStep = 1;
+      showStep(1);
+      document.getElementById('reportWizard').classList.add('open');
+    });
+
+    document.getElementById('wizardCancel').addEventListener('click', () => document.getElementById('reportWizard').classList.remove('open'));
+
+    document.getElementById('wizardNext1').addEventListener('click', () => {
+      if (!document.getElementById('reportNameInput').value.trim() || !document.getElementById('reportTypeSelect').value) { alert('Please fill in all fields'); return; }
+      showStep(2);
+    });
+    document.getElementById('wizardNext2').addEventListener('click', () => {
+      document.getElementById('summaryName').textContent = document.getElementById('reportNameInput').value;
+      document.getElementById('summaryType').textContent = `Type: ${document.getElementById('reportTypeSelect').value}`;
+      showStep(3);
+    });
+    document.getElementById('wizardBack2').addEventListener('click', () => showStep(1));
+    document.getElementById('wizardBack3').addEventListener('click', () => showStep(2));
+
+    document.getElementById('wizardGenerate').addEventListener('click', async () => {
+      const name = document.getElementById('reportNameInput').value.trim();
+      const type = document.getElementById('reportTypeSelect').value;
+      const res = await fetch('/api/reports/generate', { method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ name, type }) });
+      if (res.ok) { document.getElementById('reportWizard').classList.remove('open'); loadReports(); }
+    });
+
+    function showStep(n) {
+      wizardStep = n;
+      [1,2,3].forEach(i => {
+        document.getElementById(`wizardStep${i}`).style.display = i === n ? '' : 'none';
+        const stepEl = document.querySelector(`[data-testid="step-${i}"]`);
+        stepEl.classList.toggle('active', i === n);
+      });
+    }
+
+    function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+    loadReports();
+  </script>
+</body>
+</html>

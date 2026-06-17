@@ -1,0 +1,57 @@
+name: PR Smoke Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+env:
+  BASE_URL: http://localhost:3001
+  CI: true
+
+jobs:
+  smoke:
+    name: Smoke Tests
+    runs-on: ubuntu-latest
+    permissions:
+      checks: write
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: |
+            app/package-lock.json
+            tests/package-lock.json
+      - run: npm ci
+        working-directory: app
+      - run: npm ci
+        working-directory: tests
+      - name: Install Playwright (chromium only for smoke)
+        run: npx playwright install chromium --with-deps
+        working-directory: tests
+      - name: Start app
+        run: node -r ts-node/register api/server.ts &
+        working-directory: app
+        env:
+          JWT_SECRET: ${{ secrets.JWT_SECRET || 'pr-check-secret' }}
+      - name: Wait for app
+        run: |
+          for i in $(seq 1 15); do
+            curl -sf http://localhost:3001/health && exit 0
+            sleep 2
+          done
+          exit 1
+      - name: Run smoke tests
+        run: npx playwright test --grep @smoke --project=chromium
+        working-directory: tests
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      - name: Upload smoke report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-report-pr-${{ github.event.pull_request.number }}
+          path: tests/playwright-report/
+          retention-days: 3

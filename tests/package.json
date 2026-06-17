@@ -1,0 +1,24 @@
+{
+  "name": "nexusqa-tests",
+  "version": "1.0.0",
+  "description": "Playwright + TypeScript test suite for Luminary Analytics",
+  "scripts": {
+    "test": "playwright test",
+    "test:smoke": "playwright test --grep @smoke",
+    "test:api": "playwright test tests/api/",
+    "test:e2e": "playwright test tests/e2e/",
+    "report": "playwright show-report",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint 'tests/**/*.ts' 'helpers/**/*.ts' 'fixtures/**/*.ts'"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.49.1",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
+    "eslint": "^8.57.0",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.27.0"
+  }
+}

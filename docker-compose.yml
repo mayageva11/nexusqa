@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    ports:
+      - '3001:3001'
+    environment:
+      - PORT=3001
+      - JWT_SECRET=${JWT_SECRET:-dev-secret-change-in-production}
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3001/health']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+
+  tests:
+    image: mcr.microsoft.com/playwright:v1.48.0-jammy
+    working_dir: /app
+    volumes:
+      - ./tests:/app
+      - ./tests/playwright-report:/app/playwright-report
+      - ./tests/allure-results:/app/allure-results
+    environment:
+      - BASE_URL=http://app:3001
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - CI=true
+    depends_on:
+      app:
+        condition: service_healthy
+    command: npx playwright test
+
+  report-server:
+    image: nginx:alpine
+    ports:
+      - '8080:80'
+    volumes:
+      - ./tests/playwright-report:/usr/share/nginx/html
+    depends_on:
+      - tests

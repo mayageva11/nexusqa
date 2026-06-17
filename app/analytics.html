@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analytics — Luminary Analytics</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg: #050810; --surface: #0d1220; --border: #1a2540; --cyan: #00ffd1; --purple: #bf5af2; --pink: #ff2d55; --text: #e8eaf0; --muted: #5a6480; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; display: flex; min-height: 100vh; }
+    .sidebar { width: 240px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 1.5rem 0; flex-shrink: 0; position: fixed; top: 0; left: 0; height: 100vh; }
+    .sidebar-logo { font-family: 'Orbitron', sans-serif; font-size: 0.9rem; color: var(--cyan); padding: 0 1.5rem 1.5rem; text-transform: uppercase; letter-spacing: 0.1em; border-bottom: 1px solid var(--border); }
+    .sidebar-nav { padding: 1rem 0; }
+    .nav-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1.5rem; color: var(--muted); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s, background 0.2s; }
+    .nav-item:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+    .nav-item.active { color: var(--cyan); background: rgba(0,255,209,0.08); border-left: 2px solid var(--cyan); }
+    .main { margin-left: 240px; flex: 1; display: flex; flex-direction: column; }
+    .header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 2rem; background: var(--surface); border-bottom: 1px solid var(--border); }
+    .header-title { font-size: 1.125rem; font-weight: 600; }
+    .content { padding: 2rem; flex: 1; }
+    .page-heading { font-size: 1.5rem; font-weight: 600; margin-bottom: 1.5rem; }
+    .date-range-bar { display: flex; gap: 0.5rem; margin-bottom: 2rem; flex-wrap: wrap; }
+    .range-btn { padding: 0.5rem 1rem; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; color: var(--muted); font-size: 0.875rem; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+    .range-btn:hover { border-color: var(--cyan); color: var(--text); }
+    .range-btn.active { border-color: var(--cyan); color: var(--cyan); background: rgba(0,255,209,0.08); }
+    .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 2rem; }
+    .chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+    .chart-card h2 { font-size: 1rem; font-weight: 600; margin-bottom: 1.25rem; }
+    .chart-wrapper { position: relative; height: 280px; }
+    .data-table-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+    .data-table-card h2 { font-size: 1rem; font-weight: 600; margin-bottom: 1.25rem; }
+    table { width: 100%; border-collapse: collapse; }
+    th { text-align: left; padding: 0.625rem 1rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); border-bottom: 1px solid var(--border); }
+    td { padding: 0.75rem 1rem; font-size: 0.875rem; border-bottom: 1px solid var(--border); }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+    .logout-btn { background: none; border: 1px solid var(--border); color: var(--muted); padding: 0.375rem 0.875rem; border-radius: 8px; cursor: pointer; font-size: 0.8125rem; font-family: inherit; transition: all 0.2s; }
+    .logout-btn:hover { border-color: var(--pink); color: var(--pink); }
+  </style>
+</head>
+<body>
+  <nav class="sidebar" data-testid="sidebar">
+    <div class="sidebar-logo">Luminary</div>
+    <div class="sidebar-nav">
+      <a href="/dashboard" class="nav-item" data-testid="nav-dashboard"><span>⬡</span> Dashboard</a>
+      <a href="/analytics" class="nav-item active" data-testid="nav-analytics"><span>◈</span> Analytics</a>
+      <a href="/users" class="nav-item" data-testid="nav-users"><span>◉</span> Users</a>
+      <a href="/reports" class="nav-item" data-testid="nav-reports"><span>◫</span> Reports</a>
+      <a href="#" class="nav-item" data-testid="nav-settings"><span>◎</span> Settings</a>
+    </div>
+    <a href="/cv" class="nav-item" data-testid="nav-cv" style="margin:0;border-top:1px solid var(--border);border-radius:0;color:var(--cyan);font-size:0.75rem;letter-spacing:0.05em;" target="_blank"><span>◈</span> My Portfolio ↗</a>
+  </nav>
+
+  <div class="main">
+    <header class="header">
+      <div class="header-title" data-testid="page-title">Analytics</div>
+      <button class="logout-btn" data-testid="logout-btn" id="logoutBtn">Sign out</button>
+    </header>
+    <div class="content">
+      <h1 class="page-heading">Analytics</h1>
+      <div class="date-range-bar" data-testid="date-range-bar">
+        <button class="range-btn active" data-testid="range-7d" data-range="7">Last 7 days</button>
+        <button class="range-btn" data-testid="range-30d" data-range="30">Last 30 days</button>
+        <button class="range-btn" data-testid="range-90d" data-range="90">Last 90 days</button>
+      </div>
+      <div class="charts-grid">
+        <div class="chart-card">
+          <h2>Sessions per Day</h2>
+          <div class="chart-wrapper"><canvas id="sessionsChart" data-testid="sessions-chart"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h2>Traffic Sources</h2>
+          <div class="chart-wrapper"><canvas id="sourcesChart" data-testid="sources-chart"></canvas></div>
+        </div>
+      </div>
+      <div class="data-table-card">
+        <h2>Top Pages</h2>
+        <table data-testid="top-pages-table">
+          <thead>
+            <tr>
+              <th>Page</th>
+              <th>Sessions</th>
+              <th>Bounce Rate</th>
+              <th>Avg Time on Page</th>
+            </tr>
+          </thead>
+          <tbody id="pagesTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const token = localStorage.getItem('luminary_token');
+    if (!token) { window.location.replace('/login'); }
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await fetch('/api/auth/logout', { method: 'POST', headers: { Authorization: `Bearer ${token}` } });
+      localStorage.clear();
+      window.location.replace('/login');
+    });
+
+    let sessionsChart, sourcesChart;
+
+    document.querySelectorAll('.range-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.range-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        loadMetrics(parseInt(btn.dataset.range, 10));
+      });
+    });
+
+    async function loadMetrics(days = 7) {
+      const res = await fetch('/api/metrics', { headers: { Authorization: `Bearer ${token}` } });
+      if (!res.ok) { localStorage.removeItem('luminary_token'); localStorage.removeItem('luminary_user'); window.location.replace('/login'); return; }
+      const data = await res.json();
+      const slice = data.series.slice(-days);
+
+      if (sessionsChart) sessionsChart.destroy();
+      if (sourcesChart) sourcesChart.destroy();
+
+      sessionsChart = new Chart(document.getElementById('sessionsChart'), {
+        type: 'bar',
+        data: {
+          labels: slice.map(d => d.date.slice(5)),
+          datasets: [{ label: 'Sessions', data: slice.map(d => d.sessions), backgroundColor: 'rgba(0,255,209,0.6)', borderColor: '#00ffd1', borderWidth: 1 }],
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { color: '#1a2540' }, ticks: { color: '#5a6480' } }, y: { grid: { color: '#1a2540' }, ticks: { color: '#5a6480' } } } },
+      });
+
+      sourcesChart = new Chart(document.getElementById('sourcesChart'), {
+        type: 'pie',
+        data: {
+          labels: data.trafficSources.map(s => s.label),
+          datasets: [{ data: data.trafficSources.map(s => s.value), backgroundColor: ['#00ffd1','#bf5af2','#ff2d55','#3a7bd5','#f5a623'], borderWidth: 0 }],
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#5a6480', padding: 12, boxWidth: 12 } } } },
+      });
+
+      const tbody = document.getElementById('pagesTableBody');
+      tbody.innerHTML = data.topPages.map(p => `
+        <tr data-testid="top-page-row">
+          <td>${p.path}</td>
+          <td>${p.sessions.toLocaleString()}</td>
+          <td>${p.bounceRate}%</td>
+          <td>${p.avgTime}</td>
+        </tr>
+      `).join('');
+    }
+
+    loadMetrics(7);
+  </script>
+</body>
+</html>
