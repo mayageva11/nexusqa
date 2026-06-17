@@ -1,6 +1,6 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 
-async function loginFresh(page: Parameters<typeof test.fn>[0]['page']) {
+async function loginFresh(page: Page) {
   await page.goto('/login');
   await page.getByTestId('email-input').fill('editor@luminary.io');
   await page.getByTestId('password-input').fill('Test1234!');
