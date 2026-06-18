@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login — Luminary Analytics</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #050810; --surface: #0d1220; --border: #1a2540;
+      --cyan: #00ffd1; --purple: #bf5af2; --pink: #ff2d55;
+      --text: #e8eaf0; --muted: #5a6480;
+    }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+    .grid-bg {
+      position: fixed; inset: 0; background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 40px 40px; opacity: 0.3; pointer-events: none;
+    }
+    .card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      padding: 2.5rem; width: 100%; max-width: 420px; position: relative; z-index: 1;
+      box-shadow: 0 0 40px rgba(0, 255, 209, 0.05);
+    }
+    .logo { font-family: 'Orbitron', sans-serif; font-size: 1.1rem; color: var(--cyan); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.25rem; }
+    .subtitle { color: var(--muted); font-size: 0.875rem; margin-bottom: 2rem; }
+    h1 { font-size: 1.5rem; font-weight: 600; margin-bottom: 0.25rem; }
+    .form-group { margin-bottom: 1.25rem; }
+    label { display: block; font-size: 0.8125rem; font-weight: 500; color: var(--muted); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    input[type="email"], input[type="password"] {
+      width: 100%; padding: 0.75rem 1rem; background: var(--bg); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text); font-size: 1rem; font-family: inherit;
+      transition: border-color 0.2s;
+    }
+    input:focus { outline: none; border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(0, 255, 209, 0.1); }
+    .remember-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem; cursor: pointer; }
+    .remember-row input[type="checkbox"] { accent-color: var(--cyan); width: 16px; height: 16px; cursor: pointer; }
+    .remember-row span { font-size: 0.875rem; color: var(--muted); }
+    .btn-primary {
+      width: 100%; padding: 0.875rem; background: var(--cyan); color: var(--bg); border: none;
+      border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; font-family: inherit;
+      transition: box-shadow 0.2s, transform 0.1s;
+    }
+    .btn-primary:hover { box-shadow: 0 0 20px rgba(0, 255, 209, 0.4); transform: translateY(-1px); }
+    .btn-primary:active { transform: translateY(0); }
+    .error-message {
+      display: none; background: rgba(255, 45, 85, 0.1); border: 1px solid rgba(255, 45, 85, 0.3);
+      color: var(--pink); border-radius: 8px; padding: 0.75rem 1rem; font-size: 0.875rem; margin-bottom: 1rem;
+    }
+    .error-message.visible { display: block; }
+    .hint { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.8125rem; }
+    .hint code { color: var(--cyan); background: rgba(0,255,209,0.08); padding: 0.1em 0.4em; border-radius: 4px; }
+    .loading { opacity: 0.7; pointer-events: none; }
+  </style>
+</head>
+<body>
+  <div class="grid-bg"></div>
+  <div class="card">
+    <div class="logo">Luminary</div>
+    <p class="subtitle">Analytics Dashboard</p>
+    <h1>Sign in</h1>
+    <p style="color: var(--muted); font-size: 0.875rem; margin-bottom: 1.5rem;">Welcome back. Enter your credentials to continue.</p>
+
+    <div class="error-message" data-testid="error-message" id="errorMessage" role="alert"></div>
+
+    <form id="loginForm" novalidate>
+      <div class="form-group">
+        <label for="emailInput">Email address</label>
+        <input
+          type="email"
+          id="emailInput"
+          data-testid="email-input"
+          placeholder="you@luminary.io"
+          autocomplete="email"
+          spellcheck="false"
+        >
+      </div>
+      <div class="form-group">
+        <label for="passwordInput">Password</label>
+        <input
+          type="password"
+          id="passwordInput"
+          data-testid="password-input"
+          placeholder="••••••••"
+          autocomplete="current-password"
+        >
+      </div>
+      <label class="remember-row">
+        <input type="checkbox" data-testid="remember-me" id="rememberMe">
+        <span>Remember me for 30 days</span>
+      </label>
+      <button type="submit" data-testid="login-submit" class="btn-primary">Sign in</button>
+    </form>
+
+    <div class="hint">
+      Demo credentials: <code>admin@luminary.io</code> / <code>Test1234!</code>
+    </div>
+  </div>
+
+  <script>
+    /* Demo mode — active only on GitHub Pages; provides mock API responses without a server */
+    (function () {
+      if (['localhost', '127.0.0.1', ''].includes(location.hostname)) return;
+      window._demo = true;
+      var _auth = {
+        'admin@luminary.io': {password:'Test1234!',role:'admin',name:'Aria Chen',avatar:'AC'},
+        'editor@luminary.io': {password:'Test1234!',role:'editor',name:'Marcus Webb',avatar:'MW'},
+        'viewer@luminary.io': {password:'Test1234!',role:'viewer',name:'Sofia Patel',avatar:'SP'},
+      };
+      function _ok(data, status) { return Promise.resolve(new Response(JSON.stringify(data), {status: status || 200, headers: {'Content-Type': 'application/json'}})); }
+      var _origFetch = window.fetch.bind(window);
+      window.fetch = function (input, opts) {
+        var url = typeof input === 'string' ? input : input.url;
+        if (!url.includes('/api/')) return _origFetch(input, opts);
+        var path = url.replace(/^https?:\/\/[^/]+/, '').replace(/\?.*/, '');
+        var method = ((opts && opts.method) || 'GET').toUpperCase();
+        var body = {}; try { if (opts && opts.body) body = JSON.parse(opts.body); } catch (e) {}
+        if (path === '/api/auth/login' && method === 'POST') {
+          var c = _auth[body.email]; if (!c || c.password !== body.password) return _ok({error: 'Invalid credentials'}, 401);
+          var user = {email: body.email, role: c.role, name: c.name, avatar: c.avatar};
+          return _ok({token: 'demo.' + btoa(JSON.stringify(user)) + '.x', user: user});
+        }
+        return _ok({message: 'ok'});
+      };
+    })();
+    const form = document.getElementById('loginForm');
+    const emailInput = document.getElementById('emailInput');
+    const passwordInput = document.getElementById('passwordInput');
+    const errorMessage = document.getElementById('errorMessage');
+    const rememberMe = document.getElementById('rememberMe');
+
+    if (localStorage.getItem('luminary_token')) {
+      window.location.replace(window._demo ? 'dashboard.html' : '/dashboard');
+    }
+
+    function showError(msg) {
+      errorMessage.textContent = msg;
+      errorMessage.classList.add('visible');
+    }
+
+    function clearError() {
+      errorMessage.classList.remove('visible');
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearError();
+
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!email) { showError('Email address is required'); return; }
+      if (!password) { showError('Password is required'); return; }
+
+      form.classList.add('loading');
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          showError(data.error ?? 'Login failed');
+          return;
+        }
+        localStorage.setItem('luminary_token', data.token);
+        localStorage.setItem('luminary_user', JSON.stringify(data.user));
+        if (rememberMe.checked) {
+          localStorage.setItem('luminary_remember', 'true');
+        }
+        window.location.replace(window._demo ? 'dashboard.html' : '/dashboard');
+      } catch {
+        showError('Network error — please try again');
+      } finally {
+        form.classList.remove('loading');
+      }
+    });
+  </script>
+</body>
+</html>

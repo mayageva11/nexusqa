@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — Luminary Analytics</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #050810; --surface: #0d1220; --border: #1a2540;
+      --cyan: #00ffd1; --purple: #bf5af2; --pink: #ff2d55;
+      --text: #e8eaf0; --muted: #5a6480;
+    }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; display: flex; min-height: 100vh; }
+    .sidebar {
+      width: 240px; background: var(--surface); border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; padding: 1.5rem 0; flex-shrink: 0; position: fixed; top: 0; left: 0; height: 100vh;
+    }
+    .sidebar-logo { font-family: 'Orbitron', sans-serif; font-size: 0.9rem; color: var(--cyan); padding: 0 1.5rem 1.5rem; text-transform: uppercase; letter-spacing: 0.1em; border-bottom: 1px solid var(--border); }
+    .sidebar-nav { padding: 1rem 0; flex: 1; }
+    .nav-item {
+      display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1.5rem;
+      color: var(--muted); text-decoration: none; font-size: 0.9rem; font-weight: 500;
+      transition: color 0.2s, background 0.2s; cursor: pointer; border: none; background: none; width: 100%; text-align: left;
+    }
+    .nav-item:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+    .nav-item.active { color: var(--cyan); background: rgba(0,255,209,0.08); border-left: 2px solid var(--cyan); }
+    .nav-icon { font-size: 1rem; width: 20px; text-align: center; }
+    .main { margin-left: 240px; flex: 1; display: flex; flex-direction: column; }
+    .header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 2rem; background: var(--surface); border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 10;
+    }
+    .header-title { font-size: 1.125rem; font-weight: 600; }
+    .header-right { display: flex; align-items: center; gap: 1rem; }
+    .notification-btn {
+      background: none; border: 1px solid var(--border); color: var(--muted); width: 36px; height: 36px;
+      border-radius: 8px; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .notification-btn:hover { border-color: var(--cyan); color: var(--cyan); }
+    .user-avatar {
+      width: 36px; height: 36px; border-radius: 50%; background: var(--purple);
+      display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 600; cursor: pointer;
+    }
+    .logout-btn {
+      background: none; border: 1px solid var(--border); color: var(--muted); padding: 0.375rem 0.875rem;
+      border-radius: 8px; cursor: pointer; font-size: 0.8125rem; font-family: inherit; transition: all 0.2s;
+    }
+    .logout-btn:hover { border-color: var(--pink); color: var(--pink); }
+    .content { padding: 2rem; flex: 1; }
+    .page-heading { font-size: 1.5rem; font-weight: 600; margin-bottom: 0.25rem; }
+    .page-subheading { color: var(--muted); font-size: 0.875rem; margin-bottom: 2rem; }
+    .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; margin-bottom: 2rem; }
+    .metric-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      padding: 1.25rem 1.5rem; transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .metric-card:hover { border-color: var(--cyan); box-shadow: 0 0 20px rgba(0,255,209,0.08); }
+    .metric-label { font-size: 0.8125rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+    .metric-value { font-size: 1.875rem; font-weight: 600; margin-bottom: 0.375rem; }
+    .metric-change { font-size: 0.8125rem; display: flex; align-items: center; gap: 0.25rem; }
+    .metric-change.up { color: var(--cyan); }
+    .metric-change.down { color: var(--pink); }
+    .charts-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 1.25rem; margin-bottom: 2rem; }
+    .chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+    .chart-card h2 { font-size: 1rem; font-weight: 600; margin-bottom: 1.25rem; }
+    .chart-wrapper { position: relative; height: 260px; }
+    .activity-feed { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+    .activity-feed h2 { font-size: 1rem; font-weight: 600; margin-bottom: 1rem; }
+    .activity-item {
+      display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.75rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .activity-item:last-child { border-bottom: none; }
+    .activity-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--cyan); margin-top: 0.375rem; flex-shrink: 0; }
+    .activity-text { flex: 1; font-size: 0.875rem; }
+    .activity-time { font-size: 0.75rem; color: var(--muted); }
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; }
+      .charts-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="sidebar" data-testid="sidebar">
+    <div class="sidebar-logo">Luminary</div>
+    <div class="sidebar-nav">
+      <a href="dashboard.html" class="nav-item active" data-testid="nav-dashboard">
+        <span class="nav-icon">⬡</span> Dashboard
+      </a>
+      <a href="analytics.html" class="nav-item" data-testid="nav-analytics">
+        <span class="nav-icon">◈</span> Analytics
+      </a>
+      <a href="users.html" class="nav-item" data-testid="nav-users">
+        <span class="nav-icon">◉</span> Users
+      </a>
+      <a href="reports.html" class="nav-item" data-testid="nav-reports">
+        <span class="nav-icon">◫</span> Reports
+      </a>
+      <a href="#" class="nav-item" data-testid="nav-settings">
+        <span class="nav-icon">◎</span> Settings
+      </a>
+    </div>
+    <a href="/cv" class="nav-item" data-testid="nav-cv" style="margin:0;border-top:1px solid var(--border);border-radius:0;color:var(--cyan);font-size:0.75rem;letter-spacing:0.05em;" target="_blank">
+      <span class="nav-icon">◈</span> My Portfolio ↗
+    </a>
+  </nav>
+
+  <div class="main">
+    <header class="header">
+      <div class="header-title" data-testid="page-title">Dashboard</div>
+      <div class="header-right">
+        <button class="notification-btn" data-testid="notification-bell" aria-label="Notifications">🔔</button>
+        <div class="user-avatar" data-testid="user-avatar" id="userAvatar">AU</div>
+        <button class="logout-btn" data-testid="logout-btn" id="logoutBtn">Sign out</button>
+      </div>
+    </header>
+
+    <div class="content">
+      <h1 class="page-heading">Overview</h1>
+      <p class="page-subheading">Last 30 days performance summary</p>
+
+      <div class="metrics-grid" data-testid="metrics-grid" id="metricsGrid" style="display:none">
+        <div class="metric-card" data-testid="metric-card-revenue">
+          <div class="metric-label">Total Revenue</div>
+          <div class="metric-value" data-testid="metric-value-revenue" id="metricRevenue">—</div>
+          <div class="metric-change" data-testid="metric-change-revenue" id="metricChangeRevenue">—</div>
+        </div>
+        <div class="metric-card" data-testid="metric-card-active-users">
+          <div class="metric-label">Active Users</div>
+          <div class="metric-value" data-testid="metric-value-active-users" id="metricUsers">—</div>
+          <div class="metric-change" data-testid="metric-change-active-users" id="metricChangeUsers">—</div>
+        </div>
+        <div class="metric-card" data-testid="metric-card-conversion-rate">
+          <div class="metric-label">Conversion Rate</div>
+          <div class="metric-value" data-testid="metric-value-conversion-rate" id="metricConversion">—</div>
+          <div class="metric-change" data-testid="metric-change-conversion-rate" id="metricChangeConversion">—</div>
+        </div>
+        <div class="metric-card" data-testid="metric-card-avg-session">
+          <div class="metric-label">Avg Session Time</div>
+          <div class="metric-value" data-testid="metric-value-avg-session" id="metricSession">—</div>
+          <div class="metric-change" data-testid="metric-change-avg-session" id="metricChangeSession">—</div>
+        </div>
+      </div>
+
+      <div class="charts-grid">
+        <div class="chart-card">
+          <h2>Activity Over Time</h2>
+          <div class="chart-wrapper">
+            <canvas id="activityChart" data-testid="activity-chart"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <h2>Traffic Sources</h2>
+          <div class="chart-wrapper">
+            <canvas id="trafficChart" data-testid="traffic-chart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="activity-feed" data-testid="activity-feed">
+        <h2>Recent Activity</h2>
+        <div id="activityList"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* Demo mode — active only on GitHub Pages; provides mock API responses without a server */
+    (function () {
+      if (['localhost', '127.0.0.1', ''].includes(location.hostname)) return;
+      window._demo = true;
+      var _users = [
+        {id:'1',name:'Aria Chen',email:'aria.chen@luminary.io',role:'admin',status:'active',lastLogin:'2026-06-15T09:23:11Z'},
+        {id:'2',name:'Marcus Webb',email:'marcus.webb@luminary.io',role:'editor',status:'active',lastLogin:'2026-06-16T08:45:30Z'},
+        {id:'3',name:'Sofia Patel',email:'viewer@luminary.io',role:'viewer',status:'active',lastLogin:'2026-06-14T14:12:05Z'},
+        {id:'4',name:'James Okafor',email:'j.okafor@luminary.io',role:'editor',status:'active',lastLogin:'2026-06-17T07:30:00Z'},
+        {id:'5',name:'Lena Hoffmann',email:'l.hoffmann@luminary.io',role:'viewer',status:'inactive',lastLogin:'2026-06-01T11:20:45Z'},
+        {id:'6',name:'Noah Torres',email:'n.torres@luminary.io',role:'viewer',status:'active',lastLogin:'2026-06-16T16:55:22Z'},
+        {id:'7',name:'Yuki Tanaka',email:'y.tanaka@luminary.io',role:'editor',status:'active',lastLogin:'2026-06-17T06:18:33Z'},
+        {id:'8',name:'Camille Rousseau',email:'c.rousseau@luminary.io',role:'admin',status:'active',lastLogin:'2026-06-15T13:44:50Z'},
+        {id:'9',name:'Raj Mehta',email:'r.mehta@luminary.io',role:'viewer',status:'active',lastLogin:'2026-06-12T09:05:11Z'},
+        {id:'10',name:'Elena Vasquez',email:'e.vasquez@luminary.io',role:'editor',status:'active',lastLogin:'2026-06-17T10:02:44Z'},
+        {id:'11',name:'Tom Fischer',email:'t.fischer@luminary.io',role:'viewer',status:'inactive',lastLogin:'2026-05-28T15:30:00Z'},
+        {id:'12',name:'Amara Diallo',email:'a.diallo@luminary.io',role:'viewer',status:'active',lastLogin:'2026-06-16T12:15:38Z'},
+      ];
+      var _reports = [
+        {id:'r1',name:'Q2 Traffic Analysis',type:'traffic',status:'ready',rows:4823,createdAt:'2026-06-10T10:00:00Z'},
+        {id:'r2',name:'Monthly Revenue Report',type:'revenue',status:'ready',rows:1247,createdAt:'2026-06-01T09:00:00Z'},
+        {id:'r3',name:'User Acquisition May',type:'acquisition',status:'ready',rows:2938,createdAt:'2026-05-31T14:00:00Z'},
+        {id:'r4',name:'Conversion Funnel Q2',type:'conversion',status:'ready',rows:857,createdAt:'2026-06-08T11:30:00Z'},
+      ];
+      var _s = []; for (var _i = 0; _i < 30; _i++) { var _d = new Date('2026-05-19'); _d.setDate(_d.getDate() + _i); _s.push({date: _d.toISOString().slice(0,10), sessions: Math.floor(220 + Math.sin(_i) * 80 + Math.random() * 60)}); }
+      var _metrics = {
+        cards: [{id:'revenue',value:'$142,382',trend:'up',change:12.3},{id:'active-users',value:'8,249',trend:'up',change:5.7},{id:'conversion-rate',value:'3.24%',trend:'down',change:0.8},{id:'avg-session',value:'4m 32s',trend:'up',change:11.2}],
+        series: _s,
+        trafficSources: [{label:'Organic',value:45},{label:'Direct',value:28},{label:'Referral',value:15},{label:'Social',value:8},{label:'Email',value:4}],
+        topPages: [{path:'/dashboard',sessions:3842,bounceRate:24.3,avgTime:'3m 45s'},{path:'/analytics',sessions:2156,bounceRate:31.8,avgTime:'4m 12s'},{path:'/users',sessions:1893,bounceRate:18.5,avgTime:'5m 28s'},{path:'/reports',sessions:1247,bounceRate:22.1,avgTime:'3m 55s'},{path:'/login',sessions:8249,bounceRate:12.4,avgTime:'1m 23s'}],
+      };
+      var _auth = {
+        'admin@luminary.io': {password:'Test1234!',role:'admin',name:'Aria Chen',avatar:'AC'},
+        'editor@luminary.io': {password:'Test1234!',role:'editor',name:'Marcus Webb',avatar:'MW'},
+        'viewer@luminary.io': {password:'Test1234!',role:'viewer',name:'Sofia Patel',avatar:'SP'},
+      };
+      var _nextId = 100;
+      function _ok(data, status) { return Promise.resolve(new Response(JSON.stringify(data), {status: status || 200, headers: {'Content-Type': 'application/json'}})); }
+      var _origFetch = window.fetch.bind(window);
+      window.fetch = function (input, opts) {
+        var url = typeof input === 'string' ? input : input.url;
+        if (!url.includes('/api/')) return _origFetch(input, opts);
+        var path = url.replace(/^https?:\/\/[^/]+/, '').replace(/\?.*/, '');
+        var method = ((opts && opts.method) || 'GET').toUpperCase();
+        var body = {}; try { if (opts && opts.body) body = JSON.parse(opts.body); } catch (e) {}
+        if (path === '/api/auth/login' && method === 'POST') {
+          var c = _auth[body.email]; if (!c || c.password !== body.password) return _ok({error: 'Invalid credentials'}, 401);
+          var user = {email: body.email, role: c.role, name: c.name, avatar: c.avatar};
+          return _ok({token: 'demo.' + btoa(JSON.stringify(user)) + '.x', user: user});
+        }
+        if (path === '/api/auth/me') {
+          try { var tok = ((opts && opts.headers && (opts.headers.Authorization || opts.headers.authorization)) || '').split('.')[1]; return _ok({user: JSON.parse(atob(tok))}); }
+          catch (e) { return _ok({error: 'Unauthorized'}, 401); }
+        }
+        if (path === '/api/auth/logout') return _ok({message: 'ok'});
+        if (path === '/api/metrics') return _ok(_metrics);
+        if (path.startsWith('/api/users')) {
+          var idM = path.match(/\/api\/users\/(.+)/);
+          if (idM) {
+            var uid = idM[1];
+            if (method === 'GET') { var fu = _users.find(function(x){return x.id === uid;}); return _ok(fu || {}, fu ? 200 : 404); }
+            if (method === 'DELETE') { _users = _users.filter(function(x){return x.id !== uid;}); return _ok({message: 'deleted'}); }
+            if (method === 'PUT' || method === 'PATCH') { var xi = _users.findIndex(function(x){return x.id === uid;}); if (xi >= 0) _users[xi] = Object.assign({}, _users[xi], body); return _ok(_users[xi] || {}); }
+          }
+          if (method === 'POST') { var nu = Object.assign({id: String(_nextId++), avatar: (body.name || '?').slice(0,2).toUpperCase(), status: 'active', lastLogin: new Date().toISOString()}, body); _users.push(nu); return _ok(nu, 201); }
+          var uo = new URL(url, 'https://x.x'); var q = uo.searchParams.get('search') || '', rl = uo.searchParams.get('role') || '';
+          var pg = parseInt(uo.searchParams.get('page') || '1'); var lim = parseInt(uo.searchParams.get('limit') || '10');
+          var fil = _users.filter(function(x){return (!q || x.name.toLowerCase().includes(q.toLowerCase()) || x.email.toLowerCase().includes(q.toLowerCase())) && (!rl || x.role === rl);});
+          var pages = Math.ceil(fil.length / lim) || 1;
+          return _ok({users: fil.slice((pg-1)*lim, pg*lim), pagination: {page: pg, pages: pages, total: fil.length, limit: lim}});
+        }
+        if (path.startsWith('/api/reports')) {
+          var rm = path.match(/\/api\/reports\/([^/]+)/);
+          if (rm) {
+            var rid = rm[1];
+            if (rid === 'generate' && method === 'POST') { var nr = {id: 'r'+Date.now(), name: body.name || 'Report', type: body.type || 'traffic', status: 'ready', rows: Math.floor(Math.random()*5000+500), createdAt: new Date().toISOString()}; _reports.unshift(nr); return _ok(nr, 201); }
+            if (path.endsWith('/download')) return Promise.resolve(new Response('Date,Value\n2026-06-17,100\n', {status: 200, headers: {'Content-Type': 'text/csv'}}));
+            if (method === 'DELETE') { var ri = _reports.findIndex(function(x){return x.id === rid;}); var del = ri >= 0 ? _reports.splice(ri, 1)[0] : null; return _ok({message: 'deleted', report: del}); }
+          }
+          return _ok({reports: _reports, total: _reports.length});
+        }
+        return _ok({error: 'not found'}, 404);
+      };
+      document.addEventListener('DOMContentLoaded', function() { var cv = document.querySelector('[data-testid="nav-cv"]'); if (cv) cv.href = 'https://mayageva11.github.io/nexusqa'; });
+    })();
+    // Defer auth check one tick so WebKit has time to apply Playwright storageState
+    setTimeout(function initDashboard() {
+    const token = localStorage.getItem('luminary_token');
+    if (!token) { window.location.replace(window._demo ? 'login.html' : '/login'); return; }
+
+    const user = JSON.parse(localStorage.getItem('luminary_user') || '{}');
+    document.getElementById('userAvatar').textContent = user.avatar || 'AU';
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await fetch('/api/auth/logout', { method: 'POST', headers: { Authorization: `Bearer ${token}` } });
+      localStorage.removeItem('luminary_token');
+      localStorage.removeItem('luminary_user');
+      localStorage.removeItem('luminary_remember');
+      window.location.replace(window._demo ? 'login.html' : '/login');
+    });
+
+    const trendArrow = (trend, change) =>
+      `<span>${trend === 'up' ? '▲' : '▼'} ${Math.abs(change)}% vs last period</span>`;
+
+    async function loadMetrics() {
+      const res = await fetch('/api/metrics', { headers: { Authorization: `Bearer ${token}` } });
+      if (res.status === 401 || res.status === 403) { localStorage.removeItem('luminary_token'); localStorage.removeItem('luminary_user'); window.location.replace(window._demo ? 'login.html' : '/login'); return; }
+      const data = await res.json();
+
+      data.cards.forEach(card => {
+        const valEl = document.querySelector(`[data-testid="metric-value-${card.id}"]`);
+        const changeEl = document.querySelector(`[data-testid="metric-change-${card.id}"]`);
+        if (valEl) valEl.textContent = card.value;
+        if (changeEl) {
+          changeEl.innerHTML = trendArrow(card.trend, card.change);
+          changeEl.className = `metric-change ${card.trend}`;
+        }
+      });
+      document.getElementById('metricsGrid').style.display = '';
+
+      const labels = data.series.map(d => d.date.slice(5));
+      const sessions = data.series.map(d => d.sessions);
+
+      new Chart(document.getElementById('activityChart'), {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Sessions',
+            data: sessions,
+            borderColor: '#00ffd1',
+            backgroundColor: 'rgba(0,255,209,0.08)',
+            borderWidth: 2,
+            tension: 0.4,
+            fill: true,
+            pointRadius: 0,
+          }],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { color: '#1a2540' }, ticks: { color: '#5a6480', maxTicksLimit: 6 } },
+            y: { grid: { color: '#1a2540' }, ticks: { color: '#5a6480' } },
+          },
+        },
+      });
+
+      new Chart(document.getElementById('trafficChart'), {
+        type: 'doughnut',
+        data: {
+          labels: data.trafficSources.map(s => s.label),
+          datasets: [{
+            data: data.trafficSources.map(s => s.value),
+            backgroundColor: ['#00ffd1', '#bf5af2', '#ff2d55', '#3a7bd5', '#f5a623'],
+            borderWidth: 0,
+          }],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: 'bottom', labels: { color: '#5a6480', padding: 12, boxWidth: 12 } } },
+        },
+      });
+
+      const activities = [
+        { text: 'New user registered: alice.johnson@example.com', time: '2m ago' },
+        { text: 'Report "Traffic Overview" generated successfully', time: '14m ago' },
+        { text: 'User permissions updated for editor@luminary.io', time: '1h ago' },
+        { text: 'Monthly revenue target reached: $142,000', time: '3h ago' },
+        { text: 'Bulk user import completed — 48 users added', time: '5h ago' },
+      ];
+
+      const list = document.getElementById('activityList');
+      list.innerHTML = activities.map(a => `
+        <div class="activity-item" data-testid="activity-item">
+          <div class="activity-dot"></div>
+          <div class="activity-text">${a.text}</div>
+          <div class="activity-time" data-testid="activity-timestamp">${a.time}</div>
+        </div>
+      `).join('');
+    }
+
+    loadMetrics();
+    }, 0);
+  </script>
+</body>
+</html>
