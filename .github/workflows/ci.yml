@@ -309,13 +309,19 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
-      - name: Deploy portfolio to gh-pages branch
+      - name: Prepare deploy directory (portfolio + live app demo)
+        run: |
+          mkdir -p deploy
+          cp -r portfolio/. deploy/
+          mkdir -p deploy/app
+          cp app/*.html deploy/app/
+      - name: Deploy portfolio and app demo to gh-pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./portfolio
+          publish_dir: ./deploy
           publish_branch: gh-pages
           keep_files: true
           user_name: 'Maya Erusalimsky'
           user_email: 'mayageva11@gmail.com'
-          commit_message: 'deploy: update portfolio [skip ci]'
+          commit_message: 'deploy: update portfolio and app demo [skip ci]'

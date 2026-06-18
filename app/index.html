@@ -12,10 +12,11 @@
   <p>Redirecting...</p>
   <script>
     const token = localStorage.getItem('luminary_token');
+    const _demo = !['localhost', '127.0.0.1', ''].includes(location.hostname);
     if (token) {
-      window.location.replace('/dashboard');
+      window.location.replace(_demo ? 'dashboard.html' : '/dashboard');
     } else {
-      window.location.replace('/login');
+      window.location.replace(_demo ? 'login.html' : '/login');
     }
   </script>
 </body>

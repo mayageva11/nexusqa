@@ -45,10 +45,10 @@
   <nav class="sidebar" data-testid="sidebar">
     <div class="sidebar-logo">Luminary</div>
     <div class="sidebar-nav">
-      <a href="/dashboard" class="nav-item" data-testid="nav-dashboard"><span>⬡</span> Dashboard</a>
-      <a href="/analytics" class="nav-item active" data-testid="nav-analytics"><span>◈</span> Analytics</a>
-      <a href="/users" class="nav-item" data-testid="nav-users"><span>◉</span> Users</a>
-      <a href="/reports" class="nav-item" data-testid="nav-reports"><span>◫</span> Reports</a>
+      <a href="dashboard.html" class="nav-item" data-testid="nav-dashboard"><span>⬡</span> Dashboard</a>
+      <a href="analytics.html" class="nav-item active" data-testid="nav-analytics"><span>◈</span> Analytics</a>
+      <a href="users.html" class="nav-item" data-testid="nav-users"><span>◉</span> Users</a>
+      <a href="reports.html" class="nav-item" data-testid="nav-reports"><span>◫</span> Reports</a>
       <a href="#" class="nav-item" data-testid="nav-settings"><span>◎</span> Settings</a>
     </div>
     <a href="/cv" class="nav-item" data-testid="nav-cv" style="margin:0;border-top:1px solid var(--border);border-radius:0;color:var(--cyan);font-size:0.75rem;letter-spacing:0.05em;" target="_blank"><span>◈</span> My Portfolio ↗</a>
@@ -94,13 +94,35 @@
   </div>
 
   <script>
+    /* Demo mode — active only on GitHub Pages; provides mock API responses without a server */
+    (function () {
+      if (['localhost', '127.0.0.1', ''].includes(location.hostname)) return;
+      window._demo = true;
+      var _s = []; for (var _i = 0; _i < 30; _i++) { var _d = new Date('2026-05-19'); _d.setDate(_d.getDate() + _i); _s.push({date: _d.toISOString().slice(0,10), sessions: Math.floor(220 + Math.sin(_i) * 80 + Math.random() * 60)}); }
+      var _metrics = {
+        cards: [{id:'revenue',value:'$142,382',trend:'up',change:12.3},{id:'active-users',value:'8,249',trend:'up',change:5.7},{id:'conversion-rate',value:'3.24%',trend:'down',change:0.8},{id:'avg-session',value:'4m 32s',trend:'up',change:11.2}],
+        series: _s,
+        trafficSources: [{label:'Organic',value:45},{label:'Direct',value:28},{label:'Referral',value:15},{label:'Social',value:8},{label:'Email',value:4}],
+        topPages: [{path:'/dashboard',sessions:3842,bounceRate:24.3,avgTime:'3m 45s'},{path:'/analytics',sessions:2156,bounceRate:31.8,avgTime:'4m 12s'},{path:'/users',sessions:1893,bounceRate:18.5,avgTime:'5m 28s'},{path:'/reports',sessions:1247,bounceRate:22.1,avgTime:'3m 55s'},{path:'/login',sessions:8249,bounceRate:12.4,avgTime:'1m 23s'}],
+      };
+      function _ok(data, status) { return Promise.resolve(new Response(JSON.stringify(data), {status: status || 200, headers: {'Content-Type': 'application/json'}})); }
+      var _origFetch = window.fetch.bind(window);
+      window.fetch = function (input, opts) {
+        var url = typeof input === 'string' ? input : input.url;
+        if (!url.includes('/api/')) return _origFetch(input, opts);
+        var path = url.replace(/^https?:\/\/[^/]+/, '').replace(/\?.*/, '');
+        if (path === '/api/metrics') return _ok(_metrics);
+        return _ok({message: 'ok'});
+      };
+      document.addEventListener('DOMContentLoaded', function() { var cv = document.querySelector('[data-testid="nav-cv"]'); if (cv) cv.href = 'https://mayageva11.github.io/nexusqa'; });
+    })();
     const token = localStorage.getItem('luminary_token');
-    if (!token) { window.location.replace('/login'); }
+    if (!token) { window.location.replace(window._demo ? 'login.html' : '/login'); }
 
     document.getElementById('logoutBtn').addEventListener('click', async () => {
       await fetch('/api/auth/logout', { method: 'POST', headers: { Authorization: `Bearer ${token}` } });
       localStorage.clear();
-      window.location.replace('/login');
+      window.location.replace(window._demo ? 'login.html' : '/login');
     });
 
     let sessionsChart, sourcesChart;
@@ -115,7 +137,7 @@
 
     async function loadMetrics(days = 7) {
       const res = await fetch('/api/metrics', { headers: { Authorization: `Bearer ${token}` } });
-      if (!res.ok) { localStorage.removeItem('luminary_token'); localStorage.removeItem('luminary_user'); window.location.replace('/login'); return; }
+      if (!res.ok) { localStorage.removeItem('luminary_token'); localStorage.removeItem('luminary_user'); window.location.replace(window._demo ? 'login.html' : '/login'); return; }
       const data = await res.json();
       const slice = data.series.slice(-days);
 

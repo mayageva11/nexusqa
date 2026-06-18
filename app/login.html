@@ -99,6 +99,31 @@
   </div>
 
   <script>
+    /* Demo mode — active only on GitHub Pages; provides mock API responses without a server */
+    (function () {
+      if (['localhost', '127.0.0.1', ''].includes(location.hostname)) return;
+      window._demo = true;
+      var _auth = {
+        'admin@luminary.io': {password:'Test1234!',role:'admin',name:'Aria Chen',avatar:'AC'},
+        'editor@luminary.io': {password:'Test1234!',role:'editor',name:'Marcus Webb',avatar:'MW'},
+        'viewer@luminary.io': {password:'Test1234!',role:'viewer',name:'Sofia Patel',avatar:'SP'},
+      };
+      function _ok(data, status) { return Promise.resolve(new Response(JSON.stringify(data), {status: status || 200, headers: {'Content-Type': 'application/json'}})); }
+      var _origFetch = window.fetch.bind(window);
+      window.fetch = function (input, opts) {
+        var url = typeof input === 'string' ? input : input.url;
+        if (!url.includes('/api/')) return _origFetch(input, opts);
+        var path = url.replace(/^https?:\/\/[^/]+/, '').replace(/\?.*/, '');
+        var method = ((opts && opts.method) || 'GET').toUpperCase();
+        var body = {}; try { if (opts && opts.body) body = JSON.parse(opts.body); } catch (e) {}
+        if (path === '/api/auth/login' && method === 'POST') {
+          var c = _auth[body.email]; if (!c || c.password !== body.password) return _ok({error: 'Invalid credentials'}, 401);
+          var user = {email: body.email, role: c.role, name: c.name, avatar: c.avatar};
+          return _ok({token: 'demo.' + btoa(JSON.stringify(user)) + '.x', user: user});
+        }
+        return _ok({message: 'ok'});
+      };
+    })();
     const form = document.getElementById('loginForm');
     const emailInput = document.getElementById('emailInput');
     const passwordInput = document.getElementById('passwordInput');
@@ -106,7 +131,7 @@
     const rememberMe = document.getElementById('rememberMe');
 
     if (localStorage.getItem('luminary_token')) {
-      window.location.replace('/dashboard');
+      window.location.replace(window._demo ? 'dashboard.html' : '/dashboard');
     }
 
     function showError(msg) {
@@ -145,7 +170,7 @@
         if (rememberMe.checked) {
           localStorage.setItem('luminary_remember', 'true');
         }
-        window.location.replace('/dashboard');
+        window.location.replace(window._demo ? 'dashboard.html' : '/dashboard');
       } catch {
         showError('Network error — please try again');
       } finally {

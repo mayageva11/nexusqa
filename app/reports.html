@@ -64,10 +64,10 @@
   <nav class="sidebar" data-testid="sidebar">
     <div class="sidebar-logo">Luminary</div>
     <div class="sidebar-nav">
-      <a href="/dashboard" class="nav-item" data-testid="nav-dashboard"><span>⬡</span> Dashboard</a>
-      <a href="/analytics" class="nav-item" data-testid="nav-analytics"><span>◈</span> Analytics</a>
-      <a href="/users" class="nav-item" data-testid="nav-users"><span>◉</span> Users</a>
-      <a href="/reports" class="nav-item active" data-testid="nav-reports"><span>◫</span> Reports</a>
+      <a href="dashboard.html" class="nav-item" data-testid="nav-dashboard"><span>⬡</span> Dashboard</a>
+      <a href="analytics.html" class="nav-item" data-testid="nav-analytics"><span>◈</span> Analytics</a>
+      <a href="users.html" class="nav-item" data-testid="nav-users"><span>◉</span> Users</a>
+      <a href="reports.html" class="nav-item active" data-testid="nav-reports"><span>◫</span> Reports</a>
       <a href="#" class="nav-item" data-testid="nav-settings"><span>◎</span> Settings</a>
     </div>
     <a href="/cv" class="nav-item" data-testid="nav-cv" style="margin:0;border-top:1px solid var(--border);border-radius:0;color:var(--cyan);font-size:0.75rem;letter-spacing:0.05em;" target="_blank"><span>◈</span> My Portfolio ↗</a>
@@ -169,8 +169,41 @@
   </div>
 
   <script>
+    /* Demo mode — active only on GitHub Pages; provides mock API responses without a server */
+    (function () {
+      if (['localhost', '127.0.0.1', ''].includes(location.hostname)) return;
+      window._demo = true;
+      var _reports = [
+        {id:'r1',name:'Q2 Traffic Analysis',type:'traffic',status:'ready',rows:4823,createdAt:'2026-06-10T10:00:00Z'},
+        {id:'r2',name:'Monthly Revenue Report',type:'revenue',status:'ready',rows:1247,createdAt:'2026-06-01T09:00:00Z'},
+        {id:'r3',name:'User Acquisition May',type:'acquisition',status:'ready',rows:2938,createdAt:'2026-05-31T14:00:00Z'},
+        {id:'r4',name:'Conversion Funnel Q2',type:'conversion',status:'ready',rows:857,createdAt:'2026-06-08T11:30:00Z'},
+      ];
+      function _ok(data, status) { return Promise.resolve(new Response(JSON.stringify(data), {status: status || 200, headers: {'Content-Type': 'application/json'}})); }
+      var _origFetch = window.fetch.bind(window);
+      window.fetch = function (input, opts) {
+        var url = typeof input === 'string' ? input : input.url;
+        if (!url.includes('/api/')) return _origFetch(input, opts);
+        var path = url.replace(/^https?:\/\/[^/]+/, '').replace(/\?.*/, '');
+        var method = ((opts && opts.method) || 'GET').toUpperCase();
+        var body = {}; try { if (opts && opts.body) body = JSON.parse(opts.body); } catch (e) {}
+        if (path === '/api/auth/logout') return _ok({message: 'ok'});
+        if (path.startsWith('/api/reports')) {
+          var rm = path.match(/\/api\/reports\/([^/]+)/);
+          if (rm) {
+            var rid = rm[1];
+            if (rid === 'generate' && method === 'POST') { var nr = {id: 'r'+Date.now(), name: body.name || 'Report', type: body.type || 'traffic', status: 'ready', rows: Math.floor(Math.random()*5000+500), createdAt: new Date().toISOString()}; _reports.unshift(nr); return _ok(nr, 201); }
+            if (path.endsWith('/download')) return Promise.resolve(new Response('Date,Value\n2026-06-17,100\n', {status: 200, headers: {'Content-Type': 'text/csv'}}));
+            if (method === 'DELETE') { var ri = _reports.findIndex(function(x){return x.id === rid;}); var del = ri >= 0 ? _reports.splice(ri, 1)[0] : null; return _ok({message: 'deleted', report: del}); }
+          }
+          return _ok({reports: _reports, total: _reports.length});
+        }
+        return _ok({error: 'not found'}, 404);
+      };
+      document.addEventListener('DOMContentLoaded', function() { var cv = document.querySelector('[data-testid="nav-cv"]'); if (cv) cv.href = 'https://mayageva11.github.io/nexusqa'; });
+    })();
     const token = localStorage.getItem('luminary_token');
-    if (!token) { window.location.replace('/login'); }
+    if (!token) { window.location.replace(window._demo ? 'login.html' : '/login'); }
 
     let wizardStep = 1;
     let deletedReport = null;
@@ -179,12 +212,12 @@
     document.getElementById('logoutBtn').addEventListener('click', async () => {
       await fetch('/api/auth/logout', { method: 'POST', headers: { Authorization: `Bearer ${token}` } });
       localStorage.clear();
-      window.location.replace('/login');
+      window.location.replace(window._demo ? 'login.html' : '/login');
     });
 
     async function loadReports() {
       const res = await fetch('/api/reports', { headers: { Authorization: `Bearer ${token}` } });
-      if (!res.ok) { localStorage.removeItem('luminary_token'); localStorage.removeItem('luminary_user'); window.location.replace('/login'); return; }
+      if (!res.ok) { localStorage.removeItem('luminary_token'); localStorage.removeItem('luminary_user'); window.location.replace(window._demo ? 'login.html' : '/login'); return; }
       const data = await res.json();
       renderReports(data.reports);
     }

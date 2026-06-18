@@ -28,7 +28,7 @@ The point of the project is to show what a professional QA automation setup look
 
 | | What it is | Link |
 |---|---|---|
-| 🖥️ **Live App** | Luminary Analytics — the SaaS app being tested | **https://luminary-analytics.onrender.com** |
+| 🖥️ **Live App** | Luminary Analytics — the SaaS app being tested | **https://mayageva11.github.io/nexusqa/app/login.html** |
 | 📊 **Test Report** | Allure report — every test, pass/fail, with traces | **https://mayageva11.github.io/nexusqa/reports** |
 | 👩‍💻 **Portfolio / CV** | My background and how this project was built | **https://mayageva11.github.io/nexusqa** |
 
@@ -36,7 +36,7 @@ The point of the project is to show what a professional QA automation setup look
 
 ## The Live App — Luminary Analytics
 
-**https://luminary-analytics.onrender.com**
+**https://mayageva11.github.io/nexusqa/app/login.html**
 
 This is the application the tests run against. It is a multi-page SaaS analytics dashboard with:
 
@@ -54,7 +54,7 @@ This is the application the tests run against. It is a multi-page SaaS analytics
 | `editor@luminary.io` | `Test1234!` | View and edit data, cannot manage users |
 | `viewer@luminary.io` | `Test1234!` | Read-only, no edit or admin controls |
 
-> The app runs on Render's free tier — the first load may take up to 30 seconds if it has been idle.
+> The app runs directly in your browser from GitHub Pages — no server, always instant. All data is realistic mock data that resets on page refresh.
 
 ---
 
