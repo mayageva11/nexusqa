@@ -257,6 +257,16 @@
       };
       document.addEventListener('DOMContentLoaded', function() { var cv = document.querySelector('[data-testid="nav-cv"]'); if (cv) cv.href = 'https://mayageva11.github.io/nexusqa'; });
     })();
+    // Logout handler attached synchronously so tests can click it immediately after navigation
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      const tok = localStorage.getItem('luminary_token');
+      if (tok) await fetch('/api/auth/logout', { method: 'POST', headers: { Authorization: `Bearer ${tok}` } });
+      localStorage.removeItem('luminary_token');
+      localStorage.removeItem('luminary_user');
+      localStorage.removeItem('luminary_remember');
+      window.location.replace(window._demo ? 'login.html' : '/login');
+    });
+
     // Defer auth check one tick so WebKit has time to apply Playwright storageState
     setTimeout(function initDashboard() {
     const token = localStorage.getItem('luminary_token');
@@ -264,14 +274,6 @@
 
     const user = JSON.parse(localStorage.getItem('luminary_user') || '{}');
     document.getElementById('userAvatar').textContent = user.avatar || 'AU';
-
-    document.getElementById('logoutBtn').addEventListener('click', async () => {
-      await fetch('/api/auth/logout', { method: 'POST', headers: { Authorization: `Bearer ${token}` } });
-      localStorage.removeItem('luminary_token');
-      localStorage.removeItem('luminary_user');
-      localStorage.removeItem('luminary_remember');
-      window.location.replace(window._demo ? 'login.html' : '/login');
-    });
 
     const trendArrow = (trend, change) =>
       `<span>${trend === 'up' ? '▲' : '▼'} ${Math.abs(change)}% vs last period</span>`;
