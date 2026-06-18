@@ -20,7 +20,8 @@ test.describe('User Role Permissions', () => {
   test('all roles should be able to view the dashboard', async ({ viewerPage, editorPage }) => {
     for (const page of [viewerPage, editorPage]) {
       await page.goto('/dashboard');
-      await expect(page.getByTestId('metrics-grid')).toBeVisible();
+      await page.waitForURL(/dashboard/, { timeout: 10000 });
+      await expect(page.getByTestId('metrics-grid')).toBeVisible({ timeout: 15000 });
     }
   });
 });

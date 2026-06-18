@@ -172,8 +172,10 @@
   </div>
 
   <script>
+    // Defer auth check one tick so WebKit has time to apply Playwright storageState
+    setTimeout(function initDashboard() {
     const token = localStorage.getItem('luminary_token');
-    if (!token) { window.location.replace('/login'); }
+    if (!token) { window.location.replace('/login'); return; }
 
     const user = JSON.parse(localStorage.getItem('luminary_user') || '{}');
     document.getElementById('userAvatar').textContent = user.avatar || 'AU';
@@ -270,6 +272,7 @@
     }
 
     loadMetrics();
+    }, 0);
   </script>
 </body>
 </html>
