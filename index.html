@@ -1,853 +1,3680 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Maya Erusalimsky — QA Automation Engineer</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#050810;
-  --surface:#0D1220;
-  --border:#1A2540;
-  --cyan:#00FFD1;
-  --purple:#BF5AF2;
-  --pink:#FF2D55;
-  --text:#E8EAF0;
-  --muted:#5A6480;
-  --font-display:'Orbitron',monospace;
-  --font-body:'Inter',sans-serif;
-  --font-mono:'JetBrains Mono',monospace;
-}
-html{scroll-behavior:smooth}
-body{
-  background:var(--bg);
-  color:var(--text);
-  font-family:var(--font-body);
-  font-size:16px;
-  line-height:1.6;
-  overflow-x:hidden;
-  cursor:crosshair;
-}
-/* Scanline overlay */
-body::before{
-  content:'';
-  position:fixed;inset:0;
-  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,255,209,0.015) 2px,rgba(0,255,209,0.015) 4px);
-  pointer-events:none;z-index:9999;
-}
-/* Grid background */
-.grid-bg{
-  position:fixed;inset:0;
-  background-image:
-    linear-gradient(rgba(0,255,209,0.04) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(0,255,209,0.04) 1px,transparent 1px);
-  background-size:60px 60px;
-  transform:perspective(800px) rotateX(10deg) scale(1.1);
-  transform-origin:50% 0;
-  pointer-events:none;z-index:0;
-  animation:gridDrift 20s linear infinite;
-}
-@keyframes gridDrift{to{background-position:0 60px}}
-section,nav,footer{position:relative;z-index:1}
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Maya Erusalimsky — QA Automation Engineer</title>
 
-/* NAV */
-nav{
-  position:fixed;top:0;left:0;right:0;
-  padding:1rem 2rem;
-  display:flex;justify-content:space-between;align-items:center;
-  background:rgba(5,8,16,0.85);
-  backdrop-filter:blur(12px);
-  border-bottom:1px solid var(--border);
-  z-index:100;
-}
-.nav-logo{
-  font-family:var(--font-display);
-  font-size:0.85rem;
-  color:var(--cyan);
-  letter-spacing:0.15em;
-  text-shadow:0 0 20px rgba(0,255,209,0.5);
-}
-.nav-links{display:flex;gap:2rem}
-.nav-links a{
-  color:var(--muted);
-  text-decoration:none;
-  font-size:0.8rem;
-  letter-spacing:0.1em;
-  text-transform:uppercase;
-  transition:color 0.2s;
-}
-.nav-links a:hover{color:var(--cyan)}
+    <!-- SEO & Social Meta Tags -->
+    <meta
+      name="description"
+      content="Portfolio of Maya Erusalimsky, a QA Automation Engineer specializing in Playwright, TypeScript, Claude API, and CI/CD pipelines. Explore NexusQA."
+    />
+    <meta
+      name="keywords"
+      content="QA Automation, Playwright, TypeScript, Claude API, CI/CD, Software Testing, Software Engineer, Portfolio"
+    />
+    <meta
+      property="og:title"
+      content="Maya Erusalimsky — QA Automation Engineer"
+    />
+    <meta
+      property="og:description"
+      content="Portfolio of Maya Erusalimsky, a QA Automation Engineer specializing in Playwright, TypeScript, Claude API, and CI/CD pipelines."
+    />
+    <meta property="og:type" content="website" />
 
-/* HERO */
-.hero{
-  min-height:100vh;
-  display:flex;flex-direction:column;
-  justify-content:center;align-items:center;
-  text-align:center;
-  padding:6rem 2rem 4rem;
-}
-.hero-eyebrow{
-  font-family:var(--font-mono);
-  font-size:0.75rem;
-  color:var(--cyan);
-  letter-spacing:0.3em;
-  text-transform:uppercase;
-  margin-bottom:1.5rem;
-  opacity:0;animation:fadeUp 0.6s 0.2s ease forwards;
-}
-.hero-name{
-  font-family:var(--font-display);
-  font-size:clamp(2.5rem,8vw,6rem);
-  font-weight:900;
-  letter-spacing:0.05em;
-  line-height:1;
-  background:linear-gradient(135deg,var(--cyan) 0%,#00c8ff 50%,var(--purple) 100%);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  filter:drop-shadow(0 0 40px rgba(0,255,209,0.3));
-  margin-bottom:1rem;
-  opacity:0;animation:fadeUp 0.6s 0.4s ease forwards;
-}
-.hero-title{
-  font-size:1.1rem;
-  color:var(--muted);
-  letter-spacing:0.15em;
-  text-transform:uppercase;
-  margin-bottom:3rem;
-  opacity:0;animation:fadeUp 0.6s 0.6s ease forwards;
-}
-.cursor{
-  display:inline-block;
-  width:2px;height:1.1em;
-  background:var(--cyan);
-  margin-left:3px;
-  vertical-align:text-bottom;
-  animation:blink 1s step-end infinite;
-}
-@keyframes blink{50%{opacity:0}}
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
 
-/* Terminal */
-.terminal{
-  background:rgba(13,18,32,0.9);
-  border:1px solid var(--border);
-  border-radius:8px;
-  width:min(560px,90vw);
-  overflow:hidden;
-  margin-bottom:2.5rem;
-  opacity:0;animation:fadeUp 0.6s 0.8s ease forwards;
-  box-shadow:0 0 40px rgba(0,255,209,0.08),0 0 80px rgba(191,90,242,0.05);
-}
-.terminal-bar{
-  background:#0a1020;
-  padding:0.6rem 1rem;
-  display:flex;align-items:center;gap:8px;
-  border-bottom:1px solid var(--border);
-}
-.dot{width:10px;height:10px;border-radius:50%}
-.dot.r{background:#ff5f56}.dot.y{background:#ffbd2e}.dot.g{background:#27c93f}
-.terminal-title{
-  font-family:var(--font-mono);
-  font-size:0.7rem;
-  color:var(--muted);
-  margin-left:auto;margin-right:auto;
-}
-.terminal-body{
-  padding:1.2rem 1.5rem;
-  font-family:var(--font-mono);
-  font-size:0.78rem;
-  line-height:1.9;
-  min-height:140px;
-  position:relative;
-}
-.terminal-body::before{
-  content:'';
-  position:absolute;inset:0;
-  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,255,209,0.012) 3px,rgba(0,255,209,0.012) 6px);
-  pointer-events:none;
-  animation:flicker 8s step-end infinite;
-}
-@keyframes flicker{0%,95%,100%{opacity:1}96%{opacity:0.96}97%{opacity:1}98%{opacity:0.98}}
-.t-pass{color:#27c93f}
-.t-fail{color:var(--pink)}
-.t-info{color:var(--cyan)}
-.t-dim{color:var(--muted)}
-.t-line{display:block;white-space:pre}
-
-/* CTAs */
-.hero-ctas{
-  display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;
-  opacity:0;animation:fadeUp 0.6s 1s ease forwards;
-}
-.btn{
-  font-family:var(--font-mono);
-  font-size:0.8rem;
-  letter-spacing:0.1em;
-  text-transform:uppercase;
-  padding:0.8rem 2rem;
-  border-radius:4px;
-  text-decoration:none;
-  border:1px solid;
-  transition:all 0.2s;
-  cursor:crosshair;
-}
-.btn-primary{
-  background:transparent;
-  border-color:var(--cyan);
-  color:var(--cyan);
-  box-shadow:0 0 20px rgba(0,255,209,0.15),inset 0 0 20px rgba(0,255,209,0.05);
-}
-.btn-primary:hover{
-  background:rgba(0,255,209,0.1);
-  box-shadow:0 0 30px rgba(0,255,209,0.3),inset 0 0 20px rgba(0,255,209,0.1);
-}
-.btn-secondary{
-  background:transparent;
-  border-color:var(--purple);
-  color:var(--purple);
-  box-shadow:0 0 20px rgba(191,90,242,0.15);
-}
-.btn-secondary:hover{
-  background:rgba(191,90,242,0.1);
-  box-shadow:0 0 30px rgba(191,90,242,0.3);
-}
-
-/* STATS BAR */
-.stats-bar{
-  border-top:1px solid var(--border);
-  border-bottom:1px solid var(--border);
-  background:rgba(13,18,32,0.6);
-  padding:2rem;
-  display:flex;justify-content:center;
-  gap:clamp(2rem,6vw,6rem);
-  flex-wrap:wrap;
-}
-.stat{text-align:center}
-.stat-num{
-  font-family:var(--font-display);
-  font-size:clamp(2rem,5vw,3rem);
-  font-weight:700;
-  color:var(--cyan);
-  display:block;
-  text-shadow:0 0 30px rgba(0,255,209,0.4);
-}
-.stat-label{
-  font-size:0.7rem;
-  color:var(--muted);
-  letter-spacing:0.15em;
-  text-transform:uppercase;
-}
-
-/* SECTIONS */
-.section{padding:5rem 2rem}
-.section-inner{max-width:1000px;margin:0 auto}
-.section-eyebrow{
-  font-family:var(--font-mono);
-  font-size:0.7rem;
-  color:var(--cyan);
-  letter-spacing:0.3em;
-  text-transform:uppercase;
-  margin-bottom:0.75rem;
-}
-.section-title{
-  font-family:var(--font-display);
-  font-size:clamp(1.5rem,4vw,2.2rem);
-  font-weight:700;
-  margin-bottom:1rem;
-  letter-spacing:0.05em;
-}
-.section-desc{color:var(--muted);max-width:600px;line-height:1.7;margin-bottom:3rem}
-
-/* PROJECT CARD */
-.project-card{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:8px;
-  padding:2.5rem;
-  transition:border-color 0.3s,box-shadow 0.3s;
-}
-.project-card:hover{
-  border-color:var(--purple);
-  box-shadow:0 0 40px rgba(191,90,242,0.1);
-}
-.project-header{
-  display:flex;justify-content:space-between;align-items:flex-start;
-  flex-wrap:wrap;gap:1rem;
-  margin-bottom:2rem;
-}
-.project-name{
-  font-family:var(--font-display);
-  font-size:1.4rem;
-  color:var(--cyan);
-  letter-spacing:0.08em;
-  text-shadow:0 0 20px rgba(0,255,209,0.3);
-}
-.project-sub{color:var(--muted);font-size:0.85rem;margin-top:0.3rem}
-.project-links{display:flex;gap:0.75rem;flex-wrap:wrap}
-.link-pill{
-  font-family:var(--font-mono);
-  font-size:0.72rem;
-  padding:0.4rem 1rem;
-  border-radius:2px;
-  border:1px solid var(--border);
-  color:var(--muted);
-  text-decoration:none;
-  letter-spacing:0.08em;
-  transition:all 0.2s;
-}
-.link-pill:hover{border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 15px rgba(0,255,209,0.2)}
-
-/* Architecture diagram */
-.arch{
-  display:flex;align-items:center;justify-content:center;
-  flex-wrap:wrap;gap:0;
-  margin:2rem 0;
-  font-family:var(--font-mono);
-  font-size:0.75rem;
-}
-.arch-node{
-  background:rgba(0,255,209,0.05);
-  border:1px solid var(--cyan);
-  border-radius:4px;
-  padding:0.5rem 1rem;
-  color:var(--cyan);
-  text-align:center;
-  white-space:nowrap;
-}
-.arch-node.purple{
-  border-color:var(--purple);
-  color:var(--purple);
-  background:rgba(191,90,242,0.05);
-}
-.arch-node.pink{
-  border-color:var(--pink);
-  color:var(--pink);
-  background:rgba(255,45,85,0.05);
-}
-.arch-arrow{
-  color:var(--muted);
-  padding:0 0.5rem;
-  font-size:1rem;
-}
-
-/* Tech badges */
-.badges{display:flex;flex-wrap:wrap;gap:0.5rem;margin:1.5rem 0}
-.badge{
-  font-family:var(--font-mono);
-  font-size:0.7rem;
-  padding:0.3rem 0.75rem;
-  border-radius:2px;
-  border:1px solid var(--border);
-  color:var(--muted);
-  letter-spacing:0.05em;
-}
-.badge.cyan{border-color:rgba(0,255,209,0.4);color:var(--cyan)}
-.badge.purple{border-color:rgba(191,90,242,0.4);color:var(--purple)}
-
-/* Features grid */
-.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem;margin-top:2rem}
-.feature{
-  background:rgba(0,255,209,0.03);
-  border:1px solid var(--border);
-  border-radius:6px;
-  padding:1.5rem;
-  transition:border-color 0.2s;
-}
-.feature:hover{border-color:rgba(0,255,209,0.3)}
-.feature-icon{font-size:1.3rem;margin-bottom:0.75rem}
-.feature-title{font-weight:500;margin-bottom:0.5rem;font-size:0.9rem}
-.feature-text{color:var(--muted);font-size:0.82rem;line-height:1.6}
-
-/* Claude section */
-.claude-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem}
-.claude-card{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:8px;
-  padding:1.75rem;
-  transition:border-color 0.3s,box-shadow 0.3s;
-}
-.claude-card:hover{
-  border-color:var(--purple);
-  box-shadow:0 0 30px rgba(191,90,242,0.08);
-}
-.claude-card-title{
-  font-family:var(--font-display);
-  font-size:0.85rem;
-  color:var(--purple);
-  letter-spacing:0.08em;
-  margin-bottom:0.75rem;
-}
-.claude-card-desc{color:var(--muted);font-size:0.82rem;line-height:1.6;margin-bottom:1rem}
-.code-snippet{
-  background:#070b14;
-  border:1px solid var(--border);
-  border-radius:4px;
-  padding:0.75rem 1rem;
-  font-family:var(--font-mono);
-  font-size:0.7rem;
-  line-height:1.6;
-  overflow-x:auto;
-}
-.code-snippet .kw{color:var(--purple)}
-.code-snippet .fn{color:#61afef}
-.code-snippet .str{color:#98c379}
-.code-snippet .cm{color:var(--muted)}
-
-/* Pipeline */
-.pipeline{
-  display:flex;align-items:center;
-  flex-wrap:wrap;gap:0;
-  margin:2rem 0;
-  font-family:var(--font-mono);
-}
-.pipe-node{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:4px;
-  padding:0.6rem 1.2rem;
-  font-size:0.75rem;
-  text-align:center;
-  position:relative;
-  animation:pipePulse 3s ease-in-out infinite;
-}
-.pipe-node:nth-child(1){animation-delay:0s;border-color:rgba(0,255,209,0.4);color:var(--cyan)}
-.pipe-node:nth-child(3){animation-delay:0.4s;border-color:rgba(0,255,209,0.3);color:var(--cyan)}
-.pipe-node:nth-child(5){animation-delay:0.8s;border-color:rgba(191,90,242,0.4);color:var(--purple)}
-.pipe-node:nth-child(7){animation-delay:1.2s;border-color:rgba(191,90,242,0.3);color:var(--purple)}
-.pipe-node:nth-child(9){animation-delay:1.6s;border-color:rgba(0,255,209,0.4);color:var(--cyan)}
-.pipe-label{font-size:0.6rem;color:var(--muted);display:block;margin-top:2px}
-.pipe-arrow{color:var(--muted);padding:0 0.4rem;font-size:0.9rem}
-@keyframes pipePulse{0%,100%{box-shadow:none}50%{box-shadow:0 0 15px currentColor}}
-
-/* Skills */
-.skills-cloud{display:flex;flex-wrap:wrap;gap:0.6rem;margin-top:1.5rem}
-.skill-tag{
-  font-family:var(--font-mono);
-  font-size:0.72rem;
-  padding:0.4rem 0.9rem;
-  border-radius:2px;
-  border:1px solid var(--border);
-  color:var(--muted);
-  letter-spacing:0.05em;
-  transition:all 0.2s;
-}
-.skill-tag:hover{border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 10px rgba(0,255,209,0.2)}
-.skill-tag.primary{
-  font-size:0.85rem;
-  border-color:rgba(0,255,209,0.5);
-  color:var(--cyan);
-  box-shadow:0 0 15px rgba(0,255,209,0.1);
-}
-
-/* About */
-.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start}
-@media(max-width:640px){.about-grid{grid-template-columns:1fr}}
-.about-bio{color:var(--muted);line-height:1.8;font-size:0.9rem}
-.contact-links{display:flex;flex-direction:column;gap:1rem}
-.contact-link{
-  display:flex;align-items:center;gap:1rem;
-  text-decoration:none;
-  color:var(--muted);
-  font-family:var(--font-mono);
-  font-size:0.8rem;
-  padding:0.75rem 1rem;
-  border:1px solid var(--border);
-  border-radius:4px;
-  transition:all 0.2s;
-}
-.contact-link:hover{border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 20px rgba(0,255,209,0.1)}
-.contact-link-icon{font-size:1rem;width:1.5rem;text-align:center}
-
-/* Divider */
-.divider{
-  border:none;
-  border-top:1px solid var(--border);
-  margin:0;
-}
-
-/* Footer */
-footer{
-  padding:2rem;
-  text-align:center;
-  border-top:1px solid var(--border);
-  font-family:var(--font-mono);
-  font-size:0.7rem;
-  color:var(--muted);
-  letter-spacing:0.1em;
-}
-footer span{color:var(--cyan)}
-
-/* Animations */
-@keyframes fadeUp{
-  from{opacity:0;transform:translateY(20px)}
-  to{opacity:1;transform:translateY(0)}
-}
-.reveal{
-  opacity:0;transform:translateY(24px);
-  transition:opacity 0.6s ease,transform 0.6s ease;
-}
-.reveal.visible{opacity:1;transform:none}
-
-@media(max-width:600px){
-  .nav-links{display:none}
-  .arch{flex-direction:column}
-  .arch-arrow{transform:rotate(90deg)}
-  .pipeline{flex-direction:column;align-items:flex-start}
-  .pipe-arrow{transform:rotate(90deg)}
-}
-@media(prefers-reduced-motion:reduce){
-  *{animation-duration:0.01ms !important;transition-duration:0.01ms !important}
-}
-</style>
-</head>
-<body>
-<div class="grid-bg"></div>
-
-<nav>
-  <div class="nav-logo">MAYA.ERU</div>
-  <div class="nav-links">
-    <a href="#project">Project</a>
-    <a href="#claude">Claude Integration</a>
-    <a href="#cicd">CI/CD</a>
-    <a href="#about">About</a>
-  </div>
-</nav>
-
-<!-- HERO -->
-<section class="hero">
-  <p class="hero-eyebrow">// QA Automation Engineer · Portfolio 2026</p>
-  <h1 class="hero-name">MAYA ERUSALIMSKY</h1>
-  <p class="hero-title">Playwright · TypeScript · Claude API · CI/CD<span class="cursor"></span></p>
-
-  <div class="terminal">
-    <div class="terminal-bar">
-      <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
-      <span class="terminal-title">playwright test — nexusqa</span>
-    </div>
-    <div class="terminal-body" id="terminal-output"></div>
-  </div>
-
-  <div class="hero-ctas">
-    <a href="https://github.com/mayageva11/nexusqa" class="btn btn-primary" target="_blank">View on GitHub ↗</a>
-    <a href="#project" class="btn btn-secondary">Explore Project ↓</a>
-  </div>
-</section>
-
-<!-- STATS -->
-<div class="stats-bar">
-  <div class="stat"><span class="stat-num" data-target="87">0</span><span class="stat-label">Tests Written</span></div>
-  <div class="stat"><span class="stat-num" data-target="3">0</span><span class="stat-label">Browsers</span></div>
-  <div class="stat"><span class="stat-num" data-target="100" data-suffix="%">0</span><span class="stat-label">Pass Rate</span></div>
-  <div class="stat"><span class="stat-num" data-target="2" data-prefix="<" data-suffix="min">0</span><span class="stat-label">CI Runtime</span></div>
-</div>
-
-<hr class="divider"/>
-
-<!-- PROJECT -->
-<section class="section" id="project">
-  <div class="section-inner">
-    <p class="section-eyebrow reveal">// portfolio.main_project</p>
-    <h2 class="section-title reveal">NexusQA</h2>
-    <p class="section-desc reveal">A full-stack QA automation suite that uses Claude to build the SaaS app, generate test data, and analyze failures — all wired into a live CI/CD pipeline.</p>
-
-    <div class="project-card reveal">
-      <div class="project-header">
-        <div>
-          <div class="project-name">NEXUSQA</div>
-          <div class="project-sub">AI-Powered Test Automation Suite for Luminary Analytics SaaS</div>
-        </div>
-        <div class="project-links">
-          <a href="https://github.com/mayageva11/nexusqa" class="link-pill" target="_blank">GitHub ↗</a>
-          <a href="https://mayageva11.github.io/nexusqa/reports" class="link-pill" target="_blank">Test Reports ↗</a>
-          <a href="https://mayageva11.github.io/nexusqa" class="link-pill" target="_blank">Live App ↗</a>
-        </div>
-      </div>
-
-      <div class="arch">
-        <div class="arch-node purple">Claude API</div>
-        <div class="arch-arrow">→</div>
-        <div class="arch-node">Test Data &amp; Scenarios</div>
-        <div class="arch-arrow">→</div>
-        <div class="arch-node">Playwright Suite</div>
-        <div class="arch-arrow">→</div>
-        <div class="arch-node pink">Luminary SaaS App</div>
-        <div class="arch-arrow">→</div>
-        <div class="arch-node">Allure Reports</div>
-      </div>
-
-      <div class="badges">
-        <span class="badge cyan">Playwright</span>
-        <span class="badge cyan">TypeScript</span>
-        <span class="badge purple">Claude API</span>
-        <span class="badge">GitHub Actions</span>
-        <span class="badge">Node.js</span>
-        <span class="badge">Docker</span>
-        <span class="badge">Allure</span>
-        <span class="badge">Page Object Model</span>
-      </div>
-
-      <div class="features">
-        <div class="feature">
-          <div class="feature-icon">🧪</div>
-          <div class="feature-title">E2E + API Coverage</div>
-          <div class="feature-text">87 tests across auth, dashboard, user management, and reports. Full API layer coverage with request fixtures.</div>
-        </div>
-        <div class="feature">
-          <div class="feature-icon">🤖</div>
-          <div class="feature-title">AI-Generated Test Data</div>
-          <div class="feature-text">Claude generates realistic, edge-case-rich users, scenarios, and payloads — not just Lorem Ipsum.</div>
-        </div>
-        <div class="feature">
-          <div class="feature-icon">⚡</div>
-          <div class="feature-title">Parallel Execution</div>
-          <div class="feature-text">Matrix CI strategy runs Chromium, Firefox, and WebKit in parallel. Full suite in under 2 minutes.</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<hr class="divider"/>
-
-<!-- CLAUDE INTEGRATION -->
-<section class="section" id="claude">
-  <div class="section-inner">
-    <p class="section-eyebrow reveal">// claude_api.integration</p>
-    <h2 class="section-title reveal">How Claude Powers the Tests</h2>
-    <p class="section-desc reveal">The twist that makes this portfolio unique. Claude isn't just a tool I used to write the code — it's an active part of the test infrastructure at runtime.</p>
-
-    <div class="claude-cards">
-      <div class="claude-card reveal">
-        <div class="claude-card-title">INTELLIGENT TEST DATA</div>
-        <div class="claude-card-desc">Claude generates users with real edge cases: unicode names, long emails, special characters, multi-locale inputs. Better than any faker library.</div>
-        <div class="code-snippet">
-<span class="kw">const</span> users = <span class="kw">await</span> <span class="fn">generateTestUsers</span>(<span class="str">15</span>);
-<span class="cm">// returns users with edge cases:</span>
-<span class="cm">// { name: "Ñoño García-López", </span>
-<span class="cm">//   email: "user+tag@sub.domain.io" }</span>
-        </div>
-      </div>
-      <div class="claude-card reveal">
-        <div class="claude-card-title">FAILURE ANALYSIS</div>
-        <div class="claude-card-desc">When a test fails in CI, Claude reads the error and screenshot to classify it: real bug, flaky test, or environment issue. Saved in the Allure report.</div>
-        <div class="code-snippet">
-<span class="kw">const</span> analysis = <span class="kw">await</span> <span class="fn">analyzeFailure</span>(
-  testName, errorMsg
-);
-<span class="cm">// { rootCause: "race condition",</span>
-<span class="cm">//   severity: "flaky",</span>
-<span class="cm">//   isFlaky: true }</span>
-        </div>
-      </div>
-      <div class="claude-card reveal">
-        <div class="claude-card-title">SCENARIO GENERATION</div>
-        <div class="claude-card-desc">Feed Claude a user story in plain English. It returns a structured test scenario with steps, assertions, and edge cases ready to implement.</div>
-        <div class="code-snippet">
-<span class="kw">const</span> scenario = <span class="kw">await</span> <span class="fn">generateTestScenario</span>(
-  <span class="str">"user can filter by role"</span>
-);
-<span class="cm">// { steps: [...], assertions: [...],</span>
-<span class="cm">//   edgeCases: ["empty role", ...] }</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<hr class="divider"/>
-
-<!-- CI/CD -->
-<section class="section" id="cicd">
-  <div class="section-inner">
-    <p class="section-eyebrow reveal">// github_actions.pipeline</p>
-    <h2 class="section-title reveal">CI/CD Pipeline</h2>
-    <p class="section-desc reveal">Three GitHub Actions workflows. Every push triggers the full matrix. PRs get a smoke suite. Nightly runs deploy a fresh Allure report to GitHub Pages.</p>
-
-    <div class="pipeline reveal">
-      <div class="pipe-node">Push<span class="pipe-label">git push</span></div>
-      <div class="pipe-arrow">→</div>
-      <div class="pipe-node">Lint + TS<span class="pipe-label">typecheck</span></div>
-      <div class="pipe-arrow">→</div>
-      <div class="pipe-node">Start App<span class="pipe-label">health check</span></div>
-      <div class="pipe-arrow">→</div>
-      <div class="pipe-node">E2E Matrix<span class="pipe-label">3 browsers</span></div>
-      <div class="pipe-arrow">→</div>
-      <div class="pipe-node">Report ↗<span class="pipe-label">GitHub Pages</span></div>
-    </div>
-
-    <div class="features">
-      <div class="feature reveal">
-        <div class="feature-icon">🔀</div>
-        <div class="feature-title">Matrix Strategy</div>
-        <div class="feature-text">Chromium, Firefox, and WebKit run in parallel. Each uploads its own artifact. Failures are isolated per browser.</div>
-      </div>
-      <div class="feature reveal">
-        <div class="feature-icon">💬</div>
-        <div class="feature-title">PR Comments</div>
-        <div class="feature-text">Every PR gets an automated comment: ✅ passed | ❌ failed | ⏭️ skipped — with a direct link to the full report.</div>
-      </div>
-      <div class="feature reveal">
-        <div class="feature-icon">🌙</div>
-        <div class="feature-title">Nightly Regression</div>
-        <div class="feature-text">02:00 UTC, full suite on main. Deploys a fresh Allure report with trend graphs and history tracking.</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<hr class="divider"/>
-
-<!-- SKILLS -->
-<section class="section" id="skills">
-  <div class="section-inner">
-    <p class="section-eyebrow reveal">// engineer.skills</p>
-    <h2 class="section-title reveal">Technical Skills</h2>
-    <div class="skills-cloud reveal">
-      <span class="skill-tag primary">Playwright</span>
-      <span class="skill-tag primary">TypeScript</span>
-      <span class="skill-tag">API Testing</span>
-      <span class="skill-tag">E2E Testing</span>
-      <span class="skill-tag">Page Object Model</span>
-      <span class="skill-tag">GitHub Actions</span>
-      <span class="skill-tag">CI/CD</span>
-      <span class="skill-tag">Claude API</span>
-      <span class="skill-tag">Regression Testing</span>
-      <span class="skill-tag">Python</span>
-      <span class="skill-tag">JavaScript</span>
-      <span class="skill-tag">Git / GitHub</span>
-      <span class="skill-tag">Jira</span>
-      <span class="skill-tag">Agile / Scrum</span>
-      <span class="skill-tag">Postman</span>
-      <span class="skill-tag">Docker</span>
-      <span class="skill-tag">Allure Reports</span>
-      <span class="skill-tag">AWS</span>
-      <span class="skill-tag">SDLC</span>
-      <span class="skill-tag">Bug Lifecycle</span>
-    </div>
-  </div>
-</section>
-
-<hr class="divider"/>
-
-<!-- ABOUT -->
-<section class="section" id="about">
-  <div class="section-inner">
-    <p class="section-eyebrow reveal">// engineer.profile</p>
-    <h2 class="section-title reveal">About Maya</h2>
-    <div class="about-grid">
-      <div class="about-bio reveal">
-        <p style="margin-bottom:1rem">QA Automation Engineer with 1.5 years of production experience at Kissterra, and a B.Sc. in Computer Science from the College of Management Academic Studies.</p>
-        <p style="margin-bottom:1rem">I write production-quality TypeScript and Python, work closely with developers in Agile teams, and think critically about correctness and edge cases — because good QA is just good engineering.</p>
-        <p>Experienced with the full development cycle: from sprint planning to release gating, from PR reviews to CI pipeline ownership. I don't just find bugs — I prevent them.</p>
-      </div>
-      <div class="contact-links reveal">
-        <a href="mailto:mayageva11@gmail.com" class="contact-link">
-          <span class="contact-link-icon">✉</span>
-          mayageva11@gmail.com
-        </a>
-        <a href="https://www.linkedin.com/in/maya-eru" class="contact-link" target="_blank">
-          <span class="contact-link-icon">in</span>
-          linkedin.com/in/maya-eru
-        </a>
-        <a href="https://github.com/mayageva11" class="contact-link" target="_blank">
-          <span class="contact-link-icon">⌥</span>
-          github.com/mayageva11
-        </a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<footer>
-  <span>MAYA ERUSALIMSKY</span> · QA Automation Engineer · Israel · 2026
-  <br/>Built with Playwright + TypeScript + <span>Claude API</span>
-</footer>
-
-<script>
-// Terminal animation
-const lines = [
-  {text: '  Running 3 test suites...', cls: 't-dim', delay: 0},
-  {text: '', cls: '', delay: 300},
-  {text: '  ✓  login with valid credentials', cls: 't-pass', timing: '(342ms)', delay: 500},
-  {text: '  ✓  redirect to dashboard after login', cls: 't-pass', timing: '(218ms)', delay: 900},
-  {text: '  ✓  session persists on refresh', cls: 't-pass', timing: '(405ms)', delay: 1300},
-  {text: '', cls: '', delay: 1600},
-  {text: '  ✓  all 4 metric cards visible', cls: 't-pass', timing: '(891ms)', delay: 1800},
-  {text: '  ✓  revenue card shows positive trend', cls: 't-pass', timing: '(234ms)', delay: 2200},
-  {text: '  ✓  line chart has 30 data points', cls: 't-pass', timing: '(156ms)', delay: 2600},
-  {text: '', cls: '', delay: 2900},
-  {text: '  ✓  user table loads with pagination', cls: 't-pass', timing: '(678ms)', delay: 3100},
-  {text: '  ✓  search filters rows in real time', cls: 't-pass', timing: '(445ms)', delay: 3500},
-  {text: '  ✓  add user validates required fields', cls: 't-pass', timing: '(312ms)', delay: 3900},
-  {text: '', cls: '', delay: 4200},
-  {text: '  ─────────────────────────────────────', cls: 't-dim', delay: 4400},
-  {text: '  12 passed  (4.5s)', cls: 't-info', delay: 4600},
-];
-
-const output = document.getElementById('terminal-output');
-let loopTimeout;
-
-function runTerminal() {
-  output.innerHTML = '';
-  lines.forEach(({text, cls, timing, delay}) => {
-    setTimeout(() => {
-      const span = document.createElement('span');
-      span.className = 't-line ' + (cls || '');
-      if (timing) {
-        span.innerHTML = text + ' <span class="t-dim">' + timing + '</span>';
-      } else {
-        span.textContent = text;
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
       }
-      output.appendChild(span);
-      output.scrollTop = output.scrollHeight;
-    }, delay);
+
+      :root {
+        --bg: #090514;
+        --surface: rgba(22, 14, 38, 0.75);
+        --border: rgba(214, 188, 250, 0.15);
+        --border-glow: rgba(255, 133, 162, 0.25);
+
+        --rose: #ff85a2;
+        --rose-gold: #f6a6c1;
+        --lilac: #c5a3ff;
+        --mint: #4fd1c5;
+
+        --text: #f2efff;
+        --muted: #9a8fa9;
+
+        --font-display: 'Plus Jakarta Sans', sans-serif;
+        --font-body: 'Inter', sans-serif;
+        --font-mono: 'JetBrains Mono', monospace;
+
+        --glass-bg: rgba(18, 11, 31, 0.78);
+        --glass-border: rgba(214, 188, 250, 0.18);
+        --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--font-body);
+        font-size: 16px;
+        line-height: 1.6;
+        overflow-x: hidden;
+        cursor: crosshair;
+        position: relative;
+      }
+
+      /* Ambient Spotlight Background overlay */
+      body::after {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background: radial-gradient(
+          800px circle at var(--mouse-x, 50vw) var(--mouse-y, 50vh),
+          rgba(255, 133, 162, 0.05),
+          rgba(197, 163, 255, 0.03) 40%,
+          transparent 80%
+        );
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      /* Ambient Nebulas */
+      .ambient-glow {
+        position: fixed;
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 0;
+        filter: blur(120px);
+        opacity: 0.35;
+        animation: floatGlow 15s infinite alternate ease-in-out;
+      }
+
+      @keyframes floatGlow {
+        from {
+          transform: translate(0, 0) scale(1);
+        }
+        to {
+          transform: translate(60px, 40px) scale(1.15);
+        }
+      }
+
+      /* Selection Highlight */
+      ::selection {
+        background: rgba(255, 133, 162, 0.25);
+        color: #ffffff;
+      }
+
+      /* Scrollbars */
+      ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--bg);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: linear-gradient(
+          180deg,
+          var(--border),
+          rgba(22, 14, 38, 0.9)
+        );
+        border: 2px solid var(--bg);
+        border-radius: 5px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--rose);
+      }
+
+      /* Delicate grid background */
+      .grid-bg {
+        position: fixed;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(214, 188, 250, 0.02) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(214, 188, 250, 0.02) 1px, transparent 1px);
+        background-size: 80px 80px;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      section,
+      nav,
+      footer {
+        position: relative;
+        z-index: 1;
+      }
+
+      /* Focus Visible Styles */
+      a:focus-visible,
+      button:focus-visible {
+        outline: 2px solid var(--rose);
+        outline-offset: 4px;
+      }
+
+      /* Generic SVG Icon class */
+      .svg-icon {
+        display: inline-block;
+        vertical-align: middle;
+        transition:
+          transform 0.2s ease,
+          stroke 0.2s ease,
+          fill 0.2s ease;
+      }
+      .svg-icon:hover {
+        transform: scale(1.08);
+      }
+
+      /* NAV */
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        padding: 1.25rem 3rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(9, 5, 20, 0.7);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-bottom: 1px solid var(--border);
+        z-index: 100;
+      }
+
+      .nav-logo {
+        font-family: var(--font-display);
+        font-size: 1.05rem;
+        font-weight: 800;
+        color: var(--rose);
+        letter-spacing: 0.12em;
+        text-shadow: 0 0 20px rgba(255, 133, 162, 0.35);
+        text-decoration: none;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+      }
+
+      .nav-links a {
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 0.78rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        font-weight: 600;
+        transition:
+          color 0.25s,
+          text-shadow 0.25s;
+      }
+
+      .nav-links a:hover {
+        color: var(--rose);
+        text-shadow: 0 0 10px rgba(255, 133, 162, 0.35);
+      }
+
+      .btn-nav {
+        background: rgba(255, 133, 162, 0.1);
+        border: 1px solid var(--rose);
+        color: var(--rose);
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        padding: 0.4rem 1.1rem;
+        border-radius: 4px;
+        text-decoration: none;
+        cursor: crosshair;
+        transition: all 0.25s ease;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+      }
+
+      .btn-nav:hover {
+        background: rgba(255, 133, 162, 0.2);
+        box-shadow: 0 0 15px rgba(255, 133, 162, 0.25);
+      }
+
+      /* HERO */
+      .hero {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 7rem 2rem 4rem;
+      }
+
+      .hiring-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(79, 209, 197, 0.08);
+        border: 1px solid rgba(79, 209, 197, 0.2);
+        border-radius: 30px;
+        padding: 0.45rem 1.25rem;
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        color: var(--mint);
+        margin-bottom: 2rem;
+        opacity: 0;
+        animation: fadeUp 0.6s 0.1s ease forwards;
+      }
+
+      .pulse-dot {
+        width: 8px;
+        height: 8px;
+        background: var(--mint);
+        border-radius: 50%;
+        box-shadow: 0 0 8px var(--mint);
+        animation: pulse 1.5s infinite alternate ease-in-out;
+      }
+
+      .hero-eyebrow {
+        font-family: var(--font-mono);
+        font-size: 0.78rem;
+        color: var(--rose-gold);
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        margin-bottom: 1.5rem;
+        opacity: 0;
+        animation: fadeUp 0.6s 0.2s ease forwards;
+      }
+
+      .hero-name {
+        font-family: var(--font-display);
+        font-size: clamp(2.5rem, 7.5vw, 5.2rem);
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        line-height: 1.1;
+        background: linear-gradient(
+          135deg,
+          var(--rose) 0%,
+          #ffb3c6 40%,
+          var(--lilac) 100%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        filter: drop-shadow(0 0 35px rgba(255, 133, 162, 0.15));
+        margin-bottom: 1.25rem;
+        opacity: 0;
+        animation: fadeUp 0.6s 0.4s ease forwards;
+      }
+
+      .hero-title {
+        font-size: 1.02rem;
+        color: var(--muted);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        margin-bottom: 3.5rem;
+        opacity: 0;
+        animation: fadeUp 0.6s 0.6s ease forwards;
+      }
+
+      .cursor {
+        display: inline-block;
+        width: 2px;
+        height: 1.1em;
+        background: var(--rose);
+        margin-left: 3px;
+        vertical-align: text-bottom;
+        animation: blink 1s step-end infinite;
+      }
+
+      @keyframes blink {
+        50% {
+          opacity: 0;
+        }
+      }
+
+      /* Glow Cards Design */
+      .glow-card {
+        position: relative;
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+        box-shadow: var(--glass-shadow);
+        overflow: hidden;
+      }
+
+      .glow-card::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          400px circle at var(--card-x, 0px) var(--card-y, 0px),
+          rgba(255, 133, 162, 0.08),
+          transparent 85%
+        );
+        pointer-events: none;
+        z-index: 1;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .glow-card:hover::before {
+        opacity: 1;
+      }
+
+      /* Terminal UI */
+      .terminal {
+        width: min(650px, 92vw);
+        margin-bottom: 3rem;
+        opacity: 0;
+        animation: fadeUp 0.6s 0.8s ease forwards;
+      }
+
+      .terminal-bar {
+        background: #110b1f;
+        padding: 0.75rem 1.25rem;
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .dot-container {
+        display: flex;
+        gap: 6px;
+      }
+
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+      }
+      .dot.r {
+        background: #ff5c7c;
+      }
+      .dot.y {
+        background: #f1c40f;
+      }
+      .dot.g {
+        background: #4fd1c5;
+      }
+
+      .terminal-tabs {
+        display: flex;
+        margin-left: 24px;
+        gap: 6px;
+      }
+
+      .t-tab {
+        background: transparent;
+        border: 1px solid transparent;
+        border-bottom: none;
+        color: var(--muted);
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        padding: 0.25rem 0.85rem;
+        border-radius: 4px 4px 0 0;
+        cursor: crosshair;
+        transition: all 0.25s ease;
+      }
+
+      .t-tab:hover {
+        color: var(--rose);
+      }
+
+      .t-tab.active {
+        background: rgba(22, 14, 38, 0.85);
+        border-color: var(--border);
+        color: var(--rose);
+      }
+
+      .terminal-title {
+        font-family: var(--font-mono);
+        font-size: 0.68rem;
+        color: var(--muted);
+        margin-left: auto;
+      }
+
+      .terminal-body {
+        padding: 1.5rem;
+        font-family: var(--font-mono);
+        font-size: 0.78rem;
+        line-height: 1.8;
+        min-height: 380px;
+        position: relative;
+        background: rgba(17, 11, 31, 0.82);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        text-align: left;
+      }
+
+      .terminal-body::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 3px,
+          rgba(255, 133, 162, 0.006) 3px,
+          rgba(255, 133, 162, 0.006) 6px
+        );
+        pointer-events: none;
+      }
+
+      .t-pass {
+        color: var(--mint);
+      }
+      .t-fail {
+        color: var(--pink);
+      }
+      .t-info {
+        color: var(--rose);
+      }
+      .t-dim {
+        color: var(--muted);
+      }
+      .t-line {
+        display: block;
+        white-space: pre;
+      }
+
+      /* Interactive Log suite controllers */
+      .terminal-controls {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding-bottom: 0.75rem;
+        margin-bottom: 1rem;
+        border-bottom: 1px dashed var(--border);
+        flex-wrap: wrap;
+      }
+
+      .suite-btn {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--muted);
+        font-family: var(--font-mono);
+        font-size: 0.68rem;
+        padding: 0.25rem 0.65rem;
+        border-radius: 4px;
+        cursor: crosshair;
+        transition: all 0.2s ease;
+      }
+
+      .suite-btn:hover {
+        border-color: var(--rose);
+        color: var(--rose);
+      }
+
+      .suite-btn.active {
+        background: rgba(255, 133, 162, 0.08);
+        border-color: var(--rose);
+        color: var(--rose);
+        box-shadow: 0 0 12px rgba(255, 133, 162, 0.15);
+      }
+
+      .terminal-logs {
+        max-height: 300px;
+        overflow-y: auto;
+      }
+
+      /* Code highlights inside tabs */
+      .code-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 0.6rem;
+        border-bottom: 1px dashed var(--border);
+        margin-bottom: 1rem;
+      }
+
+      .copy-btn {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--muted);
+        font-family: var(--font-mono);
+        font-size: 0.68rem;
+        padding: 0.25rem 0.65rem;
+        border-radius: 4px;
+        cursor: crosshair;
+        transition: all 0.2s ease;
+      }
+
+      .copy-btn:hover {
+        border-color: var(--rose);
+        color: var(--rose);
+      }
+
+      .code-snippet-pre {
+        margin: 0;
+        overflow-x: auto;
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        line-height: 1.55;
+        color: var(--text);
+      }
+
+      .code-snippet-pre .kw {
+        color: var(--rose);
+      }
+      .code-snippet-pre .str {
+        color: #f1c40f;
+      }
+      .code-snippet-pre .fn {
+        color: var(--lilac);
+      }
+      .code-snippet-pre .cm {
+        color: var(--muted);
+      }
+      .code-snippet-pre .typ {
+        color: #5ce1e6;
+      }
+
+      /* CTAs */
+      .hero-ctas {
+        display: flex;
+        gap: 1.25rem;
+        flex-wrap: wrap;
+        justify-content: center;
+        opacity: 0;
+        animation: fadeUp 0.6s 1s ease forwards;
+      }
+
+      .btn {
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        padding: 0.85rem 2.2rem;
+        border-radius: 6px;
+        text-decoration: none;
+        border: 1px solid;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: crosshair;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .btn-primary {
+        background: transparent;
+        border-color: var(--rose);
+        color: var(--rose);
+        box-shadow:
+          0 0 20px rgba(255, 133, 162, 0.08),
+          inset 0 0 20px rgba(255, 133, 162, 0.02);
+      }
+
+      .btn-primary:hover {
+        background: rgba(255, 133, 162, 0.06);
+        box-shadow:
+          0 0 30px rgba(255, 133, 162, 0.2),
+          inset 0 0 20px rgba(255, 133, 162, 0.05);
+        transform: translateY(-2px);
+      }
+
+      .btn-secondary {
+        background: transparent;
+        border-color: var(--lilac);
+        color: var(--lilac);
+        box-shadow: 0 0 20px rgba(197, 163, 255, 0.08);
+      }
+
+      .btn-secondary:hover {
+        background: rgba(197, 163, 255, 0.06);
+        box-shadow: 0 0 30px rgba(197, 163, 255, 0.2);
+        transform: translateY(-2px);
+      }
+
+      /* STATS BAR */
+      .stats-bar {
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+        background: rgba(17, 11, 31, 0.7);
+        padding: 2.2rem;
+        display: flex;
+        justify-content: center;
+        gap: clamp(2rem, 6vw, 6rem);
+        flex-wrap: wrap;
+      }
+
+      .stat {
+        text-align: center;
+      }
+
+      .stat-num {
+        font-family: var(--font-display);
+        font-size: clamp(2.2rem, 5vw, 3.2rem);
+        font-weight: 700;
+        color: var(--rose);
+        display: block;
+        text-shadow: 0 0 30px rgba(255, 133, 162, 0.3);
+      }
+
+      .stat-label {
+        font-size: 0.72rem;
+        color: var(--muted);
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        margin-top: 4px;
+      }
+
+      /* SECTIONS */
+      .section {
+        padding: 6.5rem 2rem;
+      }
+
+      .section-inner {
+        max-width: 1050px;
+        margin: 0 auto;
+      }
+
+      .section-eyebrow {
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        color: var(--rose-gold);
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        margin-bottom: 0.75rem;
+      }
+
+      .section-title {
+        font-family: var(--font-display);
+        font-size: clamp(1.6rem, 4vw, 2.3rem);
+        font-weight: 700;
+        margin-bottom: 1rem;
+        letter-spacing: 0.05em;
+      }
+
+      .section-desc {
+        color: var(--muted);
+        max-width: 650px;
+        line-height: 1.75;
+        margin-bottom: 3.5rem;
+      }
+
+      /* PROJECT CARD */
+      .project-card {
+        padding: 2.5rem;
+        transition:
+          border-color 0.3s,
+          box-shadow 0.3s;
+      }
+
+      .project-card:hover {
+        border-color: var(--rose);
+        box-shadow: 0 0 40px rgba(255, 133, 162, 0.08);
+      }
+
+      .project-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .project-name {
+        font-family: var(--font-display);
+        font-size: 1.5rem;
+        color: var(--rose);
+        letter-spacing: 0.08em;
+        text-shadow: 0 0 20px rgba(255, 133, 162, 0.2);
+      }
+
+      .project-sub {
+        color: var(--muted);
+        font-size: 0.88rem;
+        margin-top: 0.3rem;
+      }
+
+      .project-links {
+        display: flex;
+        gap: 0.85rem;
+        flex-wrap: wrap;
+      }
+
+      .link-pill {
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        padding: 0.45rem 1.1rem;
+        border-radius: 4px;
+        border: 1px solid var(--border);
+        color: var(--muted);
+        text-decoration: none;
+        letter-spacing: 0.08em;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .link-pill:hover {
+        border-color: var(--rose);
+        color: var(--rose);
+        box-shadow: 0 0 15px rgba(255, 133, 162, 0.15);
+      }
+
+      /* Architecture Animated SVG flow map */
+      .arch-flow {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin: 3rem 0;
+        width: 100%;
+      }
+
+      .flow-node {
+        background: rgba(18, 11, 31, 0.65);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 1.1rem 1.4rem;
+        text-align: center;
+        flex: 1;
+        min-width: 170px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        z-index: 2;
+      }
+
+      .flow-node:hover {
+        transform: translateY(-4px);
+        border-color: var(--rose);
+        box-shadow: 0 10px 30px rgba(255, 133, 162, 0.1);
+      }
+
+      .flow-node.ai {
+        border-color: rgba(197, 163, 255, 0.35);
+      }
+      .flow-node.ai:hover {
+        border-color: var(--lilac);
+        box-shadow: 0 10px 30px rgba(197, 163, 255, 0.1);
+      }
+
+      .flow-node.target {
+        border-color: rgba(255, 133, 162, 0.35);
+      }
+      .flow-node.target:hover {
+        border-color: var(--rose);
+        box-shadow: 0 10px 30px rgba(255, 133, 162, 0.1);
+      }
+
+      .flow-node-title {
+        font-family: var(--font-display);
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.35rem;
+      }
+      .flow-node.ai .flow-node-title {
+        color: var(--lilac);
+      }
+      .flow-node.target .flow-node-title {
+        color: var(--rose);
+      }
+      .flow-node:not(.ai):not(.target) .flow-node-title {
+        color: var(--rose);
+      }
+
+      .flow-node-desc {
+        font-size: 0.68rem;
+        color: var(--muted);
+        line-height: 1.4;
+      }
+
+      .flow-arrow {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+      }
+
+      .flow-arrow svg {
+        width: 100%;
+        height: 24px;
+      }
+
+      .flow-arrow path {
+        fill: none;
+        stroke-width: 2;
+        stroke-dasharray: 6 4;
+        animation: strokeFlow 0.8s linear infinite;
+      }
+
+      .flow-arrow.purple path {
+        stroke: var(--lilac);
+      }
+      .flow-arrow.purple polygon {
+        fill: var(--lilac);
+      }
+      .flow-arrow.rose path {
+        stroke: var(--rose);
+      }
+      .flow-arrow.rose polygon {
+        fill: var(--rose);
+      }
+      .flow-arrow.mint path {
+        stroke: var(--mint);
+      }
+      .flow-arrow.mint polygon {
+        fill: var(--mint);
+      }
+
+      @keyframes strokeFlow {
+        to {
+          stroke-dashoffset: -10;
+        }
+      }
+
+      /* Tech badges */
+      .badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin: 1.8rem 0;
+      }
+
+      .badge {
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        padding: 0.35rem 0.85rem;
+        border-radius: 4px;
+        border: 1px solid var(--border);
+        color: var(--muted);
+        letter-spacing: 0.05em;
+        transition: all 0.2s ease;
+      }
+
+      .badge.cyan {
+        border-color: rgba(197, 163, 255, 0.3);
+        color: var(--lilac);
+      }
+      .badge.purple {
+        border-color: rgba(255, 133, 162, 0.3);
+        color: var(--rose);
+      }
+
+      /* Features grid */
+      .features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+      }
+
+      .feature {
+        padding: 1.75rem;
+        transition:
+          border-color 0.25s,
+          box-shadow 0.25s;
+      }
+
+      .feature:hover {
+        border-color: rgba(255, 133, 162, 0.25);
+        box-shadow: 0 0 25px rgba(255, 133, 162, 0.04);
+      }
+
+      .feature-icon {
+        margin-bottom: 1rem;
+        color: var(--rose);
+        display: flex;
+        align-items: center;
+      }
+
+      .feature-title {
+        font-weight: 600;
+        margin-bottom: 0.6rem;
+        font-size: 0.95rem;
+        letter-spacing: 0.02em;
+      }
+
+      .feature-text {
+        color: var(--muted);
+        font-size: 0.85rem;
+        line-height: 1.6;
+      }
+
+      /* Claude section */
+      .claude-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+      }
+
+      .claude-card {
+        padding: 1.85rem;
+        transition:
+          border-color 0.3s,
+          box-shadow 0.3s;
+      }
+
+      .claude-card:hover {
+        border-color: var(--rose);
+        box-shadow: 0 0 30px rgba(255, 133, 162, 0.08);
+      }
+
+      .claude-card-title {
+        font-family: var(--font-display);
+        font-size: 0.85rem;
+        color: var(--lilac);
+        letter-spacing: 0.08em;
+        margin-bottom: 0.85rem;
+      }
+
+      .claude-card-desc {
+        color: var(--muted);
+        font-size: 0.85rem;
+        line-height: 1.6;
+        margin-bottom: 1.25rem;
+      }
+
+      .code-snippet {
+        background: #0f0919;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 0.85rem 1.1rem;
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        line-height: 1.6;
+        overflow-x: auto;
+      }
+
+      .code-snippet .kw {
+        color: var(--rose);
+      }
+      .code-snippet .fn {
+        color: var(--lilac);
+      }
+      .code-snippet .str {
+        color: #f1c40f;
+      }
+      .code-snippet .cm {
+        color: var(--muted);
+      }
+
+      /* QA AI Sandbox */
+      .sandbox-container {
+        display: grid;
+        grid-template-columns: 1fr 1.3fr;
+        min-height: 480px;
+        background: var(--glass-bg);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        box-shadow: var(--glass-shadow);
+        overflow: hidden;
+        margin-top: 2rem;
+      }
+
+      @media (max-width: 850px) {
+        .sandbox-container {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .sandbox-sidebar {
+        padding: 2rem;
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        background: rgba(18, 11, 31, 0.4);
+      }
+
+      @media (max-width: 850px) {
+        .sandbox-sidebar {
+          border-right: none;
+          border-bottom: 1px solid var(--border);
+        }
+      }
+
+      .sandbox-tab-header {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 1.5rem;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 0.75rem;
+      }
+
+      .sandbox-tab-btn {
+        flex: 1;
+        background: transparent;
+        border: 1px solid transparent;
+        color: var(--muted);
+        font-family: var(--font-display);
+        font-size: 0.72rem;
+        font-weight: 700;
+        padding: 0.5rem;
+        border-radius: 4px;
+        cursor: crosshair;
+        transition: all 0.2s ease;
+      }
+
+      .sandbox-tab-btn.active {
+        background: rgba(255, 133, 162, 0.08);
+        border: 1px solid var(--rose);
+        color: var(--rose);
+      }
+
+      .sandbox-instruction {
+        font-size: 0.82rem;
+        color: var(--muted);
+        margin-bottom: 1.25rem;
+        line-height: 1.55;
+      }
+
+      .sandbox-options {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 1.75rem;
+      }
+
+      .sandbox-option-btn {
+        background: rgba(18, 11, 31, 0.5);
+        border: 1px solid var(--border);
+        color: var(--text);
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        text-align: left;
+        padding: 0.75rem 1rem;
+        border-radius: 6px;
+        cursor: crosshair;
+        transition: all 0.25s ease;
+      }
+
+      .sandbox-option-btn:hover {
+        border-color: var(--rose);
+        background: rgba(255, 133, 162, 0.02);
+      }
+
+      .sandbox-option-btn.active {
+        border-color: var(--rose);
+        background: rgba(255, 133, 162, 0.05);
+        color: var(--rose);
+        box-shadow: 0 0 10px rgba(255, 133, 162, 0.1);
+      }
+
+      .sandbox-run-btn {
+        width: 100%;
+        justify-content: center;
+        margin-top: auto;
+      }
+
+      .sandbox-display {
+        display: flex;
+        flex-direction: column;
+        background: #0b0717;
+      }
+
+      .display-bar {
+        padding: 0.75rem 1.25rem;
+        background: #110b21;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .display-title {
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        color: var(--muted);
+      }
+
+      .display-status {
+        font-family: var(--font-mono);
+        font-size: 0.65rem;
+        color: var(--muted);
+        border: 1px solid var(--border);
+        padding: 0.15rem 0.5rem;
+        border-radius: 3px;
+      }
+
+      .display-status.running {
+        border-color: var(--rose);
+        color: var(--rose);
+        box-shadow: 0 0 8px rgba(255, 133, 162, 0.2);
+        animation: pulse 1s infinite alternate;
+      }
+
+      .display-status.success {
+        border-color: var(--mint);
+        color: var(--mint);
+        box-shadow: 0 0 8px rgba(79, 209, 197, 0.2);
+      }
+
+      .display-screen {
+        padding: 1.5rem;
+        overflow-y: auto;
+        max-height: 420px;
+        flex: 1;
+      }
+
+      /* CI/CD Pipeline Simulator */
+      .pipeline-suite {
+        background: var(--glass-bg);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 2.2rem;
+        margin-top: 2rem;
+        box-shadow: var(--glass-shadow);
+      }
+
+      .pipeline-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2.2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+
+      .pipeline-status {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-family: var(--font-mono);
+        font-size: 0.88rem;
+      }
+
+      .status-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: inline-block;
+      }
+      .status-dot.green {
+        background: var(--mint);
+        box-shadow: 0 0 10px var(--mint);
+      }
+      .status-dot.yellow {
+        background: #f1c40f;
+        box-shadow: 0 0 10px #f1c40f;
+        animation: pulse 1s infinite alternate;
+      }
+
+      .pipeline-nodes {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        flex-wrap: wrap;
+      }
+
+      .pipe-step {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        background: rgba(18, 11, 31, 0.45);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 0.85rem 1.4rem;
+        flex: 1;
+        min-width: 170px;
+        transition: all 0.35s ease;
+        box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.4);
+      }
+
+      .pipe-step.pending {
+        opacity: 0.35;
+        border-style: dashed;
+      }
+
+      .pipe-step.running {
+        border-color: var(--rose);
+        box-shadow: 0 0 15px rgba(255, 133, 162, 0.2);
+        animation: pulseBorder 1.5s infinite alternate;
+        opacity: 1;
+      }
+
+      .pipe-step.completed {
+        border-color: var(--mint);
+        box-shadow:
+          0 0 15px rgba(79, 209, 197, 0.15),
+          inset 0 0 10px rgba(79, 209, 197, 0.02);
+        opacity: 1;
+      }
+
+      .pipe-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--muted);
+        transition: color 0.3s;
+      }
+
+      .pipe-step.running .pipe-icon {
+        color: var(--rose);
+        animation: rotateIcon 2.5s linear infinite;
+      }
+
+      .pipe-step.completed .pipe-icon {
+        color: var(--mint);
+      }
+
+      .pipe-info {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .pipe-name {
+        font-family: var(--font-display);
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        color: var(--text);
+      }
+
+      .pipe-status-label {
+        font-family: var(--font-mono);
+        font-size: 0.65rem;
+        color: var(--muted);
+        margin-top: 3px;
+        transition: color 0.3s;
+      }
+
+      .pipe-step.running .pipe-status-label {
+        color: var(--rose);
+      }
+
+      .pipe-step.completed .pipe-status-label {
+        color: var(--mint);
+      }
+
+      .pipe-connector {
+        flex: 0.3;
+        height: 2px;
+        background: var(--border);
+        position: relative;
+        min-width: 25px;
+      }
+
+      .pipe-connector-fill {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 0%;
+        background: linear-gradient(90deg, var(--rose), var(--mint));
+        transition: width 0.8s ease;
+      }
+
+      .pipe-connector.active .pipe-connector-fill {
+        width: 100%;
+      }
+
+      @keyframes pulseBorder {
+        from {
+          border-color: var(--border);
+        }
+        to {
+          border-color: var(--rose);
+        }
+      }
+
+      @keyframes rotateIcon {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes pulse {
+        from {
+          opacity: 0.4;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      /* Value Prop Cards */
+      .features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+      }
+
+      .feature {
+        padding: 1.75rem;
+        transition:
+          border-color 0.25s,
+          box-shadow 0.25s;
+      }
+
+      .feature:hover {
+        border-color: rgba(255, 133, 162, 0.25);
+        box-shadow: 0 0 25px rgba(255, 133, 162, 0.04);
+      }
+
+      .feature-icon {
+        margin-bottom: 1rem;
+        color: var(--rose);
+        display: flex;
+        align-items: center;
+      }
+
+      .feature-title {
+        font-weight: 600;
+        margin-bottom: 0.6rem;
+        font-size: 0.95rem;
+        letter-spacing: 0.02em;
+      }
+
+      .feature-text {
+        color: var(--muted);
+        font-size: 0.85rem;
+        line-height: 1.6;
+      }
+
+      /* Skills Cloud Filter */
+      .skills-filter {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+        margin-bottom: 2rem;
+      }
+
+      .filter-btn {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--muted);
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        padding: 0.45rem 1rem;
+        border-radius: 4px;
+        cursor: crosshair;
+        transition: all 0.2s ease;
+      }
+
+      .filter-btn:hover {
+        border-color: var(--rose);
+        color: var(--rose);
+      }
+
+      .filter-btn.active {
+        background: rgba(255, 133, 162, 0.08);
+        border-color: var(--rose);
+        color: var(--rose);
+        box-shadow: 0 0 15px rgba(255, 133, 162, 0.15);
+      }
+
+      .skills-cloud {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.65rem;
+        margin-top: 1.5rem;
+      }
+
+      .skill-tag {
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        padding: 0.45rem 1rem;
+        border-radius: 4px;
+        border: 1px solid var(--border);
+        color: var(--muted);
+        letter-spacing: 0.05em;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .skill-tag:hover {
+        border-color: var(--rose);
+        color: var(--rose);
+        box-shadow: 0 0 12px rgba(255, 133, 162, 0.2);
+      }
+
+      .skill-tag.primary {
+        font-size: 0.85rem;
+        border-color: rgba(255, 133, 162, 0.5);
+        color: var(--rose);
+        box-shadow: 0 0 15px rgba(255, 133, 162, 0.12);
+      }
+
+      .skill-tag.hidden {
+        opacity: 0.12;
+        transform: scale(0.88);
+        pointer-events: none;
+      }
+
+      /* Redesigned About Layout with Timeline */
+      .about-grid {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 3.5rem;
+        align-items: start;
+      }
+
+      @media (max-width: 850px) {
+        .about-grid {
+          grid-template-columns: 1fr;
+          gap: 2.5rem;
+        }
+      }
+
+      .timeline {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+
+      .timeline-item {
+        position: relative;
+        padding-left: 24px;
+        border-left: 2px solid var(--border);
+      }
+
+      .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -6px;
+        top: 6px;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--rose);
+        border: 2px solid var(--bg);
+        box-shadow: 0 0 5px var(--rose);
+      }
+
+      .timeline-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 0.4rem;
+      }
+
+      .timeline-title {
+        font-family: var(--font-display);
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: var(--text);
+      }
+
+      .timeline-date {
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        color: var(--rose-gold);
+      }
+
+      .timeline-subtitle {
+        font-size: 0.82rem;
+        color: var(--rose);
+        margin-bottom: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+      }
+
+      .timeline-list {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .timeline-list li {
+        font-size: 0.85rem;
+        color: var(--muted);
+        position: relative;
+        padding-left: 14px;
+        line-height: 1.5;
+      }
+
+      .timeline-list li::before {
+        content: '▪';
+        position: absolute;
+        left: 0;
+        color: var(--rose);
+        font-size: 0.6rem;
+        top: 1px;
+      }
+
+      /* About Sidebar Highlights */
+      .about-sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+      }
+
+      .highlight-card {
+        padding: 1.5rem;
+        background: rgba(255, 133, 162, 0.04);
+        border-color: rgba(255, 133, 162, 0.22);
+      }
+
+      .highlight-title {
+        font-family: var(--font-display);
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--rose);
+        margin-bottom: 0.6rem;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        letter-spacing: 0.05em;
+      }
+
+      .highlight-text {
+        font-size: 0.82rem;
+        color: var(--muted);
+        line-height: 1.55;
+      }
+
+      .lang-title {
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        color: var(--rose-gold);
+        margin-bottom: 0.5rem;
+        letter-spacing: 0.05em;
+      }
+
+      .lang-grid {
+        display: flex;
+        gap: 1.5rem;
+        font-size: 0.82rem;
+      }
+
+      .contact-links {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .contact-link {
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+        text-decoration: none;
+        color: var(--muted);
+        font-family: var(--font-mono);
+        font-size: 0.82rem;
+        padding: 0.85rem 1.25rem;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: rgba(18, 11, 31, 0.4);
+        transition: all 0.25s ease;
+      }
+
+      .contact-link:hover {
+        border-color: var(--rose);
+        color: var(--rose);
+        box-shadow: 0 0 20px rgba(255, 133, 162, 0.12);
+        transform: translateX(4px);
+      }
+
+      .contact-link-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.5rem;
+      }
+
+      /* Divider */
+      .divider {
+        border: none;
+        border-top: 1px solid var(--border);
+        margin: 0;
+      }
+
+      /* Footer */
+      footer {
+        padding: 2.5rem;
+        text-align: center;
+        border-top: 1px solid var(--border);
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        color: var(--muted);
+        letter-spacing: 0.1em;
+        background: rgba(9, 5, 20, 0.9);
+      }
+
+      footer span {
+        color: var(--rose);
+      }
+
+      /* Animations */
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .reveal {
+        opacity: 0;
+        transform: translateY(24px);
+        transition:
+          opacity 0.7s ease,
+          transform 0.7s ease;
+      }
+
+      .reveal.visible {
+        opacity: 1;
+        transform: none;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 850px) {
+        .nav-links {
+          display: none;
+        }
+        .btn-nav {
+          display: none;
+        }
+        .arch-flow {
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+        .flow-arrow {
+          transform: rotate(90deg);
+          margin: 0.25rem 0;
+        }
+        .flow-node {
+          width: 100%;
+        }
+        .pipeline-nodes {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.5rem;
+        }
+        .pipe-step {
+          width: 100%;
+        }
+        .pipe-connector {
+          width: 2px;
+          height: 20px;
+          margin-left: 20px;
+          flex: none;
+        }
+        .pipe-connector-fill {
+          width: 100%;
+          height: 0%;
+        }
+        .pipe-connector.active .pipe-connector-fill {
+          height: 100%;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          animation-duration: 0.01ms !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Floating Nebula Glows -->
+    <div
+      class="ambient-glow"
+      style="
+        top: 15%;
+        left: 10%;
+        width: 350px;
+        height: 350px;
+        background: radial-gradient(
+          circle,
+          rgba(255, 133, 162, 0.15) 0%,
+          transparent 70%
+        );
+      "
+    ></div>
+    <div
+      class="ambient-glow"
+      style="
+        top: 60%;
+        right: 10%;
+        width: 450px;
+        height: 450px;
+        background: radial-gradient(
+          circle,
+          rgba(197, 163, 255, 0.12) 0%,
+          transparent 70%
+        );
+      "
+    ></div>
+
+    <div class="grid-bg"></div>
+
+    <!-- HEADER / NAV -->
+    <nav>
+      <a href="#" class="nav-logo">MAYA.ERU</a>
+      <div class="nav-links">
+        <a href="#project">Project</a>
+        <a href="#claude">Claude Integration</a>
+        <a href="#sandbox">AI Sandbox</a>
+        <a href="#cicd">CI/CD</a>
+        <a href="#about">About</a>
+      </div>
+      <!-- Resume button -->
+      <a
+        href="maya_eru_qa_automation_cv.pdf"
+        class="btn-nav"
+        target="_blank"
+        download
+        >Download Resume</a
+      >
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+      <!-- Active hiring status badge -->
+      <div class="hiring-badge">
+        <span class="pulse-dot"></span>
+        <span>Seeking QA Automation Opportunities · Israel / Hybrid</span>
+      </div>
+
+      <p class="hero-eyebrow">// QA Automation Engineer · Portfolio 2026</p>
+      <h1 class="hero-name">MAYA ERUSALIMSKY</h1>
+      <p class="hero-title">
+        Playwright · TypeScript · Claude API · CI/CD<span class="cursor"></span>
+      </p>
+
+      <!-- Tabbed Terminal UI -->
+      <div class="terminal glow-card">
+        <div class="terminal-bar">
+          <div class="dot-container">
+            <div class="dot r"></div>
+            <div class="dot y"></div>
+            <div class="dot g"></div>
+          </div>
+          <div class="terminal-tabs">
+            <button class="t-tab active" data-tab="terminal-output">
+              ci-test-run.log
+            </button>
+            <button class="t-tab" data-tab="playwright-config">
+              playwright.config.ts
+            </button>
+            <button class="t-tab" data-tab="failure-triage">
+              failure-triage.ts
+            </button>
+          </div>
+          <span class="terminal-title">nexusqa — shell</span>
+        </div>
+
+        <div class="terminal-body">
+          <!-- Logs tab -->
+          <div class="tab-content" id="terminal-output-container">
+            <div class="terminal-controls">
+              <span class="t-dim">// Trigger Suite:</span>
+              <button class="suite-btn" onclick="triggerSuite('smoke')">
+                Smoke Suite
+              </button>
+              <button class="suite-btn" onclick="triggerSuite('api')">
+                API Layer
+              </button>
+              <button
+                class="suite-btn active"
+                onclick="triggerSuite('regression')"
+              >
+                Full Regression
+              </button>
+            </div>
+            <div class="terminal-logs" id="terminal-output"></div>
+          </div>
+
+          <!-- Config Code tab -->
+          <div
+            class="tab-content"
+            id="playwright-config-container"
+            style="display: none"
+          >
+            <div class="code-header">
+              <span class="t-dim">// playwright.config.ts</span>
+              <button class="copy-btn" onclick="copyCode('config-code')">
+                Copy Code
+              </button>
+            </div>
+            <pre
+              class="code-snippet-pre"
+            ><code id="config-code"><span class="kw">import</span> { defineConfig, devices } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+
+<span class="kw">export default</span> <span class="fn">defineConfig</span>({
+  testDir: <span class="str">'./tests'</span>,
+  fullyParallel: <span class="kw">true</span>,
+  forbidOnly: !!process.env.CI,
+  retries: process.env.CI ? <span class="str">2</span> : <span class="str">0</span>,
+  workers: process.env.CI ? <span class="str">4</span> : <span class="kw">undefined</span>,
+  reporter: [[<span class="str">'html'</span>], [<span class="str">'allure-playwright'</span>]],
+  use: {
+    baseURL: <span class="str">'http://localhost:3001'</span>,
+    trace: <span class="str">'on-first-retry'</span>,
+    screenshot: <span class="str">'only-on-failure'</span>,
+  },
+  projects: [
+    { name: <span class="str">'chromium'</span>, use: { ...devices[<span class="str">'Desktop Chrome'</span>] } },
+    { name: <span class="str">'firefox'</span>, use: { ...devices[<span class="str">'Desktop Firefox'</span>] } },
+    { name: <span class="str">'webkit'</span>, use: { ...devices[<span class="str">'Desktop Safari'</span>] } },
+  ],
+});</code></pre>
+          </div>
+
+          <!-- Failure Triage Code tab -->
+          <div
+            class="tab-content"
+            id="failure-triage-container"
+            style="display: none"
+          >
+            <div class="code-header">
+              <span class="t-dim">// failure-triage.ts</span>
+              <button class="copy-btn" onclick="copyCode('triage-code')">
+                Copy Code
+              </button>
+            </div>
+            <pre
+              class="code-snippet-pre"
+            ><code id="triage-code"><span class="kw">import</span> { Anthropic } <span class="kw">from</span> <span class="str">'@anthropic-ai/sdk'</span>;
+
+<span class="kw">export async function</span> <span class="fn">analyzeFailure</span>(testName: <span class="typ">string</span>, errorMsg: <span class="typ">string</span>) {
+  <span class="kw">const</span> anthropic = <span class="kw">new</span> <span class="fn">Anthropic</span>({ apiKey: process.env.CLAUDE_API_KEY });
+  <span class="kw">const</span> response = <span class="kw">await</span> anthropic.messages.create({
+    model: <span class="str">"claude-3-5-sonnet-20241022"</span>,
+    max_tokens: <span class="str">150</span>,
+    system: <span class="str">"You are a QA automation failure classifier."</span>,
+    messages: [{ role: <span class="str">"user"</span>, content: <span class="str">`Test: ${testName}\nError: ${errorMsg}`</span> }]
   });
-  loopTimeout = setTimeout(runTerminal, lines[lines.length-1].delay + 2500);
-}
-runTerminal();
+  <span class="kw">return</span> JSON.<span class="fn">parse</span>(response.content[<span class="str">0</span>].text);
+}</code></pre>
+          </div>
+        </div>
+      </div>
 
-// Counter animation
-function animateCounter(el) {
-  const target = parseInt(el.dataset.target);
-  const prefix = el.dataset.prefix || '';
-  const suffix = el.dataset.suffix || '';
-  const duration = 1200;
-  const start = performance.now();
-  function update(now) {
-    const progress = Math.min((now - start) / duration, 1);
-    const eased = 1 - Math.pow(1 - progress, 3);
-    el.textContent = prefix + Math.round(eased * target) + suffix;
-    if (progress < 1) requestAnimationFrame(update);
-  }
-  requestAnimationFrame(update);
-}
+      <!-- CTAS -->
+      <div class="hero-ctas">
+        <a
+          href="Maya_Erusalimsky_Resume.pdf"
+          class="btn btn-primary"
+          target="_blank"
+          download
+          aria-label="Download Maya Erusalimsky CV"
+        >
+          <svg
+            class="svg-icon"
+            viewBox="0 0 24 24"
+            width="16"
+            height="16"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path
+              d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"
+            />
+          </svg>
+          Download Resume
+        </a>
+        <a
+          href="https://github.com/mayageva11/nexusqa"
+          class="btn btn-secondary"
+          target="_blank"
+          aria-label="View Project on GitHub"
+        >
+          <svg
+            class="svg-icon"
+            viewBox="0 0 24 24"
+            width="16"
+            height="16"
+            fill="currentColor"
+          >
+            <path
+              d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"
+            />
+          </svg>
+          GitHub Codebase ↗
+        </a>
+      </div>
+    </section>
 
-// Scroll reveal
-const revealEls = document.querySelectorAll('.reveal');
-const statNums = document.querySelectorAll('.stat-num');
-let statsAnimated = false;
+    <!-- STATS -->
+    <div class="stats-bar">
+      <div class="stat">
+        <span class="stat-num" data-target="234">0</span
+        ><span class="stat-label">Tests Written</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num" data-target="3">0</span
+        ><span class="stat-label">Browsers</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num" data-target="100" data-suffix="%">0</span
+        ><span class="stat-label">Pass Rate</span>
+      </div>
+      <div class="stat">
+        <span
+          class="stat-num"
+          data-target="2"
+          data-prefix="&lt;"
+          data-suffix=" min"
+          >0</span
+        ><span class="stat-label">CI Runtime</span>
+      </div>
+    </div>
 
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-      observer.unobserve(entry.target);
-    }
+    <hr class="divider" />
+
+    <!-- PROJECT SECTION -->
+    <section class="section" id="project">
+      <div class="section-inner">
+        <p class="section-eyebrow reveal">// portfolio.main_project</p>
+        <h2 class="section-title reveal">NexusQA</h2>
+        <p class="section-desc reveal">
+          A full-stack QA automation suite that uses Claude to build the SaaS
+          app, generate test data, and analyze failures — all wired into a live
+          CI/CD pipeline.
+        </p>
+
+        <div class="project-card glow-card reveal">
+          <div class="project-header">
+            <div>
+              <div class="project-name">NEXUSQA</div>
+              <div class="project-sub">
+                AI-Powered Test Automation Suite for Luminary Analytics SaaS
+              </div>
+            </div>
+            <div class="project-links">
+              <a
+                href="https://github.com/mayageva11/nexusqa"
+                class="link-pill"
+                target="_blank"
+                aria-label="NexusQA GitHub repository"
+                >GitHub ↗</a
+              >
+              <a
+                href="https://mayageva11.github.io/nexusqa/reports"
+                class="link-pill"
+                target="_blank"
+                aria-label="NexusQA live test reports"
+                >Test Reports ↗</a
+              >
+              <a
+                href="https://mayageva11.github.io/nexusqa"
+                class="link-pill"
+                target="_blank"
+                aria-label="NexusQA live SaaS application"
+                >Live App ↗</a
+              >
+            </div>
+          </div>
+
+          <!-- Animated SVG Flow Map -->
+          <div class="arch-flow">
+            <div class="flow-node ai">
+              <div class="flow-node-title">Claude AI API</div>
+              <div class="flow-node-desc">
+                Generates raw test scenarios &amp; triages CI failures
+              </div>
+            </div>
+            <div class="flow-arrow purple">
+              <svg viewBox="0 0 40 24">
+                <path d="M 0 12 L 40 12" />
+                <polygon points="35,7 40,12 35,17" />
+              </svg>
+            </div>
+            <div class="flow-node">
+              <div class="flow-node-title">Test Data &amp; Scenarios</div>
+              <div class="flow-node-desc">
+                Structured JSON payloads with realistic edge cases
+              </div>
+            </div>
+            <div class="flow-arrow rose">
+              <svg viewBox="0 0 40 24">
+                <path d="M 0 12 L 40 12" />
+                <polygon points="35,7 40,12 35,17" />
+              </svg>
+            </div>
+            <div class="flow-node">
+              <div class="flow-node-title">Playwright Suite</div>
+              <div class="flow-node-desc">
+                Runs 234 E2E/API assertions in parallel
+              </div>
+            </div>
+            <div class="flow-arrow rose">
+              <svg viewBox="0 0 40 24">
+                <path d="M 0 12 L 40 12" />
+                <polygon points="35,7 40,12 35,17" />
+              </svg>
+            </div>
+            <div class="flow-node target">
+              <div class="flow-node-title">Luminary SaaS</div>
+              <div class="flow-node-desc">
+                Target app: dashboards, tables, wizard steps
+              </div>
+            </div>
+            <div class="flow-arrow mint">
+              <svg viewBox="0 0 40 24">
+                <path d="M 0 12 L 40 12" />
+                <polygon points="35,7 40,12 35,17" />
+              </svg>
+            </div>
+            <div class="flow-node">
+              <div class="flow-node-title">Allure Reports</div>
+              <div class="flow-node-desc">
+                Visual HTML report deployed to Pages
+              </div>
+            </div>
+          </div>
+
+          <div class="badges">
+            <span class="badge cyan">Playwright</span>
+            <span class="badge cyan">TypeScript</span>
+            <span class="badge purple">Claude API</span>
+            <span class="badge">GitHub Actions</span>
+            <span class="badge">Node.js</span>
+            <span class="badge">Docker</span>
+            <span class="badge">Allure</span>
+            <span class="badge">Page Object Model</span>
+          </div>
+
+          <div class="features">
+            <div class="feature glow-card">
+              <div class="feature-icon">
+                <svg
+                  class="svg-icon"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  height="24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M10 2v8l-6 11h16l-6-11V2M8 2h8M6.5 18h11M10 12h4" />
+                </svg>
+              </div>
+              <div class="feature-title">E2E + API Coverage</div>
+              <div class="feature-text">
+                234 tests across auth, dashboard, user management, and reports.
+                Full API layer coverage with request fixtures.
+              </div>
+            </div>
+            <div class="feature glow-card">
+              <div class="feature-icon">
+                <svg
+                  class="svg-icon"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  height="24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <rect x="3" y="11" width="18" height="10" rx="2" />
+                  <circle cx="12" cy="5" r="2" />
+                  <path d="M12 7v4M9 16h.01M15 16h.01M8 11V8a4 4 0 0 1 8 0v3" />
+                </svg>
+              </div>
+              <div class="feature-title">AI-Generated Test Data</div>
+              <div class="feature-text">
+                Claude generates realistic, edge-case-rich users, scenarios, and
+                payloads — not just dummy data.
+              </div>
+            </div>
+            <div class="feature glow-card">
+              <div class="feature-icon">
+                <svg
+                  class="svg-icon"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  height="24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                </svg>
+              </div>
+              <div class="feature-title">Parallel Execution</div>
+              <div class="feature-text">
+                Matrix CI strategy runs Chromium, Firefox, and WebKit in
+                parallel. Full suite completes in under 2 minutes.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider" />
+
+    <!-- CLAUDE INTEGRATION SECTION -->
+    <section class="section" id="claude">
+      <div class="section-inner">
+        <p class="section-eyebrow reveal">/* claude_api.integration */</p>
+        <h2 class="section-title reveal">How Claude Powers the Tests</h2>
+        <p class="section-desc reveal">
+          The twist that makes this portfolio unique. Claude isn't just a tool I
+          used to write the code — it's an active part of the test
+          infrastructure at runtime.
+        </p>
+
+        <div class="claude-cards">
+          <div class="claude-card glow-card reveal">
+            <div class="claude-card-title">INTELLIGENT TEST DATA</div>
+            <div class="claude-card-desc">
+              Claude generates users with real edge cases: unicode names, long
+              emails, special characters, multi-locale inputs. Better than any
+              faker library.
+            </div>
+            <div class="code-snippet">
+              <span class="kw">const</span> users =
+              <span class="kw">await</span>
+              <span class="fn">generateTestUsers</span>(<span class="str"
+                >15</span
+              >);
+              <span class="cm">// returns users with edge cases:</span>
+              <span class="cm">// { name: "Ñoño García-López", </span>
+              <span class="cm">// email: "user+tag@sub.domain.io" }</span>
+            </div>
+          </div>
+          <div class="claude-card glow-card reveal">
+            <div class="claude-card-title">FAILURE ANALYSIS</div>
+            <div class="claude-card-desc">
+              When a test fails in CI, Claude reads the error and screenshot to
+              classify it: real bug, flaky test, or environment issue. Saved in
+              the Allure report.
+            </div>
+            <div class="code-snippet">
+              <span class="kw">const</span> analysis =
+              <span class="kw">await</span>
+              <span class="fn">analyzeFailure</span>( testName, errorMsg );
+              <span class="cm">// { rootCause: "race condition",</span>
+              <span class="cm">// severity: "flaky",</span>
+              <span class="cm">// isFlaky: true }</span>
+            </div>
+          </div>
+          <div class="claude-card glow-card reveal">
+            <div class="claude-card-title">SCENARIO GENERATION</div>
+            <div class="claude-card-desc">
+              Feed Claude a user story in plain English. It returns a structured
+              test scenario with steps, assertions, and edge cases ready to
+              implement.
+            </div>
+            <div class="code-snippet">
+              <span class="kw">const</span> scenario =
+              <span class="kw">await</span>
+              <span class="fn">generateTestScenario</span>(
+              <span class="str">"user can filter by role"</span>
+              );
+              <span class="cm">// { steps: [...], assertions: [...],</span>
+              <span class="cm">// edgeCases: ["empty role", ...] }</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- QA AI SANDBOX SECTION -->
+    <section class="section" id="sandbox">
+      <div class="section-inner">
+        <p class="section-eyebrow reveal">// qa.ai_sandbox</p>
+        <h2 class="section-title reveal">Interactive QA AI Sandbox</h2>
+        <p class="section-desc reveal">
+          Experience how I integrate the Claude API into the test lifecycle.
+          Interact with the generators below to see live test data analysis and
+          test automation generation.
+        </p>
+
+        <div class="sandbox-container glow-card reveal">
+          <div class="sandbox-sidebar">
+            <div class="sandbox-tab-header">
+              <button
+                class="sandbox-tab-btn active"
+                onclick="switchSandboxTab('generator')"
+              >
+                Test Spec Gen
+              </button>
+              <button
+                class="sandbox-tab-btn"
+                onclick="switchSandboxTab('triage')"
+              >
+                Failure Analyzer
+              </button>
+            </div>
+
+            <!-- Tab A Content: Spec Generator controls -->
+            <div class="sandbox-tab-content" id="sandbox-generator-controls">
+              <p class="sandbox-instruction">
+                Select a User Story to see Claude generate a structured
+                Playwright spec with edge cases:
+              </p>
+              <div class="sandbox-options">
+                <button
+                  class="sandbox-option-btn active"
+                  onclick="selectStory('reset-password', this)"
+                >
+                  Story A: Reset Password Link
+                </button>
+                <button
+                  class="sandbox-option-btn"
+                  onclick="selectStory('filter-table', this)"
+                >
+                  Story B: Filter Activity Table
+                </button>
+                <button
+                  class="sandbox-option-btn"
+                  onclick="selectStory('delete-item', this)"
+                >
+                  Story C: Delete and Undo Action
+                </button>
+              </div>
+              <button
+                class="btn btn-primary btn-sm sandbox-run-btn"
+                onclick="runSpecGenerator()"
+              >
+                Generate Playwright Spec
+              </button>
+            </div>
+
+            <!-- Tab B Content: Failure Triage controls -->
+            <div
+              class="sandbox-tab-content"
+              id="sandbox-triage-controls"
+              style="display: none"
+            >
+              <p class="sandbox-instruction">
+                Select a failed CI build log to have Claude classify and suggest
+                a fix:
+              </p>
+              <div class="sandbox-options">
+                <button
+                  class="sandbox-option-btn active"
+                  onclick="selectLog('timeout', this)"
+                >
+                  Log A: Timeout (Locator Element)
+                </button>
+                <button
+                  class="sandbox-option-btn"
+                  onclick="selectLog('assertion', this)"
+                >
+                  Log B: API Assert Fail (500 Error)
+                </button>
+                <button
+                  class="sandbox-option-btn"
+                  onclick="selectLog('network', this)"
+                >
+                  Log C: Network Flake (Gateway Time)
+                </button>
+              </div>
+              <button
+                class="btn btn-primary btn-sm sandbox-run-btn"
+                onclick="runTriageAnalyzer()"
+              >
+                Analyze CI Failure
+              </button>
+            </div>
+          </div>
+
+          <div class="sandbox-display">
+            <div class="display-bar">
+              <span class="display-title" id="sandbox-display-title"
+                >playwright-test-gen.ts</span
+              >
+              <span class="display-status" id="sandbox-display-status"
+                >Idle</span
+              >
+            </div>
+            <div class="display-screen">
+              <pre
+                class="code-snippet-pre"
+              ><code id="sandbox-display-code">// Select a story or log, then click generate to start the simulation...</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider" />
+
+    <!-- CI/CD PIPELINE SECTION -->
+    <section class="section" id="cicd">
+      <div class="section-inner">
+        <p class="section-eyebrow reveal">// github_actions.pipeline</p>
+        <h2 class="section-title reveal">CI/CD Pipeline</h2>
+        <p class="section-desc reveal">
+          Three GitHub Actions workflows. Every push triggers the full matrix.
+          PRs get a smoke suite. Nightly runs deploy a fresh Allure report to
+          GitHub Pages.
+        </p>
+
+        <!-- Pipeline Simulator Widget -->
+        <div class="pipeline-suite reveal">
+          <div class="pipeline-header">
+            <div class="pipeline-status">
+              <span class="status-dot green" id="pipeline-status-dot"></span>
+              <span
+                >Pipeline Status:
+                <span class="t-pass" id="pipeline-overall-status"
+                  >Success</span
+                ></span
+              >
+            </div>
+            <button
+              class="suite-btn"
+              id="replay-pipeline-btn"
+              onclick="runPipelineSimulation()"
+            >
+              Re-run Simulation
+            </button>
+          </div>
+
+          <div class="pipeline-nodes">
+            <div class="pipe-step glow-card" id="step-push">
+              <div class="pipe-icon">
+                <svg
+                  class="svg-icon"
+                  viewBox="0 0 24 24"
+                  width="16"
+                  height="16"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M12 2v20M17 5l-5-5-5 5M2 22h20" />
+                </svg>
+              </div>
+              <div class="pipe-info">
+                <span class="pipe-name">Git Push</span>
+                <span class="pipe-status-label" id="status-push"
+                  >Completed</span
+                >
+              </div>
+            </div>
+
+            <div class="pipe-connector">
+              <div class="pipe-connector-fill"></div>
+            </div>
+
+            <div class="pipe-step glow-card" id="step-lint">
+              <div class="pipe-icon">
+                <svg
+                  class="svg-icon"
+                  viewBox="0 0 24 24"
+                  width="16"
+                  height="16"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              </div>
+              <div class="pipe-info">
+                <span class="pipe-name">Lint + TS</span>
+                <span class="pipe-status-label" id="status-lint"
+                  >Completed</span
+                >
+              </div>
+            </div>
+
+            <div class="pipe-connector">
+              <div class="pipe-connector-fill"></div>
+            </div>
+
+            <div class="pipe-step glow-card" id="step-start">
+              <div class="pipe-icon">
+                <svg
+                  class="svg-icon"
+                  viewBox="0 0 24 24"
+                  width="16"
+                  height="16"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="2" y1="12" x2="22" y2="12" />
+                  <path
+                    d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
+                  />
+                </svg>
+              </div>
+              <div class="pipe-info">
+                <span class="pipe-name">Start App</span>
+                <span class="pipe-status-label" id="status-start"
+                  >Completed</span
+                >
+              </div>
+            </div>
+
+            <div class="pipe-connector">
+              <div class="pipe-connector-fill"></div>
+            </div>
+
+            <div class="pipe-step glow-card" id="step-test">
+              <div class="pipe-icon">
+                <svg
+                  class="svg-icon"
+                  viewBox="0 0 24 24"
+                  width="16"
+                  height="16"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <rect
+                    x="2"
+                    y="2"
+                    width="20"
+                    height="20"
+                    rx="2.18"
+                    ry="2.18"
+                  />
+                  <line x1="7" y1="2" x2="7" y2="22" />
+                  <line x1="17" y1="2" x2="17" y2="22" />
+                  <line x1="2" y1="12" x2="22" y2="12" />
+                </svg>
+              </div>
+              <div class="pipe-info">
+                <span class="pipe-name">E2E Matrix</span>
+                <span class="pipe-status-label" id="status-test"
+                  >Completed</span
+                >
+              </div>
+            </div>
+
+            <div class="pipe-connector">
+              <div class="pipe-connector-fill"></div>
+            </div>
+
+            <div class="pipe-step glow-card" id="step-report">
+              <div class="pipe-icon">
+                <svg
+                  class="svg-icon"
+                  viewBox="0 0 24 24"
+                  width="16"
+                  height="16"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M18 20V10M12 20V4M6 20v-6" />
+                </svg>
+              </div>
+              <div class="pipe-info">
+                <span class="pipe-name">Report ↗</span>
+                <span class="pipe-status-label" id="status-report"
+                  >Completed</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="features">
+          <div class="feature glow-card reveal">
+            <div class="feature-icon">
+              <svg
+                class="svg-icon"
+                viewBox="0 0 24 24"
+                width="24"
+                height="24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polyline points="16 3 21 3 21 8" />
+                <line x1="4" y1="20" x2="21" y2="3" />
+                <polyline points="21 16 21 21 16 21" />
+                <line x1="15" y1="15" x2="21" y2="21" />
+                <line x1="4" y1="4" x2="9" y2="9" />
+              </svg>
+            </div>
+            <div class="feature-title">Matrix Strategy</div>
+            <div class="feature-text">
+              Chromium, Firefox, and WebKit run in parallel. Each uploads its
+              own artifact. Failures are isolated per browser.
+            </div>
+          </div>
+          <div class="feature glow-card reveal">
+            <div class="feature-icon">
+              <svg
+                class="svg-icon"
+                viewBox="0 0 24 24"
+                width="24"
+                height="24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+                />
+              </svg>
+            </div>
+            <div class="feature-title">PR Comments</div>
+            <div class="feature-text">
+              Every PR gets an automated comment: ✅ passed | ❌ failed | ⏭️
+              skipped — with a direct link to the full report.
+            </div>
+          </div>
+          <div class="feature glow-card reveal">
+            <div class="feature-icon">
+              <svg
+                class="svg-icon"
+                viewBox="0 0 24 24"
+                width="24"
+                height="24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+              </svg>
+            </div>
+            <div class="feature-title">Nightly Regression</div>
+            <div class="feature-text">
+              02:00 UTC, full suite runs on main. Deploys a fresh Allure report
+              with trend graphs and history tracking.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VALUE PROP SECTION -->
+    <section class="section" id="value-prop">
+      <div class="section-inner">
+        <p class="section-eyebrow reveal">// engineering.roi</p>
+        <h2 class="section-title reveal">Why Hire Maya?</h2>
+        <p class="section-desc reveal">
+          How I bridge the gap between engineering quality and business goals. I
+          don't just write test scripts — I design stable automation systems
+          that speed up releases and reduce development friction.
+        </p>
+
+        <div class="features">
+          <div class="feature glow-card reveal">
+            <div class="feature-icon" style="color: var(--rose)">
+              <svg
+                class="svg-icon"
+                viewBox="0 0 24 24"
+                width="24"
+                height="24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+              </svg>
+            </div>
+            <div class="feature-title">CI/CD &amp; Release Velocity</div>
+            <div class="feature-text">
+              I integrate regression suites directly into Git workflows. With
+              parallelized test runtimes under 2 minutes, developers merge code
+              faster with 100% confidence.
+            </div>
+          </div>
+          <div class="feature glow-card reveal">
+            <div class="feature-icon" style="color: var(--lilac)">
+              <svg
+                class="svg-icon"
+                viewBox="0 0 24 24"
+                width="24"
+                height="24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <rect x="3" y="11" width="18" height="10" rx="2" />
+                <path d="M12 2v20M17 5l-5-5-5 5" />
+              </svg>
+            </div>
+            <div class="feature-title">Bug Prevention (Shift-Left)</div>
+            <div class="feature-text">
+              I design automation coverage during the initial spec planning
+              phase. Catching layout issues and logical flaws early reduces
+              bug-fixing costs by up to 10x.
+            </div>
+          </div>
+          <div class="feature glow-card reveal">
+            <div class="feature-icon" style="color: var(--mint)">
+              <svg
+                class="svg-icon"
+                viewBox="0 0 24 24"
+                width="24"
+                height="24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"
+                />
+              </svg>
+            </div>
+            <div class="feature-title">AI Tooling Innovation</div>
+            <div class="feature-text">
+              By wiring the Claude API into our runtime, we generate rich user
+              edge cases and automate CI logs triage, saving developers hours of
+              trace review weekly.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider" />
+
+    <!-- SKILLS SECTION -->
+    <section class="section" id="skills">
+      <div class="section-inner">
+        <p class="section-eyebrow reveal">// engineer.skills</p>
+        <h2 class="section-title reveal">Technical Skills</h2>
+
+        <!-- Filter controls -->
+        <div class="skills-filter reveal">
+          <button class="filter-btn active" data-category="all">All</button>
+          <button class="filter-btn" data-category="automation">
+            Automation &amp; Testing
+          </button>
+          <button class="filter-btn" data-category="languages">
+            Languages
+          </button>
+          <button class="filter-btn" data-category="devops">
+            DevOps &amp; Infrastructure
+          </button>
+          <button class="filter-btn" data-category="ai">
+            AI &amp; Reports
+          </button>
+        </div>
+
+        <div class="skills-cloud reveal" id="skills-container">
+          <!-- Automation & Testing -->
+          <span class="skill-tag primary" data-category="automation"
+            >Playwright</span
+          >
+          <span class="skill-tag primary" data-category="languages"
+            >TypeScript</span
+          >
+          <span class="skill-tag" data-category="automation">API Testing</span>
+          <span class="skill-tag" data-category="automation">E2E Testing</span>
+          <span class="skill-tag" data-category="automation"
+            >Regression Testing</span
+          >
+          <span class="skill-tag" data-category="automation">Postman</span>
+          <span class="skill-tag" data-category="automation"
+            >Page Object Model</span
+          >
+          <span class="skill-tag" data-category="automation">SDLC</span>
+          <span class="skill-tag" data-category="automation"
+            >Bug Lifecycle</span
+          >
+
+          <!-- Languages -->
+          <span class="skill-tag" data-category="languages">Python</span>
+          <span class="skill-tag" data-category="languages">JavaScript</span>
+
+          <!-- DevOps & Infrastructure -->
+          <span class="skill-tag" data-category="devops">GitHub Actions</span>
+          <span class="skill-tag" data-category="devops">CI/CD Pipelines</span>
+          <span class="skill-tag" data-category="devops">AWS</span>
+          <span class="skill-tag" data-category="devops">Docker</span>
+          <span class="skill-tag" data-category="devops">Git / GitHub</span>
+          <span class="skill-tag" data-category="devops">Jira</span>
+          <span class="skill-tag" data-category="devops">Agile / Scrum</span>
+
+          <!-- AI & Reports -->
+          <span class="skill-tag" data-category="ai">Claude API</span>
+          <span class="skill-tag" data-category="ai">Allure Reports</span>
+          <span class="skill-tag" data-category="ai"
+            >AI-assisted development tools</span
+          >
+          <span class="skill-tag" data-category="ai">WebSocket (academic)</span>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider" />
+
+    <!-- ABOUT SECTION -->
+    <section class="section" id="about">
+      <div class="section-inner">
+        <p class="section-eyebrow reveal">// engineer.profile</p>
+        <h2 class="section-title reveal">About Maya</h2>
+        <div class="about-grid">
+          <!-- Timeline Experience & Education -->
+          <div class="timeline reveal">
+            <!-- Experience -->
+            <div class="timeline-item">
+              <div class="timeline-header">
+                <span class="timeline-title">QA Automation Engineer</span>
+                <span class="timeline-date">2025 – 2026</span>
+              </div>
+              <div class="timeline-subtitle">Kissterra</div>
+              <ul class="timeline-list">
+                <li>
+                  Designed and developed E2E automation test suites using
+                  Playwright and TypeScript, covering critical user flows across
+                  web and API layers.
+                </li>
+                <li>
+                  Built and maintained API test frameworks validating backend
+                  integrations, catching regressions before production.
+                </li>
+                <li>
+                  Managed test cases, bug reports, and QA workflows in JIRA
+                  throughout the full feature development cycle.
+                </li>
+                <li>
+                  Embedded in a cross-functional Agile/Scrum team with
+                  developers and product managers — participated in sprint
+                  planning, reviews, and retrospectives.
+                </li>
+                <li>
+                  Collaborated via Git: branched, reviewed, and opened pull
+                  requests with clear documentation for the dev team.
+                </li>
+                <li>
+                  Leveraged AI-assisted tooling (Cursor for code generation,
+                  MCP-Git for automated PR creation) to accelerate day-to-day
+                  automation workflows.
+                </li>
+                <li>
+                  Acted as quality gatekeeper at release — verified build
+                  stability and approved features before deployment.
+                </li>
+              </ul>
+            </div>
+
+            <!-- Education -->
+            <div class="timeline-item">
+              <div class="timeline-header">
+                <span class="timeline-title">B.Sc. in Computer Science</span>
+                <span class="timeline-date">2023 – 2025</span>
+              </div>
+              <div class="timeline-subtitle">
+                College of Management Academic Studies
+              </div>
+              <ul class="timeline-list">
+                <li>
+                  Specialized in web development — built full-stack web
+                  applications using JavaScript, TypeScript, HTML, and CSS.
+                </li>
+                <li>
+                  Coursework included algorithms, data structures, software
+                  engineering, databases, and systems design.
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Sidebar Facts & Links -->
+          <div class="about-sidebar">
+            <!-- FIRST Robotics Competition Highlight -->
+            <div class="glow-card highlight-card reveal">
+              <div class="highlight-title">
+                <span>🤖</span> FIRST Robotics Competition (FRC)
+              </div>
+              <p class="highlight-text">
+                Robotics Team Member, International Competitions (USA). Competed
+                in US tournaments representing FIRST Israel. Designed, built,
+                and programmed competition robots through complete engineering
+                cycles: requirements gathering, design, build, test, and debug.
+              </p>
+            </div>
+
+            <!-- Languages Card -->
+            <div class="glow-card lang-card reveal" style="padding: 1.5rem">
+              <div class="lang-title">// Languages</div>
+              <div class="lang-grid">
+                <div><span class="t-dim">Hebrew:</span> Native</div>
+                <div><span class="t-dim">English:</span> Professional</div>
+              </div>
+            </div>
+
+            <!-- Contact list -->
+            <div class="contact-links reveal">
+              <!-- Phone Call -->
+              <a
+                href="tel:054-446-0415"
+                class="contact-link"
+                aria-label="Call Maya Erusalimsky at 054-446-0415"
+              >
+                <span class="contact-link-icon">
+                  <svg
+                    class="svg-icon"
+                    viewBox="0 0 24 24"
+                    width="16"
+                    height="16"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path
+                      d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"
+                    />
+                  </svg>
+                </span>
+                054-446-0415
+              </a>
+
+              <!-- WhatsApp Chat -->
+              <a
+                href="https://wa.me/972544460415"
+                class="contact-link"
+                target="_blank"
+                aria-label="Chat with Maya Erusalimsky on WhatsApp"
+              >
+                <span class="contact-link-icon">
+                  <svg
+                    class="svg-icon"
+                    viewBox="0 0 24 24"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                  >
+                    <path
+                      d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.513 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.968C16.774 1.97 14.302.943 12 1.002 6.565 1.002 2.14 5.372 2.136 10.801c-.001 1.705.467 3.37 1.354 4.8l-.994 3.63 3.731-.977z"
+                    />
+                  </svg>
+                </span>
+                Chat on WhatsApp
+              </a>
+
+              <!-- Email -->
+              <a
+                href="mailto:mayageva11@gmail.com"
+                class="contact-link"
+                aria-label="Send email to Maya Erusalimsky"
+              >
+                <span class="contact-link-icon">
+                  <svg
+                    class="svg-icon"
+                    viewBox="0 0 24 24"
+                    width="16"
+                    height="16"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path
+                      d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+                    />
+                    <polyline points="22,6 12,13 2,6" />
+                  </svg>
+                </span>
+                mayageva11@gmail.com
+              </a>
+
+              <!-- LinkedIn -->
+              <a
+                href="https://www.linkedin.com/in/maya-eru"
+                class="contact-link"
+                target="_blank"
+                aria-label="Maya Erusalimsky LinkedIn Profile"
+              >
+                <span class="contact-link-icon">
+                  <svg
+                    class="svg-icon"
+                    viewBox="0 0 24 24"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                  >
+                    <path
+                      d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.779-1.75-1.75s.784-1.75 1.75-1.75 1.75.779 1.75 1.75-.784 1.75-1.75 1.75zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"
+                    />
+                  </svg>
+                </span>
+                linkedin.com/in/maya-eru
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      <span>MAYA ERUSALIMSKY</span> · QA Automation Engineer · Israel · 2026
+      <br />Built with Playwright + TypeScript + <span>Claude API</span>
+    </footer>
+
+    <script>
+      // Smooth spotlight cursor glow tracker (runs with requestAnimationFrame)
+      let mouseX = window.innerWidth / 2;
+      let mouseY = window.innerHeight / 2;
+      let nextMouseX = mouseX;
+      let nextMouseY = mouseY;
+
+      document.addEventListener('mousemove', e => {
+        nextMouseX = e.clientX;
+        nextMouseY = e.clientY;
+      });
+
+      function updateMousePosition() {
+        // Ease/Lerp transition
+        mouseX += (nextMouseX - mouseX) * 0.08;
+        mouseY += (nextMouseY - mouseY) * 0.08;
+        document.body.style.setProperty('--mouse-x', mouseX + 'px');
+        document.body.style.setProperty('--mouse-y', mouseY + 'px');
+        requestAnimationFrame(updateMousePosition);
+      }
+      requestAnimationFrame(updateMousePosition);
+
+      // Card Hover Glow positions
+      const cards = document.querySelectorAll('.glow-card');
+      cards.forEach(card => {
+        card.addEventListener('mousemove', e => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          card.style.setProperty('--card-x', x + 'px');
+          card.style.setProperty('--card-y', y + 'px');
+        });
+      });
+
+      // Terminal Tabs Logic
+      const tabButtons = document.querySelectorAll('.t-tab');
+      const tabContents = document.querySelectorAll('.tab-content');
+
+      tabButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          tabButtons.forEach(t => t.classList.remove('active'));
+          btn.classList.add('active');
+
+          // Hide all
+          tabContents.forEach(content => (content.style.display = 'none'));
+
+          // Show targets
+          const targetTab = btn.dataset.tab;
+          if (targetTab === 'terminal-output') {
+            document.getElementById('terminal-output-container').style.display =
+              'block';
+          } else if (targetTab === 'playwright-config') {
+            document.getElementById(
+              'playwright-config-container'
+            ).style.display = 'block';
+          } else if (targetTab === 'failure-triage') {
+            document.getElementById('failure-triage-container').style.display =
+              'block';
+          }
+        });
+      });
+
+      // Terminal mock typing animation data
+      const smokeSuiteLines = [
+        { text: '  npx playwright test --grep @smoke', cls: 't-dim', delay: 0 },
+        {
+          text: '  Running 13 smoke tests on 3 browsers...',
+          cls: 't-dim',
+          delay: 300
+        },
+        { text: '', cls: '', delay: 500 },
+        {
+          text: '  ✓  [chromium] › auth.spec.ts › login page loads',
+          cls: 't-pass',
+          timing: '(180ms)',
+          delay: 700
+        },
+        {
+          text: '  ✓  [firefox] › auth.spec.ts › login page loads',
+          cls: 't-pass',
+          timing: '(220ms)',
+          delay: 900
+        },
+        {
+          text: '  ✓  [webkit] › auth.spec.ts › login page loads',
+          cls: 't-pass',
+          timing: '(290ms)',
+          delay: 1100
+        },
+        { text: '', cls: '', delay: 1300 },
+        {
+          text: '  ✓  [chromium] › api.spec.ts › post login returns jwt',
+          cls: 't-pass',
+          timing: '(95ms)',
+          delay: 1500
+        },
+        {
+          text: '  ✓  [firefox] › api.spec.ts › post login returns jwt',
+          cls: 't-pass',
+          timing: '(110ms)',
+          delay: 1700
+        },
+        {
+          text: '  ✓  [webkit] › api.spec.ts › post login returns jwt',
+          cls: 't-pass',
+          timing: '(130ms)',
+          delay: 1900
+        },
+        { text: '', cls: '', delay: 2100 },
+        {
+          text: '  ✓  [chromium] › dashboard.spec.ts › metric cards visible',
+          cls: 't-pass',
+          timing: '(310ms)',
+          delay: 2300
+        },
+        {
+          text: '  ✓  [webkit] › dashboard.spec.ts › metric cards visible',
+          cls: 't-pass',
+          timing: '(390ms)',
+          delay: 2500
+        },
+        { text: '', cls: '', delay: 2700 },
+        {
+          text: '  ─────────────────────────────────────',
+          cls: 't-dim',
+          delay: 2900
+        },
+        { text: '  13 passed  (1.2s)', cls: 't-info', delay: 3100 }
+      ];
+
+      const apiSuiteLines = [
+        { text: '  npx playwright test --project=api', cls: 't-dim', delay: 0 },
+        { text: '  Running 24 API layer tests...', cls: 't-dim', delay: 300 },
+        { text: '', cls: '', delay: 500 },
+        {
+          text: '  ✓  GET /api/auth/me › returns 200 with profile',
+          cls: 't-pass',
+          timing: '(45ms)',
+          delay: 700
+        },
+        {
+          text: '  ✓  POST /api/auth/login › fails with invalid credentials',
+          cls: 't-pass',
+          timing: '(38ms)',
+          delay: 900
+        },
+        {
+          text: '  ✓  POST /api/auth/logout › invalidates jwt',
+          cls: 't-pass',
+          timing: '(52ms)',
+          delay: 1100
+        },
+        { text: '', cls: '', delay: 1300 },
+        {
+          text: '  ✓  GET /api/users › paginated results format',
+          cls: 't-pass',
+          timing: '(60ms)',
+          delay: 1500
+        },
+        {
+          text: '  ✓  POST /api/users › validation check for email',
+          cls: 't-pass',
+          timing: '(41ms)',
+          delay: 1700
+        },
+        {
+          text: '  ✓  DELETE /api/users/99 › returns 404',
+          cls: 't-pass',
+          timing: '(33ms)',
+          delay: 1900
+        },
+        { text: '', cls: '', delay: 2100 },
+        {
+          text: '  ✓  GET /api/metrics › data structure schema match',
+          cls: 't-pass',
+          timing: '(78ms)',
+          delay: 2300
+        },
+        { text: '', cls: '', delay: 2500 },
+        {
+          text: '  ─────────────────────────────────────',
+          cls: 't-dim',
+          delay: 2700
+        },
+        { text: '  24 passed  (0.8s)', cls: 't-info', delay: 2900 }
+      ];
+
+      const regressionSuiteLines = [
+        { text: '  npx playwright test', cls: 't-dim', delay: 0 },
+        { text: '  Running 87 test suites...', cls: 't-dim', delay: 300 },
+        { text: '', cls: '', delay: 500 },
+        {
+          text: '  ✓  login with valid credentials',
+          cls: 't-pass',
+          timing: '(342ms)',
+          delay: 700
+        },
+        {
+          text: '  ✓  redirect to dashboard after login',
+          cls: 't-pass',
+          timing: '(218ms)',
+          delay: 1000
+        },
+        {
+          text: '  ✓  session persists on refresh',
+          cls: 't-pass',
+          timing: '(405ms)',
+          delay: 1300
+        },
+        { text: '', cls: '', delay: 1500 },
+        {
+          text: '  ✓  all 4 metric cards visible',
+          cls: 't-pass',
+          timing: '(891ms)',
+          delay: 1700
+        },
+        {
+          text: '  ✓  revenue card shows positive trend',
+          cls: 't-pass',
+          timing: '(234ms)',
+          delay: 2000
+        },
+        {
+          text: '  ✓  line chart has 30 data points',
+          cls: 't-pass',
+          timing: '(156ms)',
+          delay: 2300
+        },
+        { text: '', cls: '', delay: 2500 },
+        {
+          text: '  ✓  user table loads with pagination',
+          cls: 't-pass',
+          timing: '(678ms)',
+          delay: 2700
+        },
+        {
+          text: '  ✓  search filters rows in real time',
+          cls: 't-pass',
+          timing: '(445ms)',
+          delay: 3000
+        },
+        {
+          text: '  ✓  add user validates required fields',
+          cls: 't-pass',
+          timing: '(312ms)',
+          delay: 3300
+        },
+        { text: '', cls: '', delay: 3500 },
+        {
+          text: '  ─────────────────────────────────────',
+          cls: 't-dim',
+          delay: 3700
+        },
+        { text: '  87 passed  (4.5s)', cls: 't-info', delay: 3900 }
+      ];
+
+      let currentTimeoutIds = [];
+
+      function triggerSuite(suiteName) {
+        // Button states
+        document.querySelectorAll('.suite-btn').forEach(btn => {
+          btn.classList.remove('active');
+          if (btn.getAttribute('onclick').includes(suiteName)) {
+            btn.classList.add('active');
+          }
+        });
+
+        // Reset active timeouts
+        currentTimeoutIds.forEach(id => clearTimeout(id));
+        currentTimeoutIds = [];
+
+        const output = document.getElementById('terminal-output');
+        output.innerHTML = '';
+
+        let activeLines;
+        if (suiteName === 'smoke') activeLines = smokeSuiteLines;
+        else if (suiteName === 'api') activeLines = apiSuiteLines;
+        else activeLines = regressionSuiteLines;
+
+        activeLines.forEach(({ text, cls, timing, delay }) => {
+          const id = setTimeout(() => {
+            const span = document.createElement('span');
+            span.className = 't-line ' + (cls || '');
+            if (timing) {
+              span.innerHTML =
+                text + ' <span class="t-dim">' + timing + '</span>';
+            } else {
+              span.textContent = text;
+            }
+            output.appendChild(span);
+            output.scrollTop = output.scrollHeight;
+          }, delay);
+          currentTimeoutIds.push(id);
+        });
+
+        // Loop after complete
+        const totalDelay = activeLines[activeLines.length - 1].delay + 3000;
+        const loopId = setTimeout(() => {
+          triggerSuite(suiteName);
+        }, totalDelay);
+        currentTimeoutIds.push(loopId);
+      }
+
+      // Copy to clipboard utility
+      function copyCode(elementId) {
+        const code = document.getElementById(elementId).innerText;
+        navigator.clipboard.writeText(code).then(() => {
+          const btn = document.querySelector(
+            `[onclick="copyCode('${elementId}')"]`
+          );
+          const originalText = btn.textContent;
+          btn.textContent = 'Copied!';
+          btn.style.color = 'var(--rose)';
+          btn.style.borderColor = 'var(--rose)';
+          setTimeout(() => {
+            btn.textContent = originalText;
+            btn.style.color = '';
+            btn.style.borderColor = '';
+          }, 2000);
+        });
+      }
+
+      // Counter animation
+      function animateCounter(el) {
+        const target = parseInt(el.dataset.target);
+        const prefix = el.dataset.prefix || '';
+        const suffix = el.dataset.suffix || '';
+        const duration = 1500;
+        const start = performance.now();
+
+        function update(now) {
+          const progress = Math.min((now - start) / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3); // easeOutCubic
+          el.textContent = prefix + Math.round(eased * target) + suffix;
+          if (progress < 1) requestAnimationFrame(update);
+        }
+        requestAnimationFrame(update);
+      }
+
+      // CI/CD Pipeline Simulator
+      let pipelineRunning = false;
+      function runPipelineSimulation() {
+        if (pipelineRunning) return;
+        pipelineRunning = true;
+
+        const steps = ['push', 'lint', 'start', 'test', 'report'];
+        const overallStatus = document.getElementById(
+          'pipeline-overall-status'
+        );
+        const statusDot = document.getElementById('pipeline-status-dot');
+
+        overallStatus.textContent = 'Running...';
+        overallStatus.className = 't-dim';
+        statusDot.className = 'status-dot yellow';
+
+        // Reset all steps to pending
+        steps.forEach(step => {
+          const el = document.getElementById(`step-${step}`);
+          el.className = 'pipe-step pending';
+          document.getElementById(`status-${step}`).textContent = 'Queued';
+
+          // Reset connector
+          if (
+            el.previousElementSibling &&
+            el.previousElementSibling.classList.contains('pipe-connector')
+          ) {
+            el.previousElementSibling.classList.remove('active');
+          }
+        });
+
+        let stepIndex = 0;
+        function nextStep() {
+          if (stepIndex >= steps.length) {
+            overallStatus.textContent = 'Success';
+            overallStatus.className = 't-pass';
+            statusDot.className = 'status-dot green';
+            pipelineRunning = false;
+            return;
+          }
+
+          const step = steps[stepIndex];
+          const el = document.getElementById(`step-${step}`);
+
+          // Animate connector leading to this step
+          if (stepIndex > 0) {
+            const connector = el.previousElementSibling;
+            if (connector && connector.classList.contains('pipe-connector')) {
+              connector.classList.add('active');
+            }
+          }
+
+          el.className = 'pipe-step running';
+          document.getElementById(`status-${step}`).textContent = 'Running...';
+
+          setTimeout(() => {
+            el.className = 'pipe-step completed';
+            const labels = {
+              push: 'Main Triggered',
+              lint: 'ESLint OK',
+              start: 'Local Server OK',
+              test: '3 Browsers OK',
+              report: 'Deployed to Pages'
+            };
+            document.getElementById(`status-${step}`).textContent =
+              labels[step];
+            stepIndex++;
+            setTimeout(nextStep, 700);
+          }, 1200);
+        }
+
+        nextStep();
+      }
+
+      // QA AI Sandbox interactive datasets
+      const storiesData = {
+        'reset-password': `import { test, expect } from '@playwright/test';
+import { LoginPage } from '../pages/LoginPage';
+
+test('User can trigger password reset', async ({ page }) => {
+  const loginPage = new LoginPage(page);
+  await loginPage.goto();
+  
+  // Trigger reset flow
+  await loginPage.clickForgotPassword();
+  await loginPage.resetEmailInput.fill('user@luminary.io');
+  await loginPage.submitResetBtn.click();
+  
+  // Assert success toast message
+  await expect(loginPage.toastMessage).toHaveText('Reset link sent!');
+  
+  // Edge Case Verified (AI generated): 
+  // Validates email syntax on frontend before API call.
+});`,
+        'filter-table': `import { test, expect } from '@playwright/test';
+import { DashboardPage } from '../pages/DashboardPage';
+
+test('Filter activity logs by category', async ({ page }) => {
+  const dashboard = new DashboardPage(page);
+  await dashboard.goto();
+  
+  // Select role filter
+  await dashboard.filterSelect.selectOption('Editor');
+  
+  // Verify matching rows
+  const rows = await dashboard.tableRows.allInnerTexts();
+  rows.forEach(row => {
+    expect(row).toContain('Editor');
   });
-}, {threshold: 0.12});
+  
+  // Edge Case Verified (AI generated): 
+  // Verify table shows placeholder when filter has 0 results.
+});`,
+        'delete-item': `import { test, expect } from '@playwright/test';
+import { ReportsPage } from '../pages/ReportsPage';
 
-revealEls.forEach(el => observer.observe(el));
+test('Delete report and undo deletion', async ({ page }) => {
+  const reports = new ReportsPage(page);
+  await reports.goto();
+  
+  const initialCount = await reports.reportItems.count();
+  await reports.deleteBtn.first().click();
+  
+  // Verify item is removed
+  await expect(reports.reportItems).toHaveCount(initialCount - 1);
+  
+  // Click undo toast
+  await reports.undoToastBtn.click();
+  await expect(reports.reportItems).toHaveCount(initialCount);
+  
+  // Edge Case Verified (AI generated): 
+  // Undo remains visible for exactly 5 seconds.
+});`
+      };
 
-const statsObserver = new IntersectionObserver((entries) => {
-  if (entries[0].isIntersecting && !statsAnimated) {
-    statsAnimated = true;
-    statNums.forEach(el => animateCounter(el));
+      const logsData = {
+        timeout: `{
+  "testName": "User Management > Add New User Dialog",
+  "status": "FAILED",
+  "error": "TimeoutError: waiting for locator('button.submit') to be visible",
+  "classification": {
+    "rootCause": "Race Condition / Page Loading Delay",
+    "isFlaky": true,
+    "severity": "Medium",
+    "aiDiagnosis": "The submit button is obscured by a fade-in animation overlay. Playwright tried to click it before the animation completed.",
+    "suggestedFix": "Change the locator strategy to wait for the overlay to fully disappear first: \\nawait expect(page.locator('.modal-overlay')).toHaveCount(0);"
   }
-}, {threshold: 0.5});
+}`,
+        assertion: `{
+  "testName": "API endpoints > POST /api/users",
+  "status": "FAILED",
+  "error": "Expected status 201 Created but received 500 Internal Error",
+  "classification": {
+    "rootCause": "Backend Bug (Unhandled Null)",
+    "isFlaky": false,
+    "severity": "High",
+    "aiDiagnosis": "The payload sent lacked a 'locale' parameter. The server-side controller tried to read user.locale.toUpperCase() which crashed the process.",
+    "suggestedFix": "Add a validation schema check on the backend OR modify fixture data to guarantee default locale generation:\\nuser.locale = user.locale || 'en-US';"
+  }
+}`,
+        network: `{
+  "testName": "E2E Authentication > Session Persistence",
+  "status": "FAILED",
+  "error": "FetchError: net::ERR_CONNECTION_REFUSED at http://localhost:3001/api/auth/me",
+  "classification": {
+    "rootCause": "CI Environment Flake (Port Lock)",
+    "isFlaky": true,
+    "severity": "Low",
+    "aiDiagnosis": "The mock Express server failed to bind to port 3001 because the previous test container did not release the socket correctly.",
+    "suggestedFix": "Add a pre-test cleanup step in the GitHub Actions workflow to release ports:\\nkill -9 $(lsof -t -i:3001) || true"
+  }
+}`
+      };
 
-statsObserver.observe(document.querySelector('.stats-bar'));
-</script>
-</body>
+      let sandboxTypewriterId = null;
+      let selectedStoryKey = 'reset-password';
+      let selectedLogKey = 'timeout';
+      let activeSandboxTab = 'generator';
+
+      function switchSandboxTab(tabName) {
+        activeSandboxTab = tabName;
+        document.querySelectorAll('.sandbox-tab-btn').forEach(btn => {
+          btn.classList.remove('active');
+          if (btn.getAttribute('onclick').includes(tabName)) {
+            btn.classList.add('active');
+          }
+        });
+
+        if (tabName === 'generator') {
+          document.getElementById('sandbox-generator-controls').style.display =
+            'block';
+          document.getElementById('sandbox-triage-controls').style.display =
+            'none';
+          document.getElementById('sandbox-display-title').textContent =
+            'playwright-test-gen.ts';
+        } else {
+          document.getElementById('sandbox-generator-controls').style.display =
+            'none';
+          document.getElementById('sandbox-triage-controls').style.display =
+            'block';
+          document.getElementById('sandbox-display-title').textContent =
+            'ci-failure-analysis.json';
+        }
+
+        if (sandboxTypewriterId) clearTimeout(sandboxTypewriterId);
+        document.getElementById('sandbox-display-code').textContent =
+          '// Click generate to start the simulation...';
+        document.getElementById('sandbox-display-status').textContent = 'Idle';
+        document.getElementById('sandbox-display-status').className =
+          'display-status';
+      }
+
+      function selectStory(storyKey, btn) {
+        selectedStoryKey = storyKey;
+        document
+          .querySelectorAll('#sandbox-generator-controls .sandbox-option-btn')
+          .forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      }
+
+      function selectLog(logKey, btn) {
+        selectedLogKey = logKey;
+        document
+          .querySelectorAll('#sandbox-triage-controls .sandbox-option-btn')
+          .forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      }
+
+      function runSpecGenerator() {
+        if (sandboxTypewriterId) clearTimeout(sandboxTypewriterId);
+
+        const statusEl = document.getElementById('sandbox-display-status');
+        const codeEl = document.getElementById('sandbox-display-code');
+
+        statusEl.textContent = 'Generating Spec...';
+        statusEl.className = 'display-status running';
+
+        codeEl.textContent =
+          '// Connecting to Claude API...\n// Processing user story...';
+
+        const codeText = storiesData[selectedStoryKey];
+        let index = 0;
+
+        setTimeout(() => {
+          statusEl.textContent = 'Streaming output...';
+          codeEl.textContent = '';
+
+          function typeChar() {
+            if (index < codeText.length) {
+              codeEl.textContent += codeText[index++];
+              document.querySelector('.display-screen').scrollTop =
+                document.querySelector('.display-screen').scrollHeight;
+              sandboxTypewriterId = setTimeout(typeChar, 8);
+            } else {
+              statusEl.textContent = 'Completed';
+              statusEl.className = 'display-status success';
+            }
+          }
+          typeChar();
+        }, 1000);
+      }
+
+      function runTriageAnalyzer() {
+        if (sandboxTypewriterId) clearTimeout(sandboxTypewriterId);
+
+        const statusEl = document.getElementById('sandbox-display-status');
+        const codeEl = document.getElementById('sandbox-display-code');
+
+        statusEl.textContent = 'Triaging Failure...';
+        statusEl.className = 'display-status running';
+
+        codeEl.textContent =
+          '// Sending error logs to Claude failure assistant...\n// Reviewing screenshot attachments...';
+
+        const codeText = logsData[selectedLogKey];
+        let index = 0;
+
+        setTimeout(() => {
+          statusEl.textContent = 'Streaming report...';
+          codeEl.textContent = '';
+
+          function typeChar() {
+            if (index < codeText.length) {
+              codeEl.textContent += codeText[index++];
+              document.querySelector('.display-screen').scrollTop =
+                document.querySelector('.display-screen').scrollHeight;
+              sandboxTypewriterId = setTimeout(typeChar, 5);
+            } else {
+              statusEl.textContent = 'Triaged';
+              statusEl.className = 'display-status success';
+            }
+          }
+          typeChar();
+        }, 1200);
+      }
+
+      // Skills filter logic
+      const filterBtns = document.querySelectorAll('.filter-btn');
+      const skillTags = document.querySelectorAll('.skill-tag');
+
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          filterBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+
+          const cat = btn.dataset.category;
+          skillTags.forEach(tag => {
+            if (cat === 'all' || tag.dataset.category === cat) {
+              tag.classList.remove('hidden');
+            } else {
+              tag.classList.add('hidden');
+            }
+          });
+        });
+      });
+
+      // Scroll reveal observer
+      const revealEls = document.querySelectorAll('.reveal');
+      const statNums = document.querySelectorAll('.stat-num');
+      let statsAnimated = false;
+      let pipelineTriggered = false;
+
+      const observer = new IntersectionObserver(
+        entries => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+
+              // Trigger pipeline simulator when first viewed
+              if (entry.target.id === 'cicd' && !pipelineTriggered) {
+                pipelineTriggered = true;
+                setTimeout(runPipelineSimulation, 400);
+              }
+
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.1 }
+      );
+
+      revealEls.forEach(el => observer.observe(el));
+
+      // Stats bar counting observer
+      const statsObserver = new IntersectionObserver(
+        entries => {
+          if (entries[0].isIntersecting && !statsAnimated) {
+            statsAnimated = true;
+            statNums.forEach(el => animateCounter(el));
+          }
+        },
+        { threshold: 0.5 }
+      );
+
+      statsObserver.observe(document.querySelector('.stats-bar'));
+
+      // Start terminal shell immediately
+      triggerSuite('regression');
+    </script>
+  </body>
 </html>
