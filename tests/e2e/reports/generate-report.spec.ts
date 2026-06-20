@@ -2,6 +2,7 @@ import { test, expect } from '../../fixtures/auth.fixture';
 import { ReportsPage } from '../../helpers/page-objects/ReportsPage';
 
 test.describe('Generate Report Wizard', () => {
+  test.describe.configure({ mode: 'serial' });
   let reportsPage: ReportsPage;
 
   test.beforeEach(async ({ adminPage }) => {

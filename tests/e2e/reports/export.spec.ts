@@ -3,6 +3,7 @@ import { ReportsPage } from '../../helpers/page-objects/ReportsPage';
 import { expectToastNotification } from '../../helpers/assertions/custom-assertions';
 
 test.describe('Report Export and Delete', () => {
+  test.describe.configure({ mode: 'serial' });
   let reportsPage: ReportsPage;
 
   test.beforeEach(async ({ adminPage }) => {
@@ -21,7 +22,7 @@ test.describe('Report Export and Delete', () => {
     await reportsPage.deleteFirstReport();
     await adminPage.getByTestId('undo-btn').click();
     if (firstReportName) {
-      await expect(adminPage.getByText(firstReportName)).toBeVisible();
+      await expect(adminPage.getByTestId('reports-list').getByText(firstReportName)).toBeVisible();
     }
   });
 

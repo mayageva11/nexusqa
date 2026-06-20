@@ -2,6 +2,7 @@ import { test, expect } from '../../fixtures/auth.fixture';
 import { UsersPage } from '../../helpers/page-objects/UsersPage';
 
 test.describe('User Management', () => {
+  test.describe.configure({ mode: 'serial' });
   let usersPage: UsersPage;
 
   test.beforeEach(async ({ adminPage }) => {

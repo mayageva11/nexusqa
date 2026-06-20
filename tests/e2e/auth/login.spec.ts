@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import { LoginPage } from '../../helpers/page-objects/LoginPage';
 
 test.describe('Login', () => {
+  test.describe.configure({ mode: 'serial' });
   let loginPage: LoginPage;
 
   test.beforeEach(async ({ page }) => {
