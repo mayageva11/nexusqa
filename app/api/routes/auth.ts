@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
+import { v4 as uuidv4 } from 'uuid';
 import { authUsers, invalidatedTokens } from '../store';
 import { authMiddleware } from '../middleware/auth.middleware';
 
@@ -26,7 +27,7 @@ authRouter.post('/login', (req: Request, res: Response): void => {
 
   const secret = process.env.JWT_SECRET ?? 'dev-secret';
   const token = jwt.sign(
-    { userId: user.id, email: user.email, role: user.role },
+    { userId: user.id, email: user.email, role: user.role, jti: uuidv4() },
     secret,
     { expiresIn: '24h' }
   );
