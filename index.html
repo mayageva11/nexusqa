@@ -1908,6 +1908,38 @@
         .sandbox-run-btn {
           padding: 0.65rem 1.25rem;
         }
+
+        /* ── Sandbox section: prevent code pre from inflating the grid ── */
+        /* 1fr in CSS Grid is minmax(auto,1fr); content wider than the
+           available space inflates the track. minmax(0,1fr) locks it. */
+        .sandbox-container {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .sandbox-sidebar,
+        .sandbox-display {
+          min-width: 0;
+        }
+        .sandbox-sidebar {
+          padding: 1.25rem 1rem;
+        }
+        /* Code area scrolls horizontally instead of pushing layout */
+        .display-screen {
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+          padding: 1rem;
+        }
+        /* Tab buttons: tighter so both fit side-by-side at 320-390 px */
+        .sandbox-tab-btn {
+          font-size: 0.63rem;
+          padding: 0.4rem 0.375rem;
+        }
+        .sandbox-option-btn {
+          font-size: 0.68rem;
+          padding: 0.6rem 0.875rem;
+        }
+        .sandbox-instruction {
+          font-size: 0.78rem;
+        }
       }
     </style>
   </head>
