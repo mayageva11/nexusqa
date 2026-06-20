@@ -1,5 +1,9 @@
 import { defineConfig, devices } from '@playwright/test';
 
+const vpW = process.env.PLAYWRIGHT_VIEWPORT_WIDTH ? parseInt(process.env.PLAYWRIGHT_VIEWPORT_WIDTH, 10) : undefined;
+const vpH = process.env.PLAYWRIGHT_VIEWPORT_HEIGHT ? parseInt(process.env.PLAYWRIGHT_VIEWPORT_HEIGHT, 10) : undefined;
+const viewport = vpW && vpH ? { width: vpW, height: vpH } : undefined;
+
 export default defineConfig({
   testDir: '.',
   testMatch: '**/*.spec.ts',
@@ -21,15 +25,15 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: { ...devices['Desktop Chrome'], ...(viewport ? { viewport } : {}) },
     },
     {
       name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
+      use: { ...devices['Desktop Firefox'], ...(viewport ? { viewport } : {}) },
     },
     {
       name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
+      use: { ...devices['Desktop Safari'], ...(viewport ? { viewport } : {}) },
     },
   ],
   globalSetup: './global-setup.ts',
