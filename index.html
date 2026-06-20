@@ -1716,6 +1716,199 @@
           transition-duration: 0.01ms !important;
         }
       }
+
+      /* ── Global fixes ─────────────────────────────────────────── */
+
+      /* btn-sm was used but never defined */
+      .btn-sm {
+        padding: 0.6rem 1.4rem;
+        font-size: 0.72rem;
+      }
+
+      /* Prevent tabs from wrapping inside their bar */
+      .t-tab {
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+
+      /* Terminal body: clip horizontal overflow so the card width is respected */
+      .terminal-body {
+        overflow-x: hidden;
+      }
+
+      /* Terminal log lines: allow horizontal scroll instead of clipping */
+      .terminal-logs {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      /* Bound code blocks so their overflow-x:auto scrollbar is reachable */
+      .code-snippet-pre,
+      .code-snippet {
+        max-width: 100%;
+      }
+
+      /* ── Hamburger button (hidden on desktop) ─────────────────── */
+      .nav-hamburger {
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        gap: 5px;
+        background: transparent;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 0.45rem 0.55rem;
+        cursor: crosshair;
+        flex-shrink: 0;
+        transition: border-color 0.25s;
+      }
+      .nav-hamburger:hover {
+        border-color: var(--rose);
+      }
+      .nav-hamburger span {
+        display: block;
+        width: 18px;
+        height: 2px;
+        background: var(--rose);
+        border-radius: 1px;
+        transition: transform 0.25s ease, opacity 0.25s ease;
+        transform-origin: center;
+      }
+      nav.menu-open .nav-hamburger span:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+      }
+      nav.menu-open .nav-hamburger span:nth-child(2) {
+        opacity: 0;
+        transform: scaleX(0);
+      }
+      nav.menu-open .nav-hamburger span:nth-child(3) {
+        transform: rotate(-45deg) translate(5px, -5px);
+      }
+
+      /* ── ≤ 850px — tablet + mobile ───────────────────────────── */
+      @media (max-width: 850px) {
+        nav {
+          padding: 1rem 1.5rem;
+          flex-wrap: wrap;
+        }
+        .nav-hamburger {
+          display: flex;
+          margin-left: auto;
+        }
+
+        /* Mobile menu open state */
+        nav.menu-open .nav-links {
+          display: flex;
+          flex-direction: column;
+          width: 100%;
+          order: 10;
+          gap: 0;
+          margin-top: 0.75rem;
+          padding: 0.25rem 0;
+          border-top: 1px solid var(--border);
+        }
+        nav.menu-open .nav-links a {
+          padding: 0.8rem 0.25rem;
+          font-size: 0.85rem;
+          letter-spacing: 0.06em;
+          border-bottom: 1px solid rgba(214, 188, 250, 0.07);
+        }
+        nav.menu-open .btn-nav {
+          display: block;
+          order: 11;
+          width: 100%;
+          text-align: center;
+          margin: 0.75rem 0 0.25rem;
+          padding: 0.7rem 1rem;
+        }
+
+        .section {
+          padding: 4rem 1.25rem;
+        }
+        .hero {
+          padding: 6rem 1.25rem 3rem;
+        }
+        .project-card {
+          padding: 1.5rem;
+        }
+        .pipeline-suite {
+          padding: 1.5rem 1.25rem;
+        }
+      }
+
+      /* ── ≤ 600px — mobile only ───────────────────────────────── */
+      @media (max-width: 600px) {
+        /* Terminal bar: move tabs to a second row so they don't overflow */
+        .terminal-bar {
+          flex-wrap: wrap;
+          padding: 0.6rem 1rem;
+          gap: 4px 0;
+        }
+        .terminal-tabs {
+          order: 3;
+          width: 100%;
+          margin-left: 0;
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+          padding-bottom: 3px;
+          scrollbar-width: thin;
+          scrollbar-color: var(--border) transparent;
+        }
+        .terminal-tabs::-webkit-scrollbar {
+          height: 3px;
+        }
+        .terminal-tabs::-webkit-scrollbar-thumb {
+          background: var(--border);
+          border-radius: 2px;
+        }
+        /* Hide the "nexusqa — shell" label on tiny screens */
+        .terminal-title {
+          display: none;
+        }
+        /* Terminal fills the available width */
+        .terminal {
+          width: 100%;
+        }
+
+        .section {
+          padding: 3.5rem 1rem;
+        }
+        .hero {
+          padding: 5.5rem 1rem 2.5rem;
+        }
+        .project-card {
+          padding: 1.25rem;
+        }
+        .pipeline-suite {
+          padding: 1.25rem 1rem;
+        }
+        .stats-bar {
+          padding: 1.75rem 1rem;
+          gap: 1.5rem;
+        }
+
+        /* Hero CTAs stack vertically and fill the width */
+        .hero-ctas {
+          flex-direction: column;
+          align-items: stretch;
+          width: 100%;
+          max-width: 320px;
+        }
+        .btn {
+          justify-content: center;
+        }
+
+        /* Pipeline header stacks on very small screens */
+        .pipeline-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        /* Sandbox run button: tighten padding on mobile */
+        .sandbox-run-btn {
+          padding: 0.65rem 1.25rem;
+        }
+      }
     </style>
   </head>
   <body>
@@ -1754,6 +1947,9 @@
     <!-- HEADER / NAV -->
     <nav>
       <a href="#" class="nav-logo">MAYA.ERU</a>
+      <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
       <div class="nav-links">
         <a href="#project">Project</a>
         <a href="#claude">Claude Integration</a>
@@ -3675,6 +3871,24 @@ test('Delete report and undo deletion', async ({ page }) => {
 
       // Start terminal shell immediately
       triggerSuite('regression');
+
+      // Mobile hamburger menu
+      (function () {
+        const hamburger = document.getElementById('nav-hamburger');
+        const navEl = document.querySelector('nav');
+        if (!hamburger) return;
+        hamburger.addEventListener('click', () => {
+          const open = navEl.classList.toggle('menu-open');
+          hamburger.setAttribute('aria-expanded', open);
+        });
+        // Close menu when any nav link is clicked
+        document.querySelectorAll('.nav-links a').forEach(link => {
+          link.addEventListener('click', () => {
+            navEl.classList.remove('menu-open');
+            hamburger.setAttribute('aria-expanded', 'false');
+          });
+        });
+      })();
     </script>
   </body>
 </html>
