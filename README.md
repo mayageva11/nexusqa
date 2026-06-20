@@ -257,6 +257,6 @@ I'm **Maya Erusalimsky**, a QA Automation Engineer with 1.5 years of production 
 I built this project to give a concrete answer to the question every hiring team asks: *"What have you actually built?"*
 
 📧 mayageva11@gmail.com
-🔗 https://linkedin.com/in/maya-erusalimsky
+🔗 https://www.linkedin.com/in/maya-eru/
 🐙 https://github.com/mayageva11
 🌐 https://mayageva11.github.io/nexusqa
